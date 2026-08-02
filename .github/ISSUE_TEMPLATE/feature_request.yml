@@ -16,7 +16,7 @@ body:
     id: idea
     attributes:
       label: Your idea
-      description: How might Fader solve it?
+      description: How might Soundpost solve it?
   - type: textarea
     id: alternatives
     attributes:

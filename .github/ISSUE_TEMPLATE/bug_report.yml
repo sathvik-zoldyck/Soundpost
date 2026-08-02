@@ -1,10 +1,10 @@
 name: 🐛 Bug report
-description: Something in Fader isn't working as expected.
+description: Something in Soundpost isn't working as expected.
 labels: ["bug", "needs triage"]
 body:
   - type: markdown
     attributes:
-      value: Thanks for helping improve Fader! Please fill this out so we can reproduce the issue.
+      value: Thanks for helping improve Soundpost! Please fill this out so we can reproduce the issue.
   - type: textarea
     id: what-happened
     attributes:
@@ -27,9 +27,9 @@ body:
     validations:
       required: true
   - type: input
-    id: fader-version
+    id: soundpost-version
     attributes:
-      label: Fader version / commit
+      label: Soundpost version / commit
       placeholder: "0.1.0 or main@abc1234"
   - type: textarea
     id: devices
@@ -40,5 +40,5 @@ body:
     id: logs
     attributes:
       label: Logs (optional)
-      description: Attach logs from %AppData%\Fader\logs if available.
+      description: Attach logs from %AppData%\Soundpost\logs if available.
       render: text

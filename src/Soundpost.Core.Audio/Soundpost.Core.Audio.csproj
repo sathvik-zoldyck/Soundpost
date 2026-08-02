@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <RootNamespace>Soundpost.Core.Audio</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Windows Core Audio (WASAPI/MMDevice) wrappers. The COM firewall lives here. -->
+    <PackageReference Include="NAudio" Version="2.3.0" />
+  </ItemGroup>
+
+</Project>

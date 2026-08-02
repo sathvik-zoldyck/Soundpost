@@ -7,8 +7,8 @@
     <Deterministic>true</Deterministic>
     <NeutralLanguage>en</NeutralLanguage>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
-    <Authors>Sathvik R and Fader contributors</Authors>
-    <Product>Fader</Product>
-    <Company>Fader</Company>
+    <Authors>Sathvik R and Soundpost contributors</Authors>
+    <Product>Soundpost</Product>
+    <Company>Soundpost</Company>
   </PropertyGroup>
 </Project>

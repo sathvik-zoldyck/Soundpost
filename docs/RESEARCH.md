@@ -1,7 +1,7 @@
-# Fader — Research & Feasibility Report
+# Soundpost — Research & Feasibility Report
 
 This document captures the competitive analysis and Windows-API feasibility study
-that shaped Fader's scope. The guiding rule throughout: **be brutally honest about
+that shaped Soundpost's scope. The guiding rule throughout: **be brutally honest about
 what Windows actually allows, and choose reliability over cleverness.**
 
 ---
@@ -22,7 +22,7 @@ what Windows actually allows, and choose reliability over cleverness.**
 
 - **Solved:** per-app volume (EarTrumpet), device-switch hotkeys (SoundSwitch), EQ (APO), heavy routing (Voicemeeter).
 - **Fragmented:** achieving mixing + hotkeys + profiles + switching requires **3–4 tools** that don't cooperate.
-- **Missing (the gap Fader fills):** a **polished, open, driver-free "brain"** combining EarTrumpet-grade per-app control with SoundSwitch-grade switching **plus** a real automation/rules engine, profiles/scenes, and plain-language diagnostics — with **reliability** (survives updates, remembers intent, self-heals) as the headline.
+- **Missing (the gap Soundpost fills):** a **polished, open, driver-free "brain"** combining EarTrumpet-grade per-app control with SoundSwitch-grade switching **plus** a real automation/rules engine, profiles/scenes, and plain-language diagnostics — with **reliability** (survives updates, remembers intent, self-heals) as the headline.
 
 ---
 
@@ -56,7 +56,7 @@ what Windows actually allows, and choose reliability over cleverness.**
 
 > **The reliable, open "autopilot" for your audio.** EarTrumpet's polish + SoundSwitch's switching + a real rules engine + plain-language diagnostics — driver-free, no bloat, no telemetry, MIT-licensed.
 
-**Brand metaphor: a mixing desk for your whole PC.** A real console already has channel routing, scene snapshots, and automation — which maps cleanly onto Fader's routing, profiles/scenes, and rules.
+**Brand metaphor: a mixing desk for your whole PC.** A real console already has channel routing, scene snapshots, and automation — which maps cleanly onto Soundpost's routing, profiles/scenes, and rules.
 
 **Simplification adopted:** *scenes* and *profiles* are the same primitive — a named bundle of desired state. A *rule* is simply how a profile gets applied (hotkey, device event, app launch, time). One small mental model, clean UI.
 

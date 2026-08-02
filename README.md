@@ -1,12 +1,12 @@
 <div align="center">
 
-# 🎛️ Fader
+# 🎛️ Soundpost
 
 ### A mixing desk for your whole PC.
 
 **Switch audio devices instantly. Route apps to the right output. Save scenes. Automate everything — automatically.**
 
-Fader is a free, open-source, no-account audio control layer for Windows. It combines the polish of a great volume mixer with a real automation engine and plain-language troubleshooting — so your audio just does the right thing when you plug in your headphones, sit down to game, or join a meeting.
+Soundpost is a free, open-source, no-account audio control layer for Windows. It combines the polish of a great volume mixer with a real automation engine and plain-language troubleshooting — so your audio just does the right thing when you plug in your headphones, sit down to game, or join a meeting.
 
 [![Status](https://img.shields.io/badge/status-early%20development-orange)](#project-status)
 [![Platform](https://img.shields.io/badge/platform-Windows%2010%20%2F%2011-0078D4)](#)
@@ -18,11 +18,11 @@ Fader is a free, open-source, no-account audio control layer for Windows. It com
 
 ---
 
-> **⚠️ Project status: early development.** Fader is being built in the open, milestone by milestone. It is **not yet installable**. Star the repo to follow along, and see the [Roadmap](#roadmap) for what's landing next. Early contributors welcome — see [CONTRIBUTING](CONTRIBUTING.md).
+> **⚠️ Project status: early development.** Soundpost is being built in the open, milestone by milestone. It is **not yet installable**. Star the repo to follow along, and see the [Roadmap](#roadmap) for what's landing next. Early contributors welcome — see [CONTRIBUTING](CONTRIBUTING.md).
 
 ---
 
-## Why Fader exists
+## Why Soundpost exists
 
 Getting audio right on Windows today means juggling **three or four separate tools** that don't talk to each other:
 
@@ -33,11 +33,11 @@ Getting audio right on Windows today means juggling **three or four separate too
 
 None of them *remember your intent*. Plug your Bluetooth headphones in and nothing follows. Something breaks and Windows says nothing about why.
 
-**Fader is the missing brain.** One place to control it all — and an automation engine so you rarely have to touch it.
+**Soundpost is the missing brain.** One place to control it all — and an automation engine so you rarely have to touch it.
 
 ## What it does
 
-Think of your PC as a mixing console. Fader gives you the console:
+Think of your PC as a mixing console. Soundpost gives you the console:
 
 - 🔀 **Instant device switching** — change your default output/input from the tray or a global hotkey.
 - 🎚️ **Per-app mixer** — volume, mute, and live meters for every app making sound.
@@ -49,13 +49,13 @@ Think of your PC as a mixing console. Fader gives you the console:
 
 **No account. No login. No telemetry. Fully local.**
 
-## What Fader is *not* (honesty first)
+## What Soundpost is *not* (honesty first)
 
 Windows has real limits, and we won't pretend otherwise:
 
 - **Playing one sound on multiple outputs at once** isn't native to Windows — it needs software loopback (added latency) or a virtual audio driver. It's on the roadmap as an **experimental** module, *not* in the first release, because it's the least reliable feature and reliability is the whole point.
-- **Equalizer / DSP** is driver-level territory (that's what [Equalizer APO](https://sourceforge.net/projects/equalizerapo/) does). Fader won't reinvent a fragile system-wide EQ; we may *integrate* with existing tools later.
-- Some apps only read their audio device when they start, so a routing change may take effect after the app is nudged or restarted. Fader **detects and tells you** when that's the case instead of silently failing.
+- **Equalizer / DSP** is driver-level territory (that's what [Equalizer APO](https://sourceforge.net/projects/equalizerapo/) does). Soundpost won't reinvent a fragile system-wide EQ; we may *integrate* with existing tools later.
+- Some apps only read their audio device when they start, so a routing change may take effect after the app is nudged or restarted. Soundpost **detects and tells you** when that's the case instead of silently failing.
 
 See [`docs/RESEARCH.md`](docs/RESEARCH.md) for the full competitive analysis and Windows-API feasibility study behind these decisions.
 
@@ -83,20 +83,20 @@ Architecture details: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 > Requires the [.NET 9 SDK](https://dotnet.microsoft.com/download) on Windows 10/11.
 
 ```bash
-git clone https://github.com/<your-org>/fader.git
-cd fader
+git clone https://github.com/<your-org>/soundpost.git
+cd soundpost
 dotnet build
 ```
 
 To run the headless audio probe (prints your devices and reacts to plug/unplug — the first thing that works):
 
 ```bash
-dotnet run --project tools/Fader.Probe
+dotnet run --project tools/Soundpost.Probe
 ```
 
 ## Contributing
 
-Fader is designed to be a friendly, modular open-source project. Whether it's a bug report, a feature idea, a design suggestion, or code — **you're welcome here.** Start with [CONTRIBUTING.md](CONTRIBUTING.md) and look for [`good first issue`](https://github.com/<your-org>/fader/labels/good%20first%20issue) labels.
+Soundpost is designed to be a friendly, modular open-source project. Whether it's a bug report, a feature idea, a design suggestion, or code — **you're welcome here.** Start with [CONTRIBUTING.md](CONTRIBUTING.md) and look for [`good first issue`](https://github.com/<your-org>/soundpost/labels/good%20first%20issue) labels.
 
 ## License
 

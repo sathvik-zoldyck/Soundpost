@@ -1,6 +1,6 @@
-# Contributing to Fader
+# Contributing to Soundpost
 
-Thanks for being here. Fader aims to be a welcoming, high-quality open-source project, and contributions of every size are valued — bug reports, docs, design ideas, and code alike.
+Thanks for being here. Soundpost aims to be a welcoming, high-quality open-source project, and contributions of every size are valued — bug reports, docs, design ideas, and code alike.
 
 ## Ways to help
 
@@ -13,7 +13,7 @@ Thanks for being here. Fader aims to be a welcoming, high-quality open-source pr
 
 - Install the [.NET 9 SDK](https://dotnet.microsoft.com/download) on Windows 10 or 11.
 - `dotnet build` from the repo root.
-- `dotnet run --project tools/Fader.Probe` to exercise the audio layer headlessly (no UI needed).
+- `dotnet run --project tools/Soundpost.Probe` to exercise the audio layer headlessly (no UI needed).
 
 ## Project principles
 
@@ -27,7 +27,7 @@ These are the values the codebase is built around. PRs are reviewed against them
 
 ## Architecture at a glance
 
-Only **`Fader.Core.Audio`** is allowed to touch Windows audio COM APIs. Everything above it works against normalized models and services. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) before making cross-layer changes.
+Only **`Soundpost.Core.Audio`** is allowed to touch Windows audio COM APIs. Everything above it works against normalized models and services. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) before making cross-layer changes.
 
 ```
 Core.Audio  ->  Core.Engine (state + rules + diagnostics)  ->  App (WPF/MVVM)

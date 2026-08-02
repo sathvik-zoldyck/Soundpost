@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Fader are documented here.
+All notable changes to Soundpost are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project aims to adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
@@ -9,7 +9,7 @@ and this project aims to adhere to [Semantic Versioning](https://semver.org/spec
 ### Added
 - Project scaffold: .NET 9 solution, research + architecture docs, and repo health files
   (issue forms, PR template, CI, Dependabot, Code of Conduct, Security policy).
-- `Fader.Core.Audio` — the Windows audio layer (the "COM firewall"):
+- `Soundpost.Core.Audio` — the Windows audio layer (the "COM firewall"):
   - Audio endpoint enumeration for playback and recording devices.
   - Default and communications role detection.
   - Live device change events via `IMMNotificationClient` (connect / disconnect / default change).
@@ -18,9 +18,9 @@ and this project aims to adhere to [Semantic Versioning](https://semver.org/spec
   - Per-app output/input routing via the undocumented per-app endpoint API (`IAudioPolicyConfig`),
     with separate Windows 10 and Windows 11 interface variants and manual HSTRING / WinRT
     activation interop (built-in WinRT marshaling was removed in .NET 5+).
-- `Fader.Probe` — a headless harness that prints devices and sessions and reacts to changes,
+- `Soundpost.Probe` — a headless harness that prints devices and sessions and reacts to changes,
   with `switch` / `route` / `unroute` commands.
-- `Fader.App` — the first UI: a WPF dashboard (custom dark theme, MVVM) with one-click
+- `Soundpost.App` — the first UI: a WPF dashboard (custom dark theme, MVVM) with one-click
   output-device switching and a live per-app mixer (volume + mute), bound to the audio core.
 
 ### Changed
@@ -29,4 +29,4 @@ and this project aims to adhere to [Semantic Versioning](https://semver.org/spec
 - Pinned `global.json` to a fully-qualified SDK version (`9.0.100`) so `setup-dotnet@v6`'s
   new `global.json` validation accepts it.
 
-_Nothing is released yet — Fader is in early development._
+_Nothing is released yet — Soundpost is in early development._

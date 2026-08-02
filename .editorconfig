@@ -1,4 +1,4 @@
-# Fader — editor + code style config
+# Soundpost — editor + code style config
 root = true
 
 [*]

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <RootNamespace>Soundpost.Probe</RootNamespace>
+    <AssemblyName>Soundpost.Probe</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Soundpost.Core.Audio\Soundpost.Core.Audio.csproj" />
+  </ItemGroup>
+
+</Project>

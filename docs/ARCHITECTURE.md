@@ -1,6 +1,6 @@
-# Fader — Architecture
+# Soundpost — Architecture
 
-Fader is built as layers with a **single source of truth** and **one-way data flow**.
+Soundpost is built as layers with a **single source of truth** and **one-way data flow**.
 The design goals, in priority order: **reliability, observability, testability, and
 keeping the scary Windows COM code sealed off from everything else.**
 
@@ -10,7 +10,7 @@ keeping the scary Windows COM code sealed off from everything else.**
              Windows Core Audio / WASAPI (COM, some undocumented)
                                   │
         ┌─────────────────────────▼─────────────────────────┐
-        │  Fader.Core.Audio                                  │
+        │  Soundpost.Core.Audio                                  │
         │  The ONLY layer allowed to touch audio COM.        │
         │  - Device enumeration + IMMNotificationClient      │
         │  - Session enumeration + volume/mute/meters        │
@@ -20,7 +20,7 @@ keeping the scary Windows COM code sealed off from everything else.**
         └─────────────────────────┬─────────────────────────┘
                                   │  normalized events / models
         ┌─────────────────────────▼─────────────────────────┐
-        │  Fader.Core.Engine                                 │
+        │  Soundpost.Core.Engine                                 │
         │  - AudioState store (single source of truth)       │
         │  - RulesEngine (trigger → condition → action)      │
         │  - ProfileManager (scenes = named state bundles)   │
@@ -29,7 +29,7 @@ keeping the scary Windows COM code sealed off from everything else.**
         └───────────────┬───────────────────┬───────────────┘
                         │                   │
         ┌───────────────▼──────┐   ┌────────▼──────────────────┐
-        │ Fader.Core.Persistence│   │ Fader.App (WPF/MVVM)       │
+        │ Soundpost.Core.Persistence│   │ Soundpost.App (WPF/MVVM)       │
         │ - Atomic JSON config  │   │ - Tray + quick-switch      │
         │ - Backups + migrations│   │ - Dashboard / Mixer /      │
         │ - Serilog logging     │   │   Profiles / Rules /       │
@@ -38,7 +38,7 @@ keeping the scary Windows COM code sealed off from everything else.**
                                     │ Actions. Never touches COM.│
                                     └────────────────────────────┘
 
-  Fader.App.Host = composition root: DI, single-instance, tray lifetime,
+  Soundpost.App.Host = composition root: DI, single-instance, tray lifetime,
                    hotkey service, background workers.
   Plugin SDK (v2): ITrigger / IAction / IDiagnostic contracts.
 ```
@@ -59,7 +59,7 @@ keeping the scary Windows COM code sealed off from everything else.**
 ## Key design decisions
 
 ### The COM firewall
-Only `Fader.Core.Audio` references audio COM. Undocumented interfaces (`IPolicyConfig`,
+Only `Soundpost.Core.Audio` references audio COM. Undocumented interfaces (`IPolicyConfig`,
 `IAudioPolicyConfig`) live behind small, documented service interfaces
 (`IDefaultDeviceService`, `IAppRoutingService`). This means:
 - The rest of the app is portable/testable against fakes.
@@ -85,22 +85,22 @@ concrete mechanism behind "it remembers your intent."
 - Writes go to a temp file then atomically rename over the target.
 - Every save keeps a timestamped backup; a corrupt config auto-restores from the newest good one.
 - Config carries a schema version; migrations run forward on load.
-- Logs (Serilog, rolling files) live next to config under `%AppData%\Fader`.
+- Logs (Serilog, rolling files) live next to config under `%AppData%\Soundpost`.
 
 ## Projects
 
 | Project | Type | Responsibility |
 |---|---|---|
-| `Fader.Core.Audio` | classlib (`net9.0-windows`) | All Windows audio interop; normalized models/services. |
-| `Fader.Core.Engine` | classlib | AudioState, rules, profiles, diagnostics, reconcile. |
-| `Fader.Core.Persistence` | classlib | Config store, backups, migrations, logging setup. |
-| `Fader.App` | WPF app | UI, tray, MVVM view-models, composition root. |
-| `Fader.Probe` | console | Headless harness to exercise `Core.Audio` without a UI. |
+| `Soundpost.Core.Audio` | classlib (`net9.0-windows`) | All Windows audio interop; normalized models/services. |
+| `Soundpost.Core.Engine` | classlib | AudioState, rules, profiles, diagnostics, reconcile. |
+| `Soundpost.Core.Persistence` | classlib | Config store, backups, migrations, logging setup. |
+| `Soundpost.App` | WPF app | UI, tray, MVVM view-models, composition root. |
+| `Soundpost.Probe` | console | Headless harness to exercise `Core.Audio` without a UI. |
 | `tests/*` | xUnit | Unit tests against services/fakes. |
 
 ## Testing strategy
 
 - `Core.Engine`, `Core.Persistence`, `RulesEngine`, and `DiagnosticsEngine` are tested
   against **fake** `Core.Audio` services — no real audio hardware required in CI.
-- `Core.Audio` itself is validated interactively via `Fader.Probe` on real machines,
+- `Core.Audio` itself is validated interactively via `Soundpost.Probe` on real machines,
   since it depends on live Windows audio state.
