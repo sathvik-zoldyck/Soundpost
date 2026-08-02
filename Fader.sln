@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fader.Core.Audio", "src\Fad
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fader.Probe", "tools\Fader.Probe\Fader.Probe.csproj", "{F702D12A-B2E4-443B-B969-D7C6C985A38D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fader.App", "src\Fader.App\Fader.App.csproj", "{2C3D25AD-43CA-4147-A752-8EB9F0877901}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,18 @@ Global
 		{F702D12A-B2E4-443B-B969-D7C6C985A38D}.Release|x64.Build.0 = Release|Any CPU
 		{F702D12A-B2E4-443B-B969-D7C6C985A38D}.Release|x86.ActiveCfg = Release|Any CPU
 		{F702D12A-B2E4-443B-B969-D7C6C985A38D}.Release|x86.Build.0 = Release|Any CPU
+		{2C3D25AD-43CA-4147-A752-8EB9F0877901}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C3D25AD-43CA-4147-A752-8EB9F0877901}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C3D25AD-43CA-4147-A752-8EB9F0877901}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2C3D25AD-43CA-4147-A752-8EB9F0877901}.Debug|x64.Build.0 = Debug|Any CPU
+		{2C3D25AD-43CA-4147-A752-8EB9F0877901}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2C3D25AD-43CA-4147-A752-8EB9F0877901}.Debug|x86.Build.0 = Debug|Any CPU
+		{2C3D25AD-43CA-4147-A752-8EB9F0877901}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C3D25AD-43CA-4147-A752-8EB9F0877901}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C3D25AD-43CA-4147-A752-8EB9F0877901}.Release|x64.ActiveCfg = Release|Any CPU
+		{2C3D25AD-43CA-4147-A752-8EB9F0877901}.Release|x64.Build.0 = Release|Any CPU
+		{2C3D25AD-43CA-4147-A752-8EB9F0877901}.Release|x86.ActiveCfg = Release|Any CPU
+		{2C3D25AD-43CA-4147-A752-8EB9F0877901}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -50,5 +64,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{83F87349-B9B5-4F40-A942-0D1FA415F613} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{F702D12A-B2E4-443B-B969-D7C6C985A38D} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{2C3D25AD-43CA-4147-A752-8EB9F0877901} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 EndGlobal

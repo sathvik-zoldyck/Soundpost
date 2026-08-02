@@ -20,6 +20,8 @@ and this project aims to adhere to [Semantic Versioning](https://semver.org/spec
     activation interop (built-in WinRT marshaling was removed in .NET 5+).
 - `Fader.Probe` — a headless harness that prints devices and sessions and reacts to changes,
   with `switch` / `route` / `unroute` commands.
+- `Fader.App` — the first UI: a WPF dashboard (custom dark theme, MVVM) with one-click
+  output-device switching and a live per-app mixer (volume + mute), bound to the audio core.
 
 ### Changed
 - Bumped NAudio to 2.3.0 (Core Audio property-access performance improvements).
