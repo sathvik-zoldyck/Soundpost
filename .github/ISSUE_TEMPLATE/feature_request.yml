@@ -1,0 +1,24 @@
+name: 💡 Feature request
+description: Suggest an idea or improvement.
+labels: ["enhancement", "needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: Great ideas start from real problems. Tell us the pain, not just the fix.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: Describe the pain point. Real pain points shape the roadmap.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+      description: How might Fader solve it?
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've tried
+      description: Other tools or workarounds, and why they fall short.

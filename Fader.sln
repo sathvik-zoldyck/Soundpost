@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fader.Core.Audio", "src\Fader.Core.Audio\Fader.Core.Audio.csproj", "{83F87349-B9B5-4F40-A942-0D1FA415F613}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fader.Probe", "tools\Fader.Probe\Fader.Probe.csproj", "{F702D12A-B2E4-443B-B969-D7C6C985A38D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{83F87349-B9B5-4F40-A942-0D1FA415F613}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83F87349-B9B5-4F40-A942-0D1FA415F613}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83F87349-B9B5-4F40-A942-0D1FA415F613}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{83F87349-B9B5-4F40-A942-0D1FA415F613}.Debug|x64.Build.0 = Debug|Any CPU
+		{83F87349-B9B5-4F40-A942-0D1FA415F613}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{83F87349-B9B5-4F40-A942-0D1FA415F613}.Debug|x86.Build.0 = Debug|Any CPU
+		{83F87349-B9B5-4F40-A942-0D1FA415F613}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83F87349-B9B5-4F40-A942-0D1FA415F613}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83F87349-B9B5-4F40-A942-0D1FA415F613}.Release|x64.ActiveCfg = Release|Any CPU
+		{83F87349-B9B5-4F40-A942-0D1FA415F613}.Release|x64.Build.0 = Release|Any CPU
+		{83F87349-B9B5-4F40-A942-0D1FA415F613}.Release|x86.ActiveCfg = Release|Any CPU
+		{83F87349-B9B5-4F40-A942-0D1FA415F613}.Release|x86.Build.0 = Release|Any CPU
+		{F702D12A-B2E4-443B-B969-D7C6C985A38D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F702D12A-B2E4-443B-B969-D7C6C985A38D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F702D12A-B2E4-443B-B969-D7C6C985A38D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F702D12A-B2E4-443B-B969-D7C6C985A38D}.Debug|x64.Build.0 = Debug|Any CPU
+		{F702D12A-B2E4-443B-B969-D7C6C985A38D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F702D12A-B2E4-443B-B969-D7C6C985A38D}.Debug|x86.Build.0 = Debug|Any CPU
+		{F702D12A-B2E4-443B-B969-D7C6C985A38D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F702D12A-B2E4-443B-B969-D7C6C985A38D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F702D12A-B2E4-443B-B969-D7C6C985A38D}.Release|x64.ActiveCfg = Release|Any CPU
+		{F702D12A-B2E4-443B-B969-D7C6C985A38D}.Release|x64.Build.0 = Release|Any CPU
+		{F702D12A-B2E4-443B-B969-D7C6C985A38D}.Release|x86.ActiveCfg = Release|Any CPU
+		{F702D12A-B2E4-443B-B969-D7C6C985A38D}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{83F87349-B9B5-4F40-A942-0D1FA415F613} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{F702D12A-B2E4-443B-B969-D7C6C985A38D} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+	EndGlobalSection
+EndGlobal

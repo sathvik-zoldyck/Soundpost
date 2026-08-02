@@ -1,0 +1,14 @@
+<Project>
+  <!-- Shared defaults for every project in the solution. -->
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Deterministic>true</Deterministic>
+    <NeutralLanguage>en</NeutralLanguage>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <Authors>Sathvik R and Fader contributors</Authors>
+    <Product>Fader</Product>
+    <Company>Fader</Company>
+  </PropertyGroup>
+</Project>
