@@ -15,7 +15,11 @@ and this project aims to adhere to [Semantic Versioning](https://semver.org/spec
   - Live device change events via `IMMNotificationClient` (connect / disconnect / default change).
   - Per-app audio session enumeration with volume, mute, and state.
   - Default-device switching across roles via `IPolicyConfig`.
-- `Fader.Probe` — a headless harness that prints devices and sessions and reacts to changes.
+  - Per-app output/input routing via the undocumented per-app endpoint API (`IAudioPolicyConfig`),
+    with separate Windows 10 and Windows 11 interface variants and manual HSTRING / WinRT
+    activation interop (built-in WinRT marshaling was removed in .NET 5+).
+- `Fader.Probe` — a headless harness that prints devices and sessions and reacts to changes,
+  with `switch` / `route` / `unroute` commands.
 
 ### Changed
 - Bumped NAudio to 2.3.0 (Core Audio property-access performance improvements).
