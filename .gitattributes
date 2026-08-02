@@ -1,0 +1,16 @@
+# Normalize line endings: store as LF in the repo, check out platform-appropriately.
+* text=auto eol=lf
+
+# Windows-only scripts keep CRLF
+*.sln    text eol=crlf
+*.bat    text eol=crlf
+*.cmd    text eol=crlf
+*.ps1    text eol=crlf
+
+# Binary assets (never touch line endings)
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.ico    binary
+*.snk    binary
