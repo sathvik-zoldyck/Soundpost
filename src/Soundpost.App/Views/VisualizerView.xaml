@@ -1,0 +1,81 @@
+<UserControl x:Class="Soundpost.App.Views.VisualizerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="clr-namespace:Soundpost.App.Controls"
+             FontFamily="{StaticResource BodyFont}">
+    <Grid Margin="18,4,18,14">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- header -->
+        <Grid Grid.Row="0" Margin="2,2,2,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock Text="VISUALIZER" Style="{StaticResource SectionLabel}" />
+                <TextBlock Text="Sound, seen." FontFamily="{StaticResource LabelFont}" FontSize="22" FontWeight="SemiBold"
+                           Foreground="{StaticResource TextPrimaryBrush}" Margin="0,6,0,0" />
+                <TextBlock Text="Reacts live to whatever's playing on your output." Style="{StaticResource Caption}" Margin="0,3,0,0" />
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom">
+                <Button x:Name="StyleRibbon" Content="Ribbon" Tag="Ribbon" Click="OnStyle" Style="{StaticResource PillButton}" Margin="0,0,8,0" />
+                <Button x:Name="StyleSpectrum" Content="Spectrum" Tag="Spectrum" Click="OnStyle" Style="{StaticResource PillButton}" Margin="0,0,8,0" />
+                <Button x:Name="StyleRadial" Content="Radial" Tag="Radial" Click="OnStyle" Style="{StaticResource PillButton}" Margin="0,0,8,0" />
+                <Button x:Name="StyleScope" Content="Oscilloscope" Tag="Oscilloscope" Click="OnStyle" Style="{StaticResource PillButton}" Margin="0,0,8,0" />
+                <Button x:Name="StyleAurora" Content="Aurora" Tag="Aurora" Click="OnStyle" Style="{StaticResource PillButton}" />
+            </StackPanel>
+        </Grid>
+
+        <!-- screen -->
+        <Border Grid.Row="1" CornerRadius="18" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" ClipToBounds="True">
+            <Border.Background>
+                <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.75" RadiusY="0.9">
+                    <GradientStop Color="#12151D" Offset="0" />
+                    <GradientStop Color="#0A0C11" Offset="0.7" />
+                    <GradientStop Color="#07090D" Offset="1" />
+                </RadialGradientBrush>
+            </Border.Background>
+            <Grid>
+                <c:Visualizer x:Name="Viz" />
+                <TextBlock Text="RIBBON" x:Name="StyleTag" FontFamily="{StaticResource LabelFont}" FontSize="10"
+                           Foreground="{StaticResource TextTertiaryBrush}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="16,14,0,0" />
+                <TextBlock Text="20 Hz — 20 kHz" Style="{StaticResource Mono}" FontSize="10"
+                           HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,16,12" />
+            </Grid>
+        </Border>
+
+        <!-- knobs -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,2">
+            <StackPanel Margin="0,0,22,0" HorizontalAlignment="Center">
+                <c:Knob x:Name="KnobSensitivity" Width="66" Height="66" Value="0.68" />
+                <TextBlock Text="SENSITIVITY" Style="{StaticResource SectionLabel}" HorizontalAlignment="Center" Margin="0,8,0,0" />
+                <TextBlock x:Name="LblSensitivity" Text="68%" Style="{StaticResource Mono}" HorizontalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Margin="0,0,22,0" HorizontalAlignment="Center">
+                <c:Knob x:Name="KnobSmoothing" Width="66" Height="66" Value="0.45" />
+                <TextBlock Text="SMOOTHING" Style="{StaticResource SectionLabel}" HorizontalAlignment="Center" Margin="0,8,0,0" />
+                <TextBlock x:Name="LblSmoothing" Text="45%" Style="{StaticResource Mono}" HorizontalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Margin="0,0,22,0" HorizontalAlignment="Center">
+                <c:Knob x:Name="KnobGlow" Width="66" Height="66" Value="0.72" />
+                <TextBlock Text="GLOW" Style="{StaticResource SectionLabel}" HorizontalAlignment="Center" Margin="0,8,0,0" />
+                <TextBlock x:Name="LblGlow" Text="72%" Style="{StaticResource Mono}" HorizontalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Margin="0,0,22,0" HorizontalAlignment="Center">
+                <c:Knob x:Name="KnobSpeed" Width="66" Height="66" Value="0.40" />
+                <TextBlock Text="SPEED" Style="{StaticResource SectionLabel}" HorizontalAlignment="Center" Margin="0,8,0,0" />
+                <TextBlock x:Name="LblSpeed" Text="40%" Style="{StaticResource Mono}" HorizontalAlignment="Center" />
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Center">
+                <c:Knob x:Name="KnobPalette" Width="66" Height="66" Value="0" Accent="#FF8A3D" />
+                <TextBlock Text="PALETTE" Style="{StaticResource SectionLabel}" HorizontalAlignment="Center" Margin="0,8,0,0" />
+                <TextBlock x:Name="LblPalette" Text="Sunset" Style="{StaticResource Mono}" HorizontalAlignment="Center" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

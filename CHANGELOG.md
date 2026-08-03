@@ -22,6 +22,13 @@ and this project aims to adhere to [Semantic Versioning](https://semver.org/spec
   with `switch` / `route` / `unroute` commands.
 - `Soundpost.App` — the first UI: a WPF dashboard (custom dark theme, MVVM) with one-click
   output-device switching and a live per-app mixer (volume + mute), bound to the audio core.
+- Console redesign: a custom dark rack-unit window (borderless chrome, Mixer/Visualizer tabs),
+  a scenes bar, output-device cards, per-app channel strips with live segmented peak meters +
+  faders, and a master section.
+- Live metering (`IAudioMeterService`) — real master and per-session peaks drive the meters.
+- Visualizer: WASAPI loopback capture + FFT (`LoopbackAnalyzer`) feeding WPF-drawn styles
+  (Ribbon, Spectrum, Radial, Oscilloscope) with draggable knobs (sensitivity, smoothing, glow,
+  speed) and switchable palettes.
 
 ### Changed
 - Bumped NAudio to 2.3.0 (Core Audio property-access performance improvements).

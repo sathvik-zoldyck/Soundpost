@@ -13,6 +13,7 @@ public partial class App : Application
 {
     private CoreAudioDeviceService? _deviceService;
     private CoreAudioSessionService? _sessionService;
+    private CoreAudioMeterService? _meterService;
     private MainViewModel? _mainViewModel;
 
     protected override void OnStartup(StartupEventArgs e)
@@ -22,9 +23,10 @@ public partial class App : Application
 
         _deviceService = new CoreAudioDeviceService();
         _sessionService = new CoreAudioSessionService();
+        _meterService = new CoreAudioMeterService();
         IDefaultDeviceSwitcher switcher = new PolicyConfigDefaultDeviceSwitcher();
 
-        _mainViewModel = new MainViewModel(_deviceService, _sessionService, switcher);
+        _mainViewModel = new MainViewModel(_deviceService, _sessionService, switcher, _meterService);
 
         var window = new MainWindow { DataContext = _mainViewModel };
         window.Show();
@@ -39,6 +41,7 @@ public partial class App : Application
     protected override void OnExit(ExitEventArgs e)
     {
         _mainViewModel?.Dispose();
+        _meterService?.Dispose();
         _sessionService?.Dispose();
         _deviceService?.Dispose();
         base.OnExit(e);

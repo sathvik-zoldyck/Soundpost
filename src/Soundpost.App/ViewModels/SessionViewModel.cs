@@ -3,7 +3,7 @@ using Soundpost.Core.Audio;
 
 namespace Soundpost.App.ViewModels;
 
-/// <summary>One app row in the per-app mixer, with a live volume + mute control.</summary>
+/// <summary>One app row in the per-app mixer, with a live volume + mute control and a peak meter.</summary>
 public partial class SessionViewModel : ObservableObject
 {
     private readonly IAudioSessionService _sessions;
@@ -15,6 +15,10 @@ public partial class SessionViewModel : ObservableObject
 
     [ObservableProperty]
     private string _state = string.Empty;
+
+    /// <summary>Live peak level (0–1) for the channel meter; updated by the render/meter loop.</summary>
+    [ObservableProperty]
+    private double _meterLevel;
 
     private float _volume;
 

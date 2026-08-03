@@ -9,16 +9,18 @@ using Soundpost.Core.Audio;
 namespace Soundpost.App.ViewModels;
 
 /// <summary>
-/// Backs the dashboard: the live list of playback devices (with one-click switching) and the
-/// per-app mixer. Device changes arrive via events; sessions are polled on a timer (there is no
-/// system-wide session-added event to subscribe to yet).
+/// Backs the console: the live device list (with one-click switching), the per-app mixer, and the
+/// master + channel peak meters. Device changes arrive via events; sessions are polled on a slow
+/// timer and meter levels on a fast one.
 /// </summary>
 public partial class MainViewModel : ObservableObject, IDisposable
 {
     private readonly IAudioDeviceService _devices;
     private readonly IAudioSessionService _sessions;
     private readonly IDefaultDeviceSwitcher _switcher;
-    private readonly DispatcherTimer _timer;
+    private readonly IAudioMeterService _meters;
+    private readonly DispatcherTimer _sessionTimer;
+    private readonly DispatcherTimer _meterTimer;
 
     public ObservableCollection<DeviceViewModel> PlaybackDevices { get; } = new();
 
@@ -27,24 +29,42 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private string _defaultDeviceName = "—";
 
+    [ObservableProperty]
+    private double _masterLevel;
+
+    [ObservableProperty]
+    private bool _showVisualizer;
+
     public MainViewModel(
         IAudioDeviceService devices,
         IAudioSessionService sessions,
-        IDefaultDeviceSwitcher switcher)
+        IDefaultDeviceSwitcher switcher,
+        IAudioMeterService meters)
     {
         _devices = devices;
         _sessions = sessions;
         _switcher = switcher;
+        _meters = meters;
 
         _devices.DevicesChanged += OnDevicesChanged;
 
-        _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1500) };
-        _timer.Tick += (_, _) => RefreshSessions();
-        _timer.Start();
+        _sessionTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1500) };
+        _sessionTimer.Tick += (_, _) => RefreshSessions();
+        _sessionTimer.Start();
+
+        _meterTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(45) };
+        _meterTimer.Tick += (_, _) => TickMeters();
+        _meterTimer.Start();
 
         RefreshDevices();
         RefreshSessions();
     }
+
+    [RelayCommand]
+    private void ShowMixer() => ShowVisualizer = false;
+
+    [RelayCommand]
+    private void ShowVisualizerView() => ShowVisualizer = true;
 
     [RelayCommand]
     private void SetDefault(DeviceViewModel? device)
@@ -123,9 +143,26 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
+    private void TickMeters()
+    {
+        MasterLevel = Decay(MasterLevel, _meters.GetMasterPeak());
+
+        IReadOnlyDictionary<int, float> peaks = _meters.GetSessionPeaks();
+        foreach (SessionViewModel session in Sessions)
+        {
+            float peak = peaks.TryGetValue(session.ProcessId, out float p) ? p : 0f;
+            session.MeterLevel = Decay(session.MeterLevel, peak);
+        }
+    }
+
+    // Instant attack, smooth release — the classic meter ballistics.
+    private static double Decay(double previous, double peak) =>
+        peak >= previous ? peak : (previous * 0.80) + (peak * 0.20);
+
     public void Dispose()
     {
-        _timer.Stop();
+        _meterTimer.Stop();
+        _sessionTimer.Stop();
         _devices.DevicesChanged -= OnDevicesChanged;
     }
 }
