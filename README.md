@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/logo.svg" alt="Soundpost" width="132" />
+<img src="assets/logo.svg" alt="Soundpost" width="150" />
 
 # Soundpost
 
