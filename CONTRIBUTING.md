@@ -1,55 +1,92 @@
 # Contributing to Soundpost
 
-Thanks for being here. Soundpost aims to be a welcoming, high-quality open-source project, and contributions of every size are valued — bug reports, docs, design ideas, and code alike.
+Thanks for being here. Soundpost aims to be a welcoming, high-quality open-source project, and
+contributions of every size are valued — bug reports, docs, design, themes, visualizers, and code alike.
+
+New here? Read the [Vision](VISION.md) first — it's short, and every decision flows from it.
 
 ## Ways to help
 
-- 🐛 **Report a bug** — open an issue with your Windows version, what you did, and what happened.
-- 💡 **Request a feature** — describe the *problem* you're hitting, not just the solution. Real pain points shape the roadmap.
-- 🎨 **Design & UX** — mockups, flow critiques, and accessibility feedback are hugely useful.
-- 🧑‍💻 **Code** — look for [`good first issue`](../../labels/good%20first%20issue) and [`help wanted`](../../labels/help%20wanted).
+- 🐛 **Report a bug** — [open an issue](../../issues/new/choose) with your Windows version, what you
+  did, and what happened.
+- 💡 **Request a feature** — describe the *problem*, not just the fix. Real pain shapes the [Roadmap](ROADMAP.md).
+- 🎨 **Design & UX** — mockups, critiques, and accessibility feedback are hugely useful.
+- 🌈 **Build a visualizer** — a render style for the "Sound, seen" view. The most fun way in.
+- 🎭 **Make a theme** — reskin the console.
+- 🔌 **Build a plugin** — automate something with the [Plugin SDK](PLUGIN_SDK.md).
+- 🖼️ **Share your setup** — add a screenshot to the [Showcase](SHOWCASE.md).
+- 🧑‍💻 **Write code** — look for [`good first issue`](../../labels/good%20first%20issue) and
+  [`help wanted`](../../labels/help%20wanted).
+
+## Ground rules
+
+Everything is judged against the [project principles](VISION.md#principles): local-first, no
+telemetry, reliability over convenience, honesty about Windows, simplicity survives, open and extensible.
+Be kind — see the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Development setup
 
 - Install the [.NET 9 SDK](https://dotnet.microsoft.com/download) on Windows 10 or 11.
 - `dotnet build` from the repo root.
-- `dotnet run --project tools/Soundpost.Probe` to exercise the audio layer headlessly (no UI needed).
+- `dotnet run --project src/Soundpost.App` — launch the app.
+- `dotnet run --project tools/Soundpost.Probe` — exercise the audio layer headlessly (no UI needed).
+- `dotnet format` before pushing (CI verifies formatting).
 
-## Project principles
-
-These are the values the codebase is built around. PRs are reviewed against them:
-
-1. **Reliability over convenience.** If a feature can leave a user's audio in a broken or confusing state, it needs a recovery path and clear diagnostics.
-2. **Honesty about Windows limits.** We never pretend a workaround is magic. If something needs a virtual driver or a relaunch, we say so — in the UI.
-3. **Simplicity survives.** Advanced features must not clutter the basic experience. Progressive disclosure, always.
-4. **Everything is observable.** Actions are logged, failures are visible, and state is inspectable.
-5. **Local-first, no accounts, no telemetry.** Full stop.
-
-## Architecture at a glance
-
-Only **`Soundpost.Core.Audio`** is allowed to touch Windows audio COM APIs. Everything above it works against normalized models and services. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) before making cross-layer changes.
+## Repo structure
 
 ```
-Core.Audio  ->  Core.Engine (state + rules + diagnostics)  ->  App (WPF/MVVM)
-                        \-> Core.Persistence (config)
+Soundpost/
+├─ src/
+│  ├─ Soundpost.Core.Audio/   the COM firewall — all Windows audio interop
+│  └─ Soundpost.App/          the WPF console + visualizer
+├─ tools/Soundpost.Probe/     headless audio harness
+├─ docs/
+│  ├─ rfcs/                    proposals for bigger changes
+│  ├─ decisions/              architecture decision records (ADRs)
+│  ├─ design/                 design docs
+│  └─ showcase/               community setup screenshots
+├─ visualizers/               community visualizer renderers
+├─ themes/                    community themes
+├─ plugins/                   community plugins
+├─ examples/                  example plugins / configs
+├─ assets/                    brand assets (logo, etc.)
+└─ scripts/                   dev / build helpers
 ```
 
-## Code style
+## How to contribute specific things
 
-- Enforced by [`.editorconfig`](.editorconfig). Run `dotnet format` before pushing.
-- File-scoped namespaces, braces always, explicit types in interop code.
-- Public APIs get XML doc comments. Interop with undocumented Windows interfaces gets a comment explaining *what* it does and *which Windows versions* it targets.
+**A visualizer** — implement `IVisualizerRenderer` ([Plugin SDK §3](PLUGIN_SDK.md#3-visualizer-plugins)),
+match the [design tokens](STYLE_GUIDE.md#part-2--design), and add it under `visualizers/`. Include a
+short GIF in your PR.
+
+**A theme** — a WPF `ResourceDictionary` overriding the color/type tokens. Add it under `themes/`
+with a screenshot.
+
+**A plugin** — see [PLUGIN_SDK.md](PLUGIN_SDK.md). Start from the base class, keep it single-purpose.
+
+**Docs / decisions** — small doc fixes: just PR them. Architectural changes: open an
+[RFC](docs/rfcs/); record settled decisions as an [ADR](docs/decisions/).
+
+**Your setup in the Showcase** — see [SHOWCASE.md](SHOWCASE.md).
+
+## Coding standards
+
+Follow the [Style Guide](STYLE_GUIDE.md). The short version: file-scoped namespaces, explicit types in
+interop, the COM firewall stays intact, fail visibly, no telemetry.
 
 ## Pull request workflow
 
-1. Fork and branch from `main` (e.g. `feat/per-app-routing`, `fix/device-null-default`).
-2. Keep PRs focused; one logical change per PR.
-3. Use [Conventional Commits](https://www.conventionalcommits.org/) for titles: `feat:`, `fix:`, `docs:`, `refactor:`, `chore:`, `test:`.
+1. Fork and branch from `main` (`feat/cymatics-visualizer`, `fix/default-null-device`).
+2. Keep PRs focused — one logical change.
+3. [Conventional Commits](https://www.conventionalcommits.org/) for titles.
 4. Make sure `dotnet build` and `dotnet format --verify-no-changes` pass.
-5. Describe *what* and *why*; link the issue.
+5. Update docs / [CHANGELOG](CHANGELOG.md) if behavior changed.
+6. Describe *what* and *why*; link the issue.
 
-## Commit sign-off & conduct
+## License of contributions
 
-By contributing you agree your work is licensed under the project's [MIT License](LICENSE) and that you'll follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+Soundpost is licensed under the **GNU General Public License v3.0** ([LICENSE](LICENSE)). By
+submitting a contribution, you agree it is licensed under GPLv3, and that you have the right to submit
+it. Copyleft keeps Soundpost — and everything built on it — open for everyone.
 
 Happy building. 🎛️

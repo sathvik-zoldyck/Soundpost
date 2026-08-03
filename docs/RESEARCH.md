@@ -54,7 +54,7 @@ what Windows actually allows, and choose reliability over cleverness.**
 
 ## 3. Positioning
 
-> **The reliable, open "autopilot" for your audio.** EarTrumpet's polish + SoundSwitch's switching + a real rules engine + plain-language diagnostics — driver-free, no bloat, no telemetry, MIT-licensed.
+> **The reliable, open "autopilot" for your audio.** EarTrumpet's polish + SoundSwitch's switching + a real rules engine + plain-language diagnostics — driver-free, no bloat, no telemetry, GPLv3-licensed.
 
 **Brand metaphor: a mixing desk for your whole PC.** A real console already has channel routing, scene snapshots, and automation — which maps cleanly onto Soundpost's routing, profiles/scenes, and rules.
 
@@ -109,11 +109,11 @@ The reliable "brain," no mirroring, no EQ:
 
 ## 7. Stack & architecture summary
 
-**.NET 9 + C# + WPF + WPF-UI.** Audio via NAudio (Core Audio) + hand-written interop for the undocumented interfaces. MVVM (CommunityToolkit.Mvvm), DI/host (Microsoft.Extensions.Hosting), logging (Serilog). Packaged as MSIX + portable zip + winget. **License: MIT.**
+**.NET 9 + C# + WPF.** Audio via NAudio (Core Audio) + hand-written interop for the undocumented interfaces. MVVM (CommunityToolkit.Mvvm), custom-drawn console controls (meters, knobs, visualizer). Packaged as MSIX + portable zip + winget. **License: GPLv3.**
 
-WPF over WinUI 3 for a tray-first, always-running utility doing deep COM interop: more reliable lifetime/tray/hotkey story, the largest contributor pool, and precedent (EarTrumpet, SoundSwitch). WPF-UI keeps it visually modern.
+WPF over WinUI 3 for a tray-first, always-running utility doing deep COM interop: more reliable lifetime/tray/hotkey story, the largest contributor pool, and precedent (EarTrumpet, SoundSwitch). A custom console UI (dark chassis, live meters, visualizer) keeps it distinctive.
 
-Full architecture: [`ARCHITECTURE.md`](ARCHITECTURE.md).
+Full architecture: [`ARCHITECTURE.md`](../ARCHITECTURE.md).
 
 ---
 

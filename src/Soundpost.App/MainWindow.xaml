@@ -49,29 +49,29 @@
 
             <!-- brand -->
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <Grid Width="30" Height="30">
-                    <Border CornerRadius="9">
-                        <Border.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                <GradientStop Color="#FF8A3D" Offset="0" />
-                                <GradientStop Color="#FF5468" Offset="0.5" />
-                                <GradientStop Color="#8B7BFF" Offset="1" />
-                            </LinearGradientBrush>
-                        </Border.Background>
-                    </Border>
-                    <Border CornerRadius="5" Margin="7" Background="#0C0E13" />
-                    <Ellipse Width="11" Height="11">
-                        <Ellipse.Fill>
-                            <RadialGradientBrush>
-                                <GradientStop Color="#FFC699" Offset="0" />
-                                <GradientStop Color="#FF5468" Offset="1" />
-                            </RadialGradientBrush>
-                        </Ellipse.Fill>
-                        <Ellipse.Effect>
-                            <DropShadowEffect Color="#FF8A3D" BlurRadius="10" ShadowDepth="0" Opacity="0.9" />
-                        </Ellipse.Effect>
-                    </Ellipse>
-                </Grid>
+                <Viewbox Width="34" Height="34">
+                    <Canvas Width="512" Height="512">
+                        <!-- left equalizer bars -->
+                        <Rectangle Canvas.Left="60" Canvas.Top="206" Width="18" Height="100" RadiusX="9" RadiusY="9" Fill="#FF7A1A" />
+                        <Rectangle Canvas.Left="96" Canvas.Top="181" Width="18" Height="150" RadiusX="9" RadiusY="9" Fill="#FF7A1A" />
+                        <Rectangle Canvas.Left="132" Canvas.Top="161" Width="18" Height="190" RadiusX="9" RadiusY="9" Fill="#FF7A1A" />
+                        <!-- right equalizer bars -->
+                        <Rectangle Canvas.Left="362" Canvas.Top="161" Width="18" Height="190" RadiusX="9" RadiusY="9" Fill="#A24BFF" />
+                        <Rectangle Canvas.Left="398" Canvas.Top="181" Width="18" Height="150" RadiusX="9" RadiusY="9" Fill="#A24BFF" />
+                        <Rectangle Canvas.Left="434" Canvas.Top="206" Width="18" Height="100" RadiusX="9" RadiusY="9" Fill="#A24BFF" />
+                        <!-- interlocking S -->
+                        <Path StrokeThickness="42" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                              Data="M 336 176 C 296 148, 212 158, 212 202 C 212 236, 256 248, 256 256 C 256 264, 300 276, 300 310 C 300 354, 216 364, 176 336">
+                            <Path.Stroke>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#FF7A1A" Offset="0" />
+                                    <GradientStop Color="#FF3D7F" Offset="0.5" />
+                                    <GradientStop Color="#A24BFF" Offset="1" />
+                                </LinearGradientBrush>
+                            </Path.Stroke>
+                        </Path>
+                    </Canvas>
+                </Viewbox>
                 <TextBlock Margin="11,0,0,0" VerticalAlignment="Center" FontFamily="{StaticResource LabelFont}" FontSize="15" FontWeight="SemiBold">
                     <Run Text="SOUND" Foreground="{StaticResource TextPrimaryBrush}" /><Run Text="POST" Foreground="{StaticResource AccentBrush}" />
                 </TextBlock>

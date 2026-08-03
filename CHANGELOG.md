@@ -29,8 +29,14 @@ and this project aims to adhere to [Semantic Versioning](https://semver.org/spec
 - Visualizer: WASAPI loopback capture + FFT (`LoopbackAnalyzer`) feeding WPF-drawn styles
   (Ribbon, Spectrum, Radial, Oscilloscope) with draggable knobs (sensitivity, smoothing, glow,
   speed) and switchable palettes.
+- Contributor docs: Vision, Roadmap, Architecture (with diagram), Plugin SDK, Style Guide, Trademark,
+  Showcase, ADRs + an RFC template, and scaffolding for community plugins / themes / visualizers / examples.
+- Brand: a new Soundpost logo (interlocking-S soundwave) in `assets/`, used in the app and README.
 
 ### Changed
+- **Relicensed from MIT to GNU GPLv3** — strong copyleft so Soundpost (and everything built on it)
+  stays open. See [ADR 0002](docs/decisions/0002-license-gplv3.md); the name/logo are covered by
+  [TRADEMARK.md](TRADEMARK.md).
 - Bumped NAudio to 2.3.0 (Core Audio property-access performance improvements).
 - CI: `actions/checkout@v7` and `actions/setup-dotnet@v6` (clears the Node 20 deprecation warning).
 - Pinned `global.json` to a fully-qualified SDK version (`9.0.100`) so `setup-dotnet@v6`'s

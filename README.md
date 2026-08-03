@@ -1,6 +1,8 @@
 <div align="center">
 
-# 🎛️ Soundpost
+<img src="assets/logo.svg" alt="Soundpost" width="120" />
+
+# Soundpost
 
 ### A mixing desk for your whole PC.
 
@@ -11,7 +13,7 @@ Soundpost is a free, open-source, no-account audio control layer for Windows. It
 [![Status](https://img.shields.io/badge/status-early%20development-orange)](#project-status)
 [![Platform](https://img.shields.io/badge/platform-Windows%2010%20%2F%2011-0078D4)](#)
 [![.NET](https://img.shields.io/badge/.NET-9-512BD4)](#)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![License](https://img.shields.io/badge/license-GPLv3-green)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](CONTRIBUTING.md)
 
 </div>
@@ -46,6 +48,7 @@ Think of your PC as a mixing console. Soundpost gives you the console:
 - 🤖 **Automation** — "when my headphones connect, apply the Headphones scene." Rules trigger on device connect/disconnect (with app-launch, focus, and time triggers coming).
 - 🩺 **Plain-language diagnostics** — "Discord is muted," "this app is routed to a device that's unplugged," "another app is holding the device in exclusive mode." With one-click fixes.
 - 💾 **Reliable by design** — atomic config saves, automatic backups, and a self-heal loop that restores your setup after Windows shuffles things around.
+- 🌈 **Visualizer** — a live "Sound, seen" view that turns whatever's playing into glowing waves, with switchable styles, palettes, and tactile knobs.
 
 **No account. No login. No telemetry. Fully local.**
 
@@ -68,36 +71,60 @@ See [`docs/RESEARCH.md`](docs/RESEARCH.md) for the full competitive analysis and
 | **v2** | Multi-output mirroring (experimental) · CLI + declarative config · plugin SDK |
 | **Later** | Equalizer APO integration · virtual-device splitting |
 
-Progress is tracked in the repo's issues and project board.
+Full roadmap: **[ROADMAP.md](ROADMAP.md)**. Progress is tracked in issues and discussions.
 
 ## Tech stack
 
-- **.NET 9** · **C#** · **WPF** with [WPF-UI](https://github.com/lepoco/wpfui) (Fluent / Mica)
-- Audio via [NAudio](https://github.com/naudio/NAudio) (Core Audio APIs) + hand-written COM interop for the parts Windows leaves undocumented (`IPolicyConfig`, `IAudioPolicyConfig`)
-- MVVM (CommunityToolkit.Mvvm) · DI/host (Microsoft.Extensions.Hosting) · logging (Serilog)
+- **.NET 9** · **C#** · **WPF** — a custom dark console UI with custom-drawn controls (meters, knobs, visualizer)
+- Audio via [NAudio](https://github.com/naudio/NAudio) (Core Audio) + hand-written COM interop for the parts Windows leaves undocumented (`IPolicyConfig`, `IAudioPolicyConfig`), plus WASAPI loopback + FFT for the visualizer
+- MVVM (CommunityToolkit.Mvvm)
 
-Architecture details: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+Architecture details: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## Building from source
 
 > Requires the [.NET 9 SDK](https://dotnet.microsoft.com/download) on Windows 10/11.
 
 ```bash
-git clone https://github.com/<your-org>/soundpost.git
+git clone https://github.com/sathvik-zoldyck/soundpost.git
 cd soundpost
 dotnet build
 ```
 
-To run the headless audio probe (prints your devices and reacts to plug/unplug — the first thing that works):
+Run the app:
+
+```bash
+dotnet run --project src/Soundpost.App
+```
+
+Or exercise the audio layer headlessly (prints devices, reacts to plug/unplug):
 
 ```bash
 dotnet run --project tools/Soundpost.Probe
 ```
 
+## Documentation
+
+- [Vision](VISION.md) — what Soundpost is, and the principles behind it
+- [Roadmap](ROADMAP.md) — shipped, in progress, and planned
+- [Architecture](ARCHITECTURE.md) — how it's built (with a diagram)
+- [Plugin SDK](PLUGIN_SDK.md) — extend Soundpost without touching core
+- [Style Guide](STYLE_GUIDE.md) — code + visual language
+- [Contributing](CONTRIBUTING.md) · [Code of Conduct](CODE_OF_CONDUCT.md) · [Security](SECURITY.md) · [Trademark](TRADEMARK.md)
+
+## Extend Soundpost
+
+The core stays small; the fun lives in the ecosystem:
+
+- 🌈 **[Visualizers](visualizers/)** — build a render style for the "Sound, seen" view.
+- 🎭 **[Themes](themes/)** — reskin the console.
+- 🔌 **[Plugins](plugins/)** — react to events and automate ([SDK](PLUGIN_SDK.md)).
+- 🖼️ **[Showcase](SHOWCASE.md)** — share your setup.
+
 ## Contributing
 
-Soundpost is designed to be a friendly, modular open-source project. Whether it's a bug report, a feature idea, a design suggestion, or code — **you're welcome here.** Start with [CONTRIBUTING.md](CONTRIBUTING.md) and look for [`good first issue`](https://github.com/<your-org>/soundpost/labels/good%20first%20issue) labels.
+Soundpost is designed to be a friendly, modular open-source project. Whether it's a bug report, a feature idea, a design suggestion, or code — **you're welcome here.** Start with [CONTRIBUTING.md](CONTRIBUTING.md) and look for [`good first issue`](https://github.com/sathvik-zoldyck/soundpost/labels/good%20first%20issue) labels.
 
 ## License
 
-[MIT](LICENSE) — do anything you like, just keep the notice. Built with respect for the trails blazed by [EarTrumpet](https://github.com/File-New-Project/EarTrumpet) and [SoundSwitch](https://github.com/Belphemur/SoundSwitch).
+[GNU GPLv3](LICENSE) — free to use, study, modify, and share; derivatives stay open. The **Soundpost** name and logo are covered separately by [TRADEMARK.md](TRADEMARK.md). Built with respect for the trails blazed by [EarTrumpet](https://github.com/File-New-Project/EarTrumpet) and [SoundSwitch](https://github.com/Belphemur/SoundSwitch).
