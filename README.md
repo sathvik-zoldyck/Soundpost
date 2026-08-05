@@ -22,11 +22,10 @@ Local-first. No account. No telemetry.
 
 <div align="center">
 
-<!-- ▶ HERO — add assets/media/hero.gif and uncomment this line:
-<img src="assets/media/hero.gif" alt="Soundpost — switch a device, watch the meters, flip to the visualizer" width="840" />
--->
+<img src="assets/media/dashboard.png" alt="Soundpost dashboard — master volume dial, playback devices, per-app mixer and output meters" width="840" />
+
 <br/>
-<em>🎬 Demo GIF coming soon — screenshots & GIFs will live in <a href="assets/media/">assets/media/</a></em>
+<em>🎬 Demo GIF coming soon — more screenshots live in <a href="assets/media/">assets/media/</a></em>
 
 </div>
 
@@ -68,11 +67,17 @@ have to touch it.
 
 <div align="center">
 
-<!-- Add the files below to assets/media/ and uncomment. Keep them in this order.
-<img src="assets/media/mixer.png"      alt="Mixer — device cards, channel strips, master" width="840" />
-<img src="assets/media/visualizer.gif" alt="Visualizer — Ribbon reacting to music"        width="840" />
--->
-<em>Screenshots of the Mixer and Visualizer land here — see <a href="assets/media/">assets/media/</a>.</em>
+<p><strong>Dashboard</strong> (above) — every device and every app making sound, on one screen. Click a
+device to make it default; drag any app's slider to set its level.</p>
+
+<br/>
+
+<img src="assets/media/visualizer.png" alt="Visualizer — the Ribbon style reacting to live audio at 60fps" width="840" />
+
+<p><strong>Visualizer</strong> — whatever is playing on your output, drawn live. Switchable styles and
+palettes, with sensitivity, smoothing, glow and speed on real knobs.</p>
+
+<em>More screenshots and GIFs land in <a href="assets/media/">assets/media/</a>.</em>
 
 </div>
 
