@@ -27,6 +27,7 @@ The backbone. Everything else sits on top of this working flawlessly.
 | 🔜 | **Plain-language diagnostics** — "this app is routed to an unplugged device," with one-click fixes |
 | 🔜 | **Self-heal reconcile** — re-apply your intent after a Windows update shuffles things |
 | 🔜 | **Tray icon** + minimize-to-tray + single instance |
+| 🔜 | **Quick Panel** — a compact tray flyout for the moves you make mid-meeting, without opening the console ([plan](#quick-panel)) |
 | 🧭 | Global hotkeys + quick-switch overlay |
 
 ## v1 — power without clutter
@@ -51,6 +52,39 @@ The backbone. Everything else sits on top of this working flawlessly.
 | 💭 | CLI + declarative config file for power users |
 | 💭 | Plugin/theme/visualizer registry — discover and install community work in-app |
 | 💭 | Equalizer APO *integration* (detect + drive it, don't reinvent DSP) |
+
+## Quick Panel
+
+You're in a meeting and one app is too loud. Opening a 1220×740 console to drag one slider is
+absurd. The Quick Panel is the answer: a small flyout from the tray icon holding only the moves you
+make without thinking.
+
+**What's in it**
+
+| | |
+|---|---|
+| Master volume + mute | the single most common action |
+| Output switcher | a compact device list — one click to change default |
+| Per-app rows | icon, slider, mute — the meeting case: silence one app fast |
+| "Open Soundpost" | escape hatch to the full console |
+
+**What's deliberately out:** visualizer, knobs, routing, scenes, settings. Everything that needs room
+to think stays in the console. If the panel grows a scrollbar, it has failed.
+
+**How it's built**
+
+- Tray icon via [H.NotifyIcon](https://github.com/HavenDV/H.NotifyIcon) — the maintained continuation
+  of Hardcodet's NotifyIcon, with .NET 6+ and flyout support.
+- `QuickPanelWindow`: `WindowStyle=None`, `ShowInTaskbar=False`, `Topmost`, closing on `Deactivated`
+  so it behaves like the Windows volume flyout.
+- Positioned against the taskbar's work area and clamped to the monitor, so it stays correct on
+  multi-monitor setups and with a left- or top-docked taskbar.
+- Reuses `MainViewModel` unchanged — the same devices, sessions and master volume, a second view
+  over one source of truth. No duplicate polling.
+- Meter polling is gated on panel visibility as well as section, for the same reason it's gated on
+  the visualizer: those calls cross into Core Audio COM on the UI thread and are not free.
+
+**Delivery order:** tray icon + minimize-to-tray + single instance first, then the flyout on top of it.
 
 ## Explicitly not planned
 
