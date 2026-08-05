@@ -232,6 +232,15 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     private void TickMeters()
     {
+        // Peak polling crosses into Core Audio COM on the UI thread ~22x a second: it opens the
+        // default endpoint and walks its session list every tick. That is fine behind a static
+        // dashboard, but on the Visualizer it competes with a 60fps render loop for the same
+        // thread and drags the frame rate down. Nothing on that screen shows a meter, so skip it.
+        if (ActiveSection == Section.Visualizer)
+        {
+            return;
+        }
+
         MasterLevel = Decay(MasterLevel, _meters.GetMasterPeak());
 
         IReadOnlyDictionary<int, float> peaks = _meters.GetSessionPeaks();
