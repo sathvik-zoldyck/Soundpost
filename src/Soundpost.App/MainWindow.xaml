@@ -78,27 +78,69 @@
                         <Run Text="SOUND" Foreground="{StaticResource TextPrimaryBrush}" /><Run Text="POST" Foreground="{StaticResource AccentBrush}" />
                     </TextBlock>
                 </StackPanel>
+                <Border DockPanel.Dock="Top" Height="1" Background="{StaticResource BorderBrush}" Margin="20,0,20,0" />
 
-                <!-- nav -->
-                <StackPanel Margin="12,16,12,0" shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                <!-- footer, anchored to the bottom of the rail -->
+                <StackPanel DockPanel.Dock="Bottom" Margin="20,0,20,16">
+                    <Border Height="1" Background="{StaticResource BorderBrush}" Margin="0,0,0,12" />
+                    <TextBlock Text="Open source · GPLv3" Style="{StaticResource Caption}" FontSize="10" Foreground="#4E5A76" />
+                </StackPanel>
+
+                <!-- nav: grouped so nine destinations read as three short lists -->
+                <StackPanel Margin="12,10,12,0" shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                    <TextBlock Text="CONSOLE" Style="{StaticResource NavGroupLabel}" Margin="12,4,12,7" />
                     <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Content="Dashboard" Tag="{StaticResource IconDashboard}"
                                  IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Dashboard}" />
                     <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Content="Visualizer" Tag="{StaticResource IconVisualizer}"
                                  IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Visualizer}" />
                     <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Content="Mixer" Tag="{StaticResource IconMixer}"
                                  IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Mixer}" />
-                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Content="Routing" Tag="{StaticResource IconRouting}"
-                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Routing}" />
-                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Content="Automation" Tag="{StaticResource IconAutomation}"
-                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Automation}" />
-                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Content="Scenes" Tag="{StaticResource IconScenes}"
-                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Scenes}" />
-                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Content="Devices" Tag="{StaticResource IconDevices}"
-                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Devices}" />
-                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Content="Plugins" Tag="{StaticResource IconPlugins}"
-                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Plugins}" />
-                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Content="Settings" Tag="{StaticResource IconSettings}"
-                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Settings}" />
+
+                    <TextBlock Text="CONTROL" Style="{StaticResource NavGroupLabel}" />
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Tag="{StaticResource IconRouting}"
+                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Routing}">
+                        <Grid>
+                            <TextBlock Text="Routing" VerticalAlignment="Center" />
+                            <Border Style="{StaticResource SoonBadge}"><TextBlock Text="soon" Style="{StaticResource SoonBadgeText}" /></Border>
+                        </Grid>
+                    </RadioButton>
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Tag="{StaticResource IconAutomation}"
+                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Automation}">
+                        <Grid>
+                            <TextBlock Text="Automation" VerticalAlignment="Center" />
+                            <Border Style="{StaticResource SoonBadge}"><TextBlock Text="soon" Style="{StaticResource SoonBadgeText}" /></Border>
+                        </Grid>
+                    </RadioButton>
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Tag="{StaticResource IconScenes}"
+                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Scenes}">
+                        <Grid>
+                            <TextBlock Text="Scenes" VerticalAlignment="Center" />
+                            <Border Style="{StaticResource SoonBadge}"><TextBlock Text="soon" Style="{StaticResource SoonBadgeText}" /></Border>
+                        </Grid>
+                    </RadioButton>
+
+                    <TextBlock Text="SYSTEM" Style="{StaticResource NavGroupLabel}" />
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Tag="{StaticResource IconDevices}"
+                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Devices}">
+                        <Grid>
+                            <TextBlock Text="Devices" VerticalAlignment="Center" />
+                            <Border Style="{StaticResource SoonBadge}"><TextBlock Text="soon" Style="{StaticResource SoonBadgeText}" /></Border>
+                        </Grid>
+                    </RadioButton>
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Tag="{StaticResource IconPlugins}"
+                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Plugins}">
+                        <Grid>
+                            <TextBlock Text="Plugins" VerticalAlignment="Center" />
+                            <Border Style="{StaticResource SoonBadge}"><TextBlock Text="soon" Style="{StaticResource SoonBadgeText}" /></Border>
+                        </Grid>
+                    </RadioButton>
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Tag="{StaticResource IconSettings}"
+                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Settings}">
+                        <Grid>
+                            <TextBlock Text="Settings" VerticalAlignment="Center" />
+                            <Border Style="{StaticResource SoonBadge}"><TextBlock Text="soon" Style="{StaticResource SoonBadgeText}" /></Border>
+                        </Grid>
+                    </RadioButton>
                 </StackPanel>
             </DockPanel>
         </Border>

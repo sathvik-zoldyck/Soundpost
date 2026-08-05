@@ -267,12 +267,39 @@
     <Geometry x:Key="IconSpeakerMute">M3,8 H6 L10,4 V16 L6,12 H3 Z M13.5,8 L18,12 M18,8 L13.5,12</Geometry>
 
     <!-- ============================ Sidebar nav ============================ -->
+    <!-- Group heading inside the rail. Spacing above separates clusters; the label itself
+         stays quiet so it never competes with the items under it. -->
+    <Style x:Key="NavGroupLabel" TargetType="TextBlock" BasedOn="{StaticResource SectionLabel}">
+        <Setter Property="FontSize" Value="10" />
+        <Setter Property="Foreground" Value="#5A6784" />
+        <Setter Property="Margin" Value="12,20,12,7" />
+    </Style>
+
+    <!-- "soon" tag for rail items that aren't wired up yet -->
+    <Style x:Key="SoonBadge" TargetType="Border">
+        <Setter Property="Background" Value="#131C31" />
+        <Setter Property="BorderBrush" Value="#28334D" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="5" />
+        <Setter Property="Padding" Value="5,1,5,2" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Right" />
+    </Style>
+    <Style x:Key="SoonBadgeText" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource LabelFont}" />
+        <Setter Property="FontSize" Value="9" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <!-- Explicit, so it doesn't inherit the accent colour when the row is selected. -->
+        <Setter Property="Foreground" Value="#5A6784" />
+    </Style>
+
     <Style x:Key="NavItem" TargetType="RadioButton">
         <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
         <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
         <Setter Property="FontSize" Value="13" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Margin" Value="0,1" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RadioButton">
@@ -291,16 +318,18 @@
                                 <ScaleTransform ScaleY="0.2" />
                             </Border.RenderTransform>
                         </Border>
-                        <StackPanel Orientation="Horizontal" Margin="12,9">
-                            <Path x:Name="ic" Data="{TemplateBinding Tag}" Width="18" Height="18" Stretch="Uniform"
-                                  StrokeThickness="1.5" StrokeLineJoin="Round"
+                        <!-- DockPanel (not StackPanel) so the label area fills the row and a
+                             trailing badge can sit flush against the right edge. -->
+                        <DockPanel Margin="12,9" LastChildFill="True">
+                            <Path x:Name="ic" DockPanel.Dock="Left" Data="{TemplateBinding Tag}" Width="18" Height="18"
+                                  Stretch="Uniform" StrokeThickness="1.5" StrokeLineJoin="Round"
                                   StrokeStartLineCap="Round" StrokeEndLineCap="Round" VerticalAlignment="Center">
                                 <Path.Stroke>
                                     <SolidColorBrush Color="#93A0BE" />
                                 </Path.Stroke>
                             </Path>
                             <ContentPresenter Margin="12,0,0,0" VerticalAlignment="Center" />
-                        </StackPanel>
+                        </DockPanel>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
