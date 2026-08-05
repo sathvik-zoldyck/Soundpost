@@ -27,8 +27,14 @@ public partial class VisualizerView : UserControl
         KnobSpeed.ValueChanged += (_, _) => ApplySpeed();
         KnobPalette.ValueChanged += (_, _) => ApplyPalette();
 
+        Viz.FpsUpdated += (_, _) => UpdateStyleTag();
         SetActive(VizStyle.Ribbon);
     }
+
+    private VizStyle _style = VizStyle.Ribbon;
+
+    private void UpdateStyleTag() =>
+        StyleTag.Text = $"{Display(_style).ToUpperInvariant()} · {Viz.Fps} FPS";
 
     private void OnStyle(object sender, RoutedEventArgs e)
     {
@@ -45,7 +51,8 @@ public partial class VisualizerView : UserControl
     private void SetActive(VizStyle style)
     {
         Viz.VisualStyle = style;
-        StyleTag.Text = Display(style).ToUpperInvariant();
+        _style = style;
+        UpdateStyleTag();
 
         StyleRibbon.Style = Pill(style == VizStyle.Ribbon);
         StyleSpectrum.Style = Pill(style == VizStyle.Spectrum);

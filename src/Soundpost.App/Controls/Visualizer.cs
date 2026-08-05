@@ -57,7 +57,47 @@ public sealed class Visualizer : FrameworkElement
     private int _palette;
     private Pen _mainPen = null!;
     private Pen _glowPen = null!;
+    private Pen _strandPen = null!;
+    private Pen[] _ribbonPens = null!;
     private LinearGradientBrush _barBrush = null!;
+
+    // Reused across strands so a 60fps redraw doesn't allocate a list per curve.
+    private readonly List<Point> _strandBuffer = new(192);
+
+    // Hoisted out of the render loop; one geometry per opacity tier, rebuilt each frame.
+    private readonly StreamGeometry[] _ribbonGeometry = new StreamGeometry[3];
+    private readonly StreamGeometryContext[] _ribbonContext = new StreamGeometryContext[3];
+
+    private const int RibbonStrands = 9;
+    private const int RibbonSteps = 96;
+    private double[]? _ribbonEnvelope;                                  // shape only — built once
+    private readonly double[] _ribbonX = new double[RibbonSteps];       // rebuilt per frame
+    private readonly double[] _ribbonLevel = new double[RibbonSteps];
+    private readonly double[] _ribbonSinA = new double[RibbonSteps];
+    private readonly double[] _ribbonCosA = new double[RibbonSteps];
+
+    /// <summary>The lens taper: zero at both edges, widest in the middle. Never changes.</summary>
+    private static double[] BuildEnvelope()
+    {
+        var envelope = new double[RibbonSteps];
+        for (int i = 0; i < RibbonSteps; i++)
+        {
+            envelope[i] = Math.Pow(Math.Sin(i / (double)(RibbonSteps - 1) * Math.PI), 0.7);
+        }
+
+        return envelope;
+    }
+
+    private int _frameParity;
+
+    private readonly System.Diagnostics.Stopwatch _fpsClock = System.Diagnostics.Stopwatch.StartNew();
+    private int _frames;
+
+    /// <summary>Frames actually rendered in the last second — surfaced on the screen HUD.</summary>
+    public int Fps { get; private set; }
+
+    /// <summary>Raised about once a second when <see cref="Fps"/> changes.</summary>
+    public event EventHandler? FpsUpdated;
 
     // Cymatics state (allocated lazily).
     private const int CymSize = 200;
@@ -111,6 +151,17 @@ public sealed class Visualizer : FrameworkElement
 
         _mainPen = FreezePen(grad, 2.0);
         _glowPen = FreezePen(Fade(grad, 0.35), 6.0);
+        _strandPen = FreezePen(grad, 1.2);
+
+        // Ribbon strands are grouped into a few opacity tiers, each with its own pre-faded frozen
+        // pen. Baking the alpha into the pen means the render loop never calls PushOpacity, which
+        // would otherwise force a separate composition layer per strand, every frame.
+        _ribbonPens = new[]
+        {
+            FreezePen(Fade(grad, 0.30), 1.1),
+            FreezePen(Fade(grad, 0.55), 1.2),
+            FreezePen(Fade(grad, 0.90), 1.3),
+        };
 
         _barBrush = new LinearGradientBrush { StartPoint = new Point(0.5, 1), EndPoint = new Point(0.5, 0) };
         _barBrush.GradientStops.Add(new GradientStop(p[0], 0));
@@ -146,9 +197,26 @@ public sealed class Visualizer : FrameworkElement
     private void OnFrame(object? sender, EventArgs e)
     {
         _time += 0.016 * (0.35 + (Speed * 1.4));
-        UpdateBands();
+
+        // The FFT runs at half the frame rate. Bands are heavily smoothed on the way out, so
+        // a 30Hz refresh is indistinguishable from 60 while halving the transform cost.
+        if ((++_frameParity & 1) == 0)
+        {
+            UpdateBands();
+        }
+
         _analyzer.CopyWaveform(_wave);
         InvalidateVisual();
+
+        _frames++;
+        double elapsed = _fpsClock.Elapsed.TotalSeconds;
+        if (elapsed >= 1.0)
+        {
+            Fps = (int)Math.Round(_frames / elapsed);
+            _frames = 0;
+            _fpsClock.Restart();
+            FpsUpdated?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     private void UpdateBands()
@@ -198,30 +266,116 @@ public sealed class Visualizer : FrameworkElement
         }
     }
 
+    // A lens of nested strands: amplitude is shaped by an envelope that falls to zero at both
+    // edges, so the ribbon converges to a point left and right and swells in the middle. Strands
+    // are hairline strokes rather than thick glowing bands — that keeps the curves legible and
+    // keeps the rasterised area (the real cost of this style) small enough to hold 60fps.
     private void DrawRibbon(DrawingContext dc, double w, double h)
     {
+        const int strands = RibbonStrands;
+        const int steps = RibbonSteps;
         double cy = h / 2;
-        double maxAmp = h * 0.4;
-        const int lines = 9;
+        double maxAmp = h * 0.44;
+        double reach = 0.5 + Sensitivity;
 
-        for (int line = 0; line < lines; line++)
+        // Everything that depends only on the step (and not the strand) is computed once per
+        // frame rather than once per strand — otherwise the same Pow/Sin/band-average work is
+        // repeated for all nine strands, which is where the frame budget was going.
+        _ribbonEnvelope ??= BuildEnvelope();
+        for (int i = 0; i < steps; i++)
         {
-            double scale = 1.0 - (line / (double)(lines + 1));
-            var top = new List<Point>(Bands);
-            var bot = new List<Point>(Bands);
-            for (int i = 0; i < Bands; i++)
-            {
-                double x = i / (double)(Bands - 1) * w;
-                double ripple = Math.Sin((i * 0.28) + (_time * 3.0) + line) * (h * 0.012);
-                double amp = (_bands[i] * maxAmp * (0.45 + (0.55 * scale))) + ripple;
-                top.Add(new Point(x, cy - amp));
-                bot.Add(new Point(x, cy + amp));
-            }
-
-            double op = 0.28 + (scale * 0.6);
-            DrawPolyline(dc, top, op);
-            DrawPolyline(dc, bot, op);
+            double t = i / (double)(steps - 1);
+            _ribbonX[i] = t * w;
+            _ribbonLevel[i] = BandAt(t);
+            double a = (t * 5.5) + (_time * 2.2);
+            _ribbonSinA[i] = Math.Sin(a);
+            _ribbonCosA[i] = Math.Cos(a);
         }
+
+        int tiers = _ribbonPens.Length;
+        for (int i = 0; i < tiers; i++)
+        {
+            _ribbonGeometry[i] = new StreamGeometry();
+            _ribbonContext[i] = _ribbonGeometry[i].Open();
+        }
+
+        // Every strand goes into its tier's geometry, so the whole ribbon costs one stroked
+        // draw per tier instead of one per curve.
+        for (int s = 1; s <= strands; s++)
+        {
+            double scale = s / (double)strands;
+            int tier = Math.Min(tiers - 1, (int)(scale * tiers * 0.999));
+
+            // sin(A + B) expanded, so the per-strand phase costs two multiplies instead of a
+            // fresh Sin call at every point.
+            double phase = s * 0.55;
+            double sinB = Math.Sin(phase);
+            double cosB = Math.Cos(phase);
+
+            for (int side = 0; side < 2; side++)
+            {
+                double sign = side == 0 ? -1 : 1;
+                StreamGeometryContext ctx = _ribbonContext[tier];
+
+                for (int i = 0; i < steps; i++)
+                {
+                    double wobble = ((_ribbonSinA[i] * cosB) + (_ribbonCosA[i] * sinB)) * 0.05;
+                    double amp = maxAmp * scale * _ribbonEnvelope![i] * (0.14 + ((_ribbonLevel[i] + wobble) * reach));
+                    var p = new Point(_ribbonX[i], cy + (sign * amp));
+
+                    if (i == 0)
+                    {
+                        ctx.BeginFigure(p, false, false);
+                    }
+                    else
+                    {
+                        ctx.LineTo(p, true, false);
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < tiers; i++)
+        {
+            _ribbonContext[i].Close();
+            _ribbonGeometry[i].Freeze();
+        }
+
+        // Bloom rides on the outer tier only — the inner strands stay crisp.
+        if (GlowAmount > 0.05)
+        {
+            dc.PushOpacity(GlowAmount * 0.45);
+            dc.DrawGeometry(null, _glowPen, _ribbonGeometry[tiers - 1]);
+            dc.Pop();
+        }
+
+        for (int i = 0; i < tiers; i++)
+        {
+            dc.DrawGeometry(null, _ribbonPens[i], _ribbonGeometry[i]);
+        }
+    }
+
+    /// <summary>
+    /// Band energy at normalised position <paramref name="t"/>, averaged over a small
+    /// neighbourhood so the ribbon draws as a smooth curve rather than a spiky one.
+    /// </summary>
+    private double BandAt(double t)
+    {
+        double pos = Math.Clamp(t, 0, 1) * (Bands - 1);
+        int centre = (int)pos;
+
+        double sum = 0;
+        int n = 0;
+        for (int k = centre - 3; k <= centre + 3; k++)
+        {
+            if (k >= 0 && k < Bands)
+            {
+                sum += _bands[k];
+                n++;
+            }
+        }
+
+        return n == 0 ? 0 : sum / n;
     }
 
     private void DrawSpectrum(DrawingContext dc, double w, double h)

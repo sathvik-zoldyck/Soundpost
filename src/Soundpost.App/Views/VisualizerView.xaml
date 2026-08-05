@@ -3,61 +3,101 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:c="clr-namespace:Soundpost.App.Controls"
              FontFamily="{StaticResource BodyFont}">
-    <Grid Margin="18,4,18,14">
+    <UserControl.Resources>
+        <!-- Knob + its labels, so the deck reads as one repeated module -->
+        <Style x:Key="KnobCaption" TargetType="TextBlock" BasedOn="{StaticResource SectionLabel}">
+            <Setter Property="FontSize" Value="9.5" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,9,0,0" />
+        </Style>
+        <Style x:Key="KnobValue" TargetType="TextBlock" BasedOn="{StaticResource Mono}">
+            <Setter Property="FontSize" Value="10.5" />
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,2,0,0" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="4,0,20,18">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="*" MinHeight="180" />
+            <RowDefinition Height="14" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- header -->
-        <Grid Grid.Row="0" Margin="2,2,2,12">
+        <!-- ======================= STYLE BAR ======================= -->
+        <Grid Grid.Row="0" Margin="0,0,0,12">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel>
-                <TextBlock Text="VISUALIZER" Style="{StaticResource SectionLabel}" />
-                <TextBlock Text="Sound, seen." FontFamily="{StaticResource LabelFont}" FontSize="22" FontWeight="SemiBold"
-                           Foreground="{StaticResource TextPrimaryBrush}" Margin="0,6,0,0" />
-                <TextBlock Text="Reacts live to whatever's playing on your output." Style="{StaticResource Caption}" Margin="0,3,0,0" />
-            </StackPanel>
-            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom">
-                <Button x:Name="StyleRibbon" Content="Ribbon" Tag="Ribbon" Click="OnStyle" Style="{StaticResource PillButton}" Margin="0,0,8,0" />
-                <Button x:Name="StyleSpectrum" Content="Spectrum" Tag="Spectrum" Click="OnStyle" Style="{StaticResource PillButton}" Margin="0,0,8,0" />
-                <Button x:Name="StyleRadial" Content="Radial" Tag="Radial" Click="OnStyle" Style="{StaticResource PillButton}" Margin="0,0,8,0" />
-                <Button x:Name="StyleScope" Content="Oscilloscope" Tag="Oscilloscope" Click="OnStyle" Style="{StaticResource PillButton}" Margin="0,0,8,0" />
-                <Button x:Name="ImageButton" Content="Choose image…" Click="OnChooseImage" Style="{StaticResource PillButton}" Margin="0,0,8,0" Visibility="Collapsed" />
-                <Button x:Name="MoreButton" Content="More  ▾" Click="OnToggleMore" Style="{StaticResource PillButton}" />
-                <Popup x:Name="MorePopup" PlacementTarget="{Binding ElementName=MoreButton}" Placement="Bottom"
-                       StaysOpen="False" AllowsTransparency="True" HorizontalOffset="-60" VerticalOffset="8">
-                    <Border Background="#12151C" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="8">
-                        <StackPanel Width="196">
-                            <TextBlock Text="MORE VISUALIZERS" Style="{StaticResource SectionLabel}" Margin="6,2,6,8" />
-                            <Button Content="Cymatics" Tag="Cymatics" Click="OnStyle" Style="{StaticResource PillButton}"
-                                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Margin="0,0,0,6" />
-                            <Button Content="Custom Image" Tag="CustomImage" Click="OnStyle" Style="{StaticResource PillButton}"
-                                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" />
-                            <Border Height="1" Background="{StaticResource BorderBrush}" Margin="4,10,4,8" />
-                            <TextBlock Text="Community styles land here — see visualizers/" Style="{StaticResource Caption}"
-                                       TextWrapping="Wrap" Margin="6,0,6,2" />
-                        </StackPanel>
-                    </Border>
-                </Popup>
-            </StackPanel>
+
+            <!-- Segmented group: one recessed housing rather than five floating pills -->
+            <Border Grid.Column="0" CornerRadius="13" Padding="4" Background="{StaticResource InsetBrush}"
+                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="StyleRibbon" Content="Ribbon" Tag="Ribbon" Click="OnStyle" Style="{StaticResource PillButton}" Margin="0,0,3,0" />
+                    <Button x:Name="StyleSpectrum" Content="Spectrum" Tag="Spectrum" Click="OnStyle" Style="{StaticResource PillButton}" Margin="0,0,3,0" />
+                    <Button x:Name="StyleRadial" Content="Radial" Tag="Radial" Click="OnStyle" Style="{StaticResource PillButton}" Margin="0,0,3,0" />
+                    <Button x:Name="StyleScope" Content="Oscilloscope" Tag="Oscilloscope" Click="OnStyle" Style="{StaticResource PillButton}" Margin="0,0,3,0" />
+                    <Button x:Name="MoreButton" Content="More  ▾" Click="OnToggleMore" Style="{StaticResource PillButton}" />
+                    <Popup x:Name="MorePopup" PlacementTarget="{Binding ElementName=MoreButton}" Placement="Bottom"
+                           StaysOpen="False" AllowsTransparency="True" HorizontalOffset="-70" VerticalOffset="10">
+                        <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderSoftBrush}"
+                                BorderThickness="1" CornerRadius="13" Padding="8">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#04060C" BlurRadius="26" ShadowDepth="6" Direction="270" Opacity="0.8" />
+                            </Border.Effect>
+                            <StackPanel Width="206">
+                                <TextBlock Text="MORE VISUALIZERS" Style="{StaticResource SectionLabel}" Margin="6,2,6,8" />
+                                <Button Content="Cymatics" Tag="Cymatics" Click="OnStyle" Style="{StaticResource PillButton}"
+                                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Margin="0,0,0,5" />
+                                <Button Content="Custom Image" Tag="CustomImage" Click="OnStyle" Style="{StaticResource PillButton}"
+                                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" />
+                                <Border Height="1" Background="{StaticResource BorderBrush}" Margin="4,11,4,8" />
+                                <TextBlock Text="Community styles land here — see visualizers/" Style="{StaticResource Caption}"
+                                           TextWrapping="Wrap" Margin="6,0,6,2" />
+                            </StackPanel>
+                        </Border>
+                    </Popup>
+                </StackPanel>
+            </Border>
+
+            <Button x:Name="ImageButton" Grid.Column="2" Content="Change image…" Click="OnChooseImage"
+                    Style="{StaticResource PillButton}" Visibility="Collapsed" VerticalAlignment="Center" />
         </Grid>
 
-        <!-- screen -->
-        <Border x:Name="ScreenBorder" Grid.Row="1" CornerRadius="18" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" ClipToBounds="True"
+        <!-- ======================= SCREEN ======================= -->
+        <Border x:Name="ScreenBorder" Grid.Row="1" CornerRadius="18" BorderBrush="{StaticResource BevelBorderBrush}"
+                BorderThickness="1" ClipToBounds="True"
                 AllowDrop="True" DragEnter="OnDragEnter" DragOver="OnDragOver" DragLeave="OnDragLeave" Drop="OnDrop">
+            <!-- Deliberately no DropShadowEffect here: the visualizer inside repaints at 60fps,
+                 and an Effect forces WPF to re-blur the whole surface on every one of those
+                 frames. Elevation comes from the bevel border instead, which costs nothing. -->
             <Border.Background>
                 <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.75" RadiusY="0.9">
-                    <GradientStop Color="#12151D" Offset="0" />
-                    <GradientStop Color="#0A0C11" Offset="0.7" />
-                    <GradientStop Color="#07090D" Offset="1" />
+                    <GradientStop Color="#101728" Offset="0" />
+                    <GradientStop Color="#090D18" Offset="0.7" />
+                    <GradientStop Color="#06090F" Offset="1" />
                 </RadialGradientBrush>
             </Border.Background>
             <Grid>
+                <!-- Static tiled grid: drawn once and cached by WPF, so it costs nothing per frame. -->
+                <Rectangle IsHitTestVisible="False">
+                    <Rectangle.Fill>
+                        <DrawingBrush TileMode="Tile" Viewport="0,0,68,68" ViewportUnits="Absolute">
+                            <DrawingBrush.Drawing>
+                                <GeometryDrawing Geometry="M0,0 L0,68 M0,0 L68,0">
+                                    <GeometryDrawing.Pen>
+                                        <Pen Brush="#141C31" Thickness="1" />
+                                    </GeometryDrawing.Pen>
+                                </GeometryDrawing>
+                            </DrawingBrush.Drawing>
+                        </DrawingBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
                 <c:Visualizer x:Name="Viz" />
 
                 <!-- Custom Image: empty state / drop hint -->
@@ -86,9 +126,9 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Drag-over highlight (covers the screen while a file is held over it) -->
+                <!-- Drag-over highlight -->
                 <Border x:Name="DragOverlay" Visibility="Collapsed" CornerRadius="17" Margin="1" IsHitTestVisible="False"
-                        Background="#CC0A0C11">
+                        Background="#CC090D18">
                     <Grid Margin="16">
                         <Rectangle RadiusX="13" RadiusY="13" Stroke="{StaticResource AccentBrush}" StrokeThickness="2"
                                    StrokeDashArray="5 4" Fill="{StaticResource AccentSoftBrush}" />
@@ -101,40 +141,51 @@
                     </Grid>
                 </Border>
 
-                <TextBlock Text="RIBBON" x:Name="StyleTag" FontFamily="{StaticResource LabelFont}" FontSize="10"
-                           Foreground="{StaticResource TextTertiaryBrush}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="16,14,0,0" />
-                <TextBlock Text="20 Hz — 20 kHz" Style="{StaticResource Mono}" FontSize="10"
+                <!-- HUD -->
+                <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="14,13,0,0" CornerRadius="6"
+                        Background="#66070A12" Padding="8,3">
+                    <TextBlock Text="RIBBON" x:Name="StyleTag" FontFamily="{StaticResource LabelFont}" FontSize="9.5"
+                               Foreground="{StaticResource TextSecondaryBrush}" />
+                </Border>
+                <TextBlock Text="20 Hz — 20 kHz" Style="{StaticResource Mono}" FontSize="9.5"
                            HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,16,12" />
             </Grid>
         </Border>
 
-        <!-- knobs -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,2">
-            <StackPanel Margin="0,0,22,0" HorizontalAlignment="Center">
-                <c:Knob x:Name="KnobSensitivity" Width="66" Height="66" Value="0.68" />
-                <TextBlock Text="SENSITIVITY" Style="{StaticResource SectionLabel}" HorizontalAlignment="Center" Margin="0,8,0,0" />
-                <TextBlock x:Name="LblSensitivity" Text="68%" Style="{StaticResource Mono}" HorizontalAlignment="Center" />
-            </StackPanel>
-            <StackPanel Margin="0,0,22,0" HorizontalAlignment="Center">
-                <c:Knob x:Name="KnobSmoothing" Width="66" Height="66" Value="0.45" />
-                <TextBlock Text="SMOOTHING" Style="{StaticResource SectionLabel}" HorizontalAlignment="Center" Margin="0,8,0,0" />
-                <TextBlock x:Name="LblSmoothing" Text="45%" Style="{StaticResource Mono}" HorizontalAlignment="Center" />
-            </StackPanel>
-            <StackPanel Margin="0,0,22,0" HorizontalAlignment="Center">
-                <c:Knob x:Name="KnobGlow" Width="66" Height="66" Value="0.72" />
-                <TextBlock Text="GLOW" Style="{StaticResource SectionLabel}" HorizontalAlignment="Center" Margin="0,8,0,0" />
-                <TextBlock x:Name="LblGlow" Text="72%" Style="{StaticResource Mono}" HorizontalAlignment="Center" />
-            </StackPanel>
-            <StackPanel Margin="0,0,22,0" HorizontalAlignment="Center">
-                <c:Knob x:Name="KnobSpeed" Width="66" Height="66" Value="0.40" />
-                <TextBlock Text="SPEED" Style="{StaticResource SectionLabel}" HorizontalAlignment="Center" Margin="0,8,0,0" />
-                <TextBlock x:Name="LblSpeed" Text="40%" Style="{StaticResource Mono}" HorizontalAlignment="Center" />
-            </StackPanel>
-            <StackPanel HorizontalAlignment="Center">
-                <c:Knob x:Name="KnobPalette" Width="66" Height="66" Value="0" Accent="#FF8A3D" />
-                <TextBlock Text="PALETTE" Style="{StaticResource SectionLabel}" HorizontalAlignment="Center" Margin="0,8,0,0" />
-                <TextBlock x:Name="LblPalette" Text="Sunset" Style="{StaticResource Mono}" HorizontalAlignment="Center" />
-            </StackPanel>
-        </StackPanel>
+        <!-- ======================= CONTROL DECK ======================= -->
+        <Border Grid.Row="3" Style="{StaticResource Card}" CornerRadius="16" Padding="16,13">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="CONTROLS" Style="{StaticResource SectionLabel}" Margin="0,0,0,4" />
+                <!-- Even columns across the full deck, so the strip reads as one instrument
+                     rather than a cluster floating in the middle. -->
+                <UniformGrid Rows="1" Columns="5">
+                    <StackPanel>
+                        <c:Knob x:Name="KnobSensitivity" Width="60" Height="60" Value="0.68" />
+                        <TextBlock Text="SENSITIVITY" Style="{StaticResource KnobCaption}" />
+                        <TextBlock x:Name="LblSensitivity" Text="68%" Style="{StaticResource KnobValue}" />
+                    </StackPanel>
+                    <StackPanel>
+                        <c:Knob x:Name="KnobSmoothing" Width="60" Height="60" Value="0.45" />
+                        <TextBlock Text="SMOOTHING" Style="{StaticResource KnobCaption}" />
+                        <TextBlock x:Name="LblSmoothing" Text="45%" Style="{StaticResource KnobValue}" />
+                    </StackPanel>
+                    <StackPanel>
+                        <c:Knob x:Name="KnobGlow" Width="60" Height="60" Value="0.72" />
+                        <TextBlock Text="GLOW" Style="{StaticResource KnobCaption}" />
+                        <TextBlock x:Name="LblGlow" Text="72%" Style="{StaticResource KnobValue}" />
+                    </StackPanel>
+                    <StackPanel>
+                        <c:Knob x:Name="KnobSpeed" Width="60" Height="60" Value="0.40" />
+                        <TextBlock Text="SPEED" Style="{StaticResource KnobCaption}" />
+                        <TextBlock x:Name="LblSpeed" Text="40%" Style="{StaticResource KnobValue}" />
+                    </StackPanel>
+                    <StackPanel>
+                        <c:Knob x:Name="KnobPalette" Width="60" Height="60" Value="0" Accent="#8B7BFF" />
+                        <TextBlock Text="PALETTE" Style="{StaticResource KnobCaption}" />
+                        <TextBlock x:Name="LblPalette" Text="Sunset" Style="{StaticResource KnobValue}" />
+                    </StackPanel>
+                </UniformGrid>
+            </DockPanel>
+        </Border>
     </Grid>
 </UserControl>
