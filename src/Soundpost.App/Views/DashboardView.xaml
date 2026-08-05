@@ -1,0 +1,304 @@
+<UserControl x:Class="Soundpost.App.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="clr-namespace:Soundpost.App.Controls"
+             FontFamily="{StaticResource BodyFont}">
+    <UserControl.Resources>
+
+        <!-- Playback device glyph, chosen from the endpoint's inferred kind -->
+        <Style x:Key="DeviceGlyph" TargetType="Path">
+            <Setter Property="Width" Value="20" />
+            <Setter Property="Height" Value="20" />
+            <Setter Property="Stretch" Value="Uniform" />
+            <Setter Property="StrokeThickness" Value="1.5" />
+            <Setter Property="StrokeLineJoin" Value="Round" />
+            <Setter Property="StrokeStartLineCap" Value="Round" />
+            <Setter Property="StrokeEndLineCap" Value="Round" />
+            <Setter Property="Stroke" Value="{StaticResource TextSecondaryBrush}" />
+            <Setter Property="Data" Value="{StaticResource IconGeneric}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IconKind}" Value="Headphones">
+                    <Setter Property="Data" Value="{StaticResource IconHeadphones}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IconKind}" Value="Speakers">
+                    <Setter Property="Data" Value="{StaticResource IconSpeakers}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IconKind}" Value="Monitor">
+                    <Setter Property="Data" Value="{StaticResource IconMonitor}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsDefault}" Value="True">
+                    <Setter Property="Stroke" Value="{StaticResource AccentBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ScaleTick" TargetType="TextBlock" BasedOn="{StaticResource Mono}">
+            <Setter Property="FontSize" Value="8.5" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="4,0,20,18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="278" />
+            <RowDefinition Height="16" />
+            <RowDefinition Height="*" MinHeight="180" />
+        </Grid.RowDefinitions>
+
+        <!-- ======================= TOP ROW ======================= -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.15*" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Master volume -->
+            <Border Grid.Column="0" Style="{StaticResource Card}" CornerRadius="16" Padding="16">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <Path Data="{StaticResource IconSpeakerWave}" Width="15" Height="15" Stretch="Uniform"
+                              Stroke="{StaticResource TextTertiaryBrush}" StrokeThickness="1.5"
+                              StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                              VerticalAlignment="Center" Margin="0,0,9,0" />
+                        <TextBlock Text="MASTER VOLUME" Style="{StaticResource SectionLabel}" VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <Grid Margin="0,6,0,0">
+                        <c:ArcGauge Value="{Binding MasterVolume, Mode=TwoWay}" IsMuted="{Binding IsMasterMuted}"
+                                    MaxWidth="212" MaxHeight="212" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False">
+                            <TextBlock FontFamily="{StaticResource LabelFont}" FontSize="34" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" HorizontalAlignment="Center">
+                                <Run Text="{Binding MasterVolumePercent, Mode=OneWay}" /><Run Text="%" Foreground="{StaticResource TextSecondaryBrush}" FontSize="20" />
+                            </TextBlock>
+                        </StackPanel>
+                        <Button Command="{Binding ToggleMasterMuteCommand}" Style="{StaticResource GhostIconButton}"
+                                Width="34" Height="34" HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                                Margin="0,0,0,14" ToolTip="Mute / unmute">
+                            <Path Width="19" Height="19" Stretch="Uniform" StrokeThickness="1.6"
+                                  StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round">
+                                <Path.Style>
+                                    <Style TargetType="Path">
+                                        <Setter Property="Data" Value="{StaticResource IconSpeakerWave}" />
+                                        <Setter Property="Stroke" Value="{StaticResource TextSecondaryBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsMasterMuted}" Value="True">
+                                                <Setter Property="Data" Value="{StaticResource IconSpeakerMute}" />
+                                                <Setter Property="Stroke" Value="#FF5468" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Path.Style>
+                            </Path>
+                        </Button>
+                    </Grid>
+                </DockPanel>
+            </Border>
+
+            <!-- Playback devices -->
+            <Border Grid.Column="2" Style="{StaticResource Card}" CornerRadius="16" Padding="16">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="PLAYBACK DEVICES" Style="{StaticResource SectionLabel}" Margin="0,0,0,12" />
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding PlaybackDevices}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Style="{StaticResource DeviceRow}"
+                                            Command="{Binding DataContext.SetDefaultCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding}" ToolTip="{Binding Name}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <Border Width="38" Height="38" CornerRadius="11" Background="{StaticResource InsetBrush}"
+                                                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                                                <Path Style="{StaticResource DeviceGlyph}" />
+                                            </Border>
+
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="13,0,10,0">
+                                                <TextBlock Text="{Binding Title}" Foreground="{StaticResource TextPrimaryBrush}"
+                                                           FontWeight="SemiBold" FontSize="13.5" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{Binding Subtitle}" Style="{StaticResource Caption}"
+                                                           Margin="0,3,0,0" TextTrimming="CharacterEllipsis" />
+                                            </StackPanel>
+
+                                            <!-- selection indicator -->
+                                            <Grid Grid.Column="2" Width="24" Height="24" VerticalAlignment="Center">
+                                                <Ellipse Stroke="{StaticResource BorderSoftBrush}" StrokeThickness="1.5"
+                                                         Visibility="{Binding IsDefault, Converter={StaticResource BoolToVisInv}}" />
+                                                <Grid Visibility="{Binding IsDefault, Converter={StaticResource BoolToVis}}">
+                                                    <Ellipse Fill="{StaticResource VioletBrush}">
+                                                        <Ellipse.Effect>
+                                                            <DropShadowEffect Color="#8B7BFF" BlurRadius="16" ShadowDepth="0" Opacity="0.75" />
+                                                        </Ellipse.Effect>
+                                                    </Ellipse>
+                                                    <Path Data="M6,12.4 L9.4,15.8 L16,8.6" Stretch="Uniform" Width="12" Height="12"
+                                                          Stroke="#12121A" StrokeThickness="2.2"
+                                                          StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+
+            <!-- Output meters -->
+            <Border Grid.Column="4" Style="{StaticResource Card}" CornerRadius="16" Padding="14,16">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="OUT" Style="{StaticResource SectionLabel}"
+                               HorizontalAlignment="Center" Margin="0,0,0,12" />
+                    <Grid DockPanel.Dock="Bottom" Margin="0,9,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="14" />
+                            <ColumnDefinition Width="7" />
+                            <ColumnDefinition Width="14" />
+                            <ColumnDefinition Width="28" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="L" Style="{StaticResource Mono}" FontSize="9" HorizontalAlignment="Center" />
+                        <TextBlock Grid.Column="2" Text="R" Style="{StaticResource Mono}" FontSize="9" HorizontalAlignment="Center" />
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="14" />
+                            <ColumnDefinition Width="7" />
+                            <ColumnDefinition Width="14" />
+                            <ColumnDefinition Width="28" />
+                        </Grid.ColumnDefinitions>
+                        <!-- Recessed trough the LEDs sit in -->
+                        <Border Grid.Column="0" Grid.ColumnSpan="3" CornerRadius="6" Background="{StaticResource InsetBrush}"
+                                BorderBrush="#1B2338" BorderThickness="1" Margin="-5,-6,-5,-6" />
+                        <c:SegmentMeter Grid.Column="0" Segments="16" Level="{Binding MasterLevel}" />
+                        <c:SegmentMeter Grid.Column="2" Segments="16" Level="{Binding MasterLevel}" />
+                        <Grid Grid.Column="3" Margin="5,-4,0,-4">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="0dB" Style="{StaticResource ScaleTick}" />
+                            <TextBlock Grid.Row="1" Text="-10" Style="{StaticResource ScaleTick}" />
+                            <TextBlock Grid.Row="2" Text="-20" Style="{StaticResource ScaleTick}" />
+                            <TextBlock Grid.Row="3" Text="-30" Style="{StaticResource ScaleTick}" />
+                            <TextBlock Grid.Row="4" Text="-40" Style="{StaticResource ScaleTick}" />
+                            <TextBlock Grid.Row="5" Text="-50" Style="{StaticResource ScaleTick}" />
+                            <TextBlock Grid.Row="6" Text="-60" Style="{StaticResource ScaleTick}" VerticalAlignment="Bottom" />
+                        </Grid>
+                    </Grid>
+                </DockPanel>
+            </Border>
+        </Grid>
+
+        <!-- ======================= BOTTOM ROW ======================= -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.85*" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Active apps -->
+            <Border Grid.Column="0" Style="{StaticResource Card}" CornerRadius="16" Padding="16">
+                <DockPanel>
+                    <Grid DockPanel.Dock="Top" Margin="0,0,0,12">
+                        <TextBlock Text="ACTIVE APPS" Style="{StaticResource SectionLabel}" VerticalAlignment="Center" />
+                        <TextBlock Style="{StaticResource Caption}" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                   Text="{Binding Sessions.Count, StringFormat='{}{0} playing'}" />
+                    </Grid>
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding Sessions}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource AppRow}">
+                                    <Grid Height="46">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="132" />
+                                            <ColumnDefinition Width="*" MinWidth="90" />
+                                            <ColumnDefinition Width="46" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- real Windows app icon, letter tile when unavailable -->
+                                        <Grid Width="30" Height="30" VerticalAlignment="Center">
+                                            <Image Source="{Binding Icon}" Width="30" Height="30"
+                                                   RenderOptions.BitmapScalingMode="HighQuality" />
+                                            <Border CornerRadius="9" Background="{StaticResource SurfaceAltBrush}"
+                                                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                                                    Visibility="{Binding HasNoIcon, Converter={StaticResource BoolToVis}}">
+                                                <TextBlock Text="{Binding DisplayName, Converter={StaticResource FirstLetter}}"
+                                                           FontFamily="{StaticResource LabelFont}" FontSize="14" FontWeight="SemiBold"
+                                                           Foreground="{StaticResource AccentBrush}"
+                                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Border>
+                                        </Grid>
+
+                                        <TextBlock Grid.Column="1" Text="{Binding DisplayName}" VerticalAlignment="Center"
+                                                   Margin="13,0,12,0" Foreground="{StaticResource TextPrimaryBrush}"
+                                                   FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                                                   ToolTip="{Binding DisplayName}" />
+
+                                        <Slider Grid.Column="2" Style="{StaticResource AppSlider}" VerticalAlignment="Center"
+                                                Value="{Binding Volume, Mode=TwoWay}" />
+
+                                        <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right"
+                                                   Margin="10,0,0,0" Style="{StaticResource Mono}"
+                                                   Foreground="{StaticResource TextSecondaryBrush}">
+                                            <Run Text="{Binding VolumePercent, Mode=OneWay}" /><Run Text="%" />
+                                        </TextBlock>
+
+                                        <c:SegmentMeter Grid.Column="4" Width="42" Height="6" Segments="9" Horizontal="True"
+                                                        Level="{Binding MeterLevel}" VerticalAlignment="Center" Margin="14,0,4,0" />
+
+                                        <Button Grid.Column="5" Style="{StaticResource GhostIconButton}" Content="⋯"
+                                                VerticalAlignment="Center" ToolTip="Per-app options — coming with Routing" />
+                                    </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+
+            <!-- Current scene (placeholder until the rules engine lands) -->
+            <Border Grid.Column="2" Style="{StaticResource Card}" CornerRadius="16" Padding="16">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="CURRENT SCENE" Style="{StaticResource SectionLabel}" Margin="0,0,0,14" />
+                    <StackPanel VerticalAlignment="Center">
+                        <Border Width="46" Height="46" CornerRadius="14" HorizontalAlignment="Left"
+                                Background="{StaticResource InsetBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                            <Path Data="{StaticResource IconScenes}" Width="22" Height="22" Stretch="Uniform"
+                                  Stroke="{StaticResource VioletBrush}" StrokeThickness="1.5"
+                                  StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                        </Border>
+                        <TextBlock Text="No scene active" FontFamily="{StaticResource LabelFont}" FontSize="18" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,14,0,0" />
+                        <TextBlock Style="{StaticResource Caption}" TextWrapping="Wrap" Margin="0,7,0,0" LineHeight="16"
+                                   Text="Snap volumes, routing and output device into one named setup — then switch with a click." />
+                        <Border Background="{StaticResource InsetBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                                CornerRadius="9" Padding="11,7" HorizontalAlignment="Left" Margin="0,16,0,0">
+                            <TextBlock Text="Coming soon" FontFamily="{StaticResource LabelFont}" FontSize="10.5"
+                                       Foreground="{StaticResource TextTertiaryBrush}" />
+                        </Border>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,4 +1,6 @@
+using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Soundpost.App.Interop;
 using Soundpost.Core.Audio;
 
 namespace Soundpost.App.ViewModels;
@@ -9,6 +11,12 @@ public partial class SessionViewModel : ObservableObject
     private readonly IAudioSessionService _sessions;
 
     public int ProcessId { get; }
+
+    /// <summary>The app's real Windows icon, or null when we fall back to a letter tile.</summary>
+    public ImageSource? Icon { get; }
+
+    /// <summary>True when <see cref="Icon"/> is missing, so the letter tile takes over.</summary>
+    public bool HasNoIcon => Icon is null;
 
     [ObservableProperty]
     private string _displayName = string.Empty;
@@ -70,6 +78,7 @@ public partial class SessionViewModel : ObservableObject
     {
         _sessions = sessions;
         ProcessId = session.ProcessId;
+        Icon = AppIconLoader.ForProcess(session.ProcessId);
         UpdateFrom(session);
     }
 

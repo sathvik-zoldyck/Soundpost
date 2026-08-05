@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         xmlns:views="clr-namespace:Soundpost.App.Views"
-        Title="Soundpost" Height="724" Width="1180" MinHeight="560" MinWidth="900"
+        Title="Soundpost" Height="740" Width="1220" MinHeight="600" MinWidth="980"
         WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="CanResize"
         Background="{StaticResource ChassisBrush}" Foreground="{StaticResource TextPrimaryBrush}"
         FontFamily="{StaticResource BodyFont}" UseLayoutRounding="True" TextOptions.TextFormattingMode="Ideal">
@@ -13,118 +13,140 @@
     </shell:WindowChrome.WindowChrome>
 
     <Window.Resources>
-        <Style x:Key="Tab" TargetType="Button">
-            <Setter Property="FontFamily" Value="{StaticResource LabelFont}" />
-            <Setter Property="FontSize" Value="11.5" />
-            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border CornerRadius="8" Padding="16,7" Background="{TemplateBinding Background}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+        <!-- Section changes get one orchestrated moment: a short rise + fade, so switching
+             reads as the console swapping panels rather than the screen blinking. -->
+        <Style x:Key="ViewHost" TargetType="UserControl">
+            <Style.Triggers>
+                <Trigger Property="Visibility" Value="Visible">
+                    <Trigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                 From="0" To="1" Duration="0:0:0.20" />
+                                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
+                                                 From="14" To="0" Duration="0:0:0.30">
+                                    <DoubleAnimation.EasingFunction>
+                                        <CubicEase EasingMode="EaseOut" />
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.EnterActions>
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </Window.Resources>
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="212" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="46" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- caption -->
-        <Grid Grid.Row="0" Margin="18,0,12,0">
+        <!-- ======================= SIDEBAR ======================= -->
+        <Border Grid.Column="0" Grid.RowSpan="2" Background="{StaticResource RailBrush}"
+                BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,1,0">
+            <DockPanel>
+                <!-- brand -->
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Height="46" Margin="18,0,0,0">
+                    <Viewbox Width="26" Height="26" VerticalAlignment="Center">
+                        <Canvas Width="512" Height="512">
+                            <Rectangle Canvas.Left="60" Canvas.Top="206" Width="18" Height="100" RadiusX="9" RadiusY="9" Fill="#FF7A1A" />
+                            <Rectangle Canvas.Left="96" Canvas.Top="181" Width="18" Height="150" RadiusX="9" RadiusY="9" Fill="#FF7A1A" />
+                            <Rectangle Canvas.Left="132" Canvas.Top="161" Width="18" Height="190" RadiusX="9" RadiusY="9" Fill="#FF7A1A" />
+                            <Rectangle Canvas.Left="362" Canvas.Top="161" Width="18" Height="190" RadiusX="9" RadiusY="9" Fill="#A24BFF" />
+                            <Rectangle Canvas.Left="398" Canvas.Top="181" Width="18" Height="150" RadiusX="9" RadiusY="9" Fill="#A24BFF" />
+                            <Rectangle Canvas.Left="434" Canvas.Top="206" Width="18" Height="100" RadiusX="9" RadiusY="9" Fill="#A24BFF" />
+                            <Path StrokeThickness="42" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                  Data="M 336 176 C 296 148, 212 158, 212 202 C 212 236, 256 248, 256 256 C 256 264, 300 276, 300 310 C 300 354, 216 364, 176 336">
+                                <Path.Stroke>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#FF7A1A" Offset="0" />
+                                        <GradientStop Color="#FF3D7F" Offset="0.5" />
+                                        <GradientStop Color="#A24BFF" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Path.Stroke>
+                            </Path>
+                        </Canvas>
+                    </Viewbox>
+                    <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" FontFamily="{StaticResource LabelFont}"
+                               FontSize="14.5" FontWeight="SemiBold">
+                        <Run Text="SOUND" Foreground="{StaticResource TextPrimaryBrush}" /><Run Text="POST" Foreground="{StaticResource AccentBrush}" />
+                    </TextBlock>
+                </StackPanel>
+
+                <!-- nav -->
+                <StackPanel Margin="12,16,12,0" shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Content="Dashboard" Tag="{StaticResource IconDashboard}"
+                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Dashboard}" />
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Content="Visualizer" Tag="{StaticResource IconVisualizer}"
+                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Visualizer}" />
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Content="Mixer" Tag="{StaticResource IconMixer}"
+                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Mixer}" />
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Content="Routing" Tag="{StaticResource IconRouting}"
+                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Routing}" />
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Content="Automation" Tag="{StaticResource IconAutomation}"
+                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Automation}" />
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Content="Scenes" Tag="{StaticResource IconScenes}"
+                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Scenes}" />
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Content="Devices" Tag="{StaticResource IconDevices}"
+                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Devices}" />
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Content="Plugins" Tag="{StaticResource IconPlugins}"
+                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Plugins}" />
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Content="Settings" Tag="{StaticResource IconSettings}"
+                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Settings}" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- ======================= CAPTION ======================= -->
+        <Grid Grid.Column="1" Grid.Row="0" Margin="20,0,12,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!-- brand -->
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <Viewbox Width="34" Height="34">
-                    <Canvas Width="512" Height="512">
-                        <!-- left equalizer bars -->
-                        <Rectangle Canvas.Left="60" Canvas.Top="206" Width="18" Height="100" RadiusX="9" RadiusY="9" Fill="#FF7A1A" />
-                        <Rectangle Canvas.Left="96" Canvas.Top="181" Width="18" Height="150" RadiusX="9" RadiusY="9" Fill="#FF7A1A" />
-                        <Rectangle Canvas.Left="132" Canvas.Top="161" Width="18" Height="190" RadiusX="9" RadiusY="9" Fill="#FF7A1A" />
-                        <!-- right equalizer bars -->
-                        <Rectangle Canvas.Left="362" Canvas.Top="161" Width="18" Height="190" RadiusX="9" RadiusY="9" Fill="#A24BFF" />
-                        <Rectangle Canvas.Left="398" Canvas.Top="181" Width="18" Height="150" RadiusX="9" RadiusY="9" Fill="#A24BFF" />
-                        <Rectangle Canvas.Left="434" Canvas.Top="206" Width="18" Height="100" RadiusX="9" RadiusY="9" Fill="#A24BFF" />
-                        <!-- interlocking S -->
-                        <Path StrokeThickness="42" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
-                              Data="M 336 176 C 296 148, 212 158, 212 202 C 212 236, 256 248, 256 256 C 256 264, 300 276, 300 310 C 300 354, 216 364, 176 336">
-                            <Path.Stroke>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                    <GradientStop Color="#FF7A1A" Offset="0" />
-                                    <GradientStop Color="#FF3D7F" Offset="0.5" />
-                                    <GradientStop Color="#A24BFF" Offset="1" />
-                                </LinearGradientBrush>
-                            </Path.Stroke>
-                        </Path>
-                    </Canvas>
-                </Viewbox>
-                <TextBlock Margin="11,0,0,0" VerticalAlignment="Center" FontFamily="{StaticResource LabelFont}" FontSize="15" FontWeight="SemiBold">
-                    <Run Text="SOUND" Foreground="{StaticResource TextPrimaryBrush}" /><Run Text="POST" Foreground="{StaticResource AccentBrush}" />
-                </TextBlock>
-            </StackPanel>
+            <TextBlock VerticalAlignment="Center" Text="{Binding ActiveSection}"
+                       FontFamily="{StaticResource LabelFont}" FontSize="14" FontWeight="SemiBold"
+                       Foreground="{StaticResource TextPrimaryBrush}" />
 
-            <!-- tabs -->
-            <Border Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center" CornerRadius="10"
-                    Background="#0F1218" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Padding="3"
-                    shell:WindowChrome.IsHitTestVisibleInChrome="True">
-                <StackPanel Orientation="Horizontal">
-                    <Button Content="Mixer" Command="{Binding ShowMixerCommand}">
-                        <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource Tab}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ShowVisualizer}" Value="False">
-                                        <Setter Property="Background" Value="{StaticResource AccentFillBrush}" />
-                                        <Setter Property="Foreground" Value="{StaticResource OnAccentBrush}" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                    <Button Content="Visualizer" Command="{Binding ShowVisualizerViewCommand}">
-                        <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource Tab}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ShowVisualizer}" Value="True">
-                                        <Setter Property="Background" Value="{StaticResource AccentFillBrush}" />
-                                        <Setter Property="Foreground" Value="{StaticResource OnAccentBrush}" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                </StackPanel>
+            <Border Grid.Column="1" VerticalAlignment="Center" Margin="0,0,14,0" CornerRadius="8" Padding="10,5"
+                    Background="{StaticResource SurfaceAltBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                <TextBlock Style="{StaticResource Caption}" Text="{Binding DefaultDeviceName, StringFormat='OUTPUT · {0}'}"
+                           TextTrimming="CharacterEllipsis" MaxWidth="280" />
             </Border>
 
-            <!-- now -->
-            <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="0,0,14,0"
-                       Style="{StaticResource Caption}" Text="{Binding DefaultDeviceName, StringFormat='OUTPUT · {0}'}" />
-
-            <!-- window buttons -->
-            <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center"
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
                         shell:WindowChrome.IsHitTestVisibleInChrome="True">
                 <Button Style="{StaticResource CaptionButton}" Click="OnMinimize" FontFamily="Segoe MDL2 Assets" FontSize="10" Content="&#xE921;" />
                 <Button Style="{StaticResource CaptionButton}" Click="OnClose" FontFamily="Segoe MDL2 Assets" FontSize="10" Content="&#xE8BB;" />
             </StackPanel>
         </Grid>
 
-        <!-- content -->
-        <Grid Grid.Row="1">
-            <views:MixerView Visibility="{Binding ShowVisualizer, Converter={StaticResource BoolToVisInv}}" />
-            <views:VisualizerView Visibility="{Binding ShowVisualizer, Converter={StaticResource BoolToVis}}" />
+        <!-- ======================= CONTENT ======================= -->
+        <Grid Grid.Column="1" Grid.Row="1">
+            <!-- Each view owns its own TranslateTransform; a Style setter would share one instance. -->
+            <views:DashboardView Style="{StaticResource ViewHost}"
+                                 Visibility="{Binding IsDashboard, Converter={StaticResource BoolToVis}}">
+                <views:DashboardView.RenderTransform><TranslateTransform /></views:DashboardView.RenderTransform>
+            </views:DashboardView>
+            <views:MixerView Style="{StaticResource ViewHost}"
+                             Visibility="{Binding IsMixer, Converter={StaticResource BoolToVis}}">
+                <views:MixerView.RenderTransform><TranslateTransform /></views:MixerView.RenderTransform>
+            </views:MixerView>
+            <views:VisualizerView Style="{StaticResource ViewHost}"
+                                  Visibility="{Binding IsVisualizer, Converter={StaticResource BoolToVis}}">
+                <views:VisualizerView.RenderTransform><TranslateTransform /></views:VisualizerView.RenderTransform>
+            </views:VisualizerView>
+            <views:PlaceholderView Style="{StaticResource ViewHost}"
+                                   Visibility="{Binding IsPlaceholder, Converter={StaticResource BoolToVis}}">
+                <views:PlaceholderView.RenderTransform><TranslateTransform /></views:PlaceholderView.RenderTransform>
+            </views:PlaceholderView>
         </Grid>
     </Grid>
 </Window>
