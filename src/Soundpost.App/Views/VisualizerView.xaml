@@ -27,12 +27,29 @@
                 <Button x:Name="StyleSpectrum" Content="Spectrum" Tag="Spectrum" Click="OnStyle" Style="{StaticResource PillButton}" Margin="0,0,8,0" />
                 <Button x:Name="StyleRadial" Content="Radial" Tag="Radial" Click="OnStyle" Style="{StaticResource PillButton}" Margin="0,0,8,0" />
                 <Button x:Name="StyleScope" Content="Oscilloscope" Tag="Oscilloscope" Click="OnStyle" Style="{StaticResource PillButton}" Margin="0,0,8,0" />
-                <Button x:Name="StyleAurora" Content="Aurora" Tag="Aurora" Click="OnStyle" Style="{StaticResource PillButton}" />
+                <Button x:Name="ImageButton" Content="Choose image…" Click="OnChooseImage" Style="{StaticResource PillButton}" Margin="0,0,8,0" Visibility="Collapsed" />
+                <Button x:Name="MoreButton" Content="More  ▾" Click="OnToggleMore" Style="{StaticResource PillButton}" />
+                <Popup x:Name="MorePopup" PlacementTarget="{Binding ElementName=MoreButton}" Placement="Bottom"
+                       StaysOpen="False" AllowsTransparency="True" HorizontalOffset="-60" VerticalOffset="8">
+                    <Border Background="#12151C" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="8">
+                        <StackPanel Width="196">
+                            <TextBlock Text="MORE VISUALIZERS" Style="{StaticResource SectionLabel}" Margin="6,2,6,8" />
+                            <Button Content="Cymatics" Tag="Cymatics" Click="OnStyle" Style="{StaticResource PillButton}"
+                                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Margin="0,0,0,6" />
+                            <Button Content="Custom Image" Tag="CustomImage" Click="OnStyle" Style="{StaticResource PillButton}"
+                                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" />
+                            <Border Height="1" Background="{StaticResource BorderBrush}" Margin="4,10,4,8" />
+                            <TextBlock Text="Community styles land here — see visualizers/" Style="{StaticResource Caption}"
+                                       TextWrapping="Wrap" Margin="6,0,6,2" />
+                        </StackPanel>
+                    </Border>
+                </Popup>
             </StackPanel>
         </Grid>
 
         <!-- screen -->
-        <Border Grid.Row="1" CornerRadius="18" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" ClipToBounds="True">
+        <Border x:Name="ScreenBorder" Grid.Row="1" CornerRadius="18" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" ClipToBounds="True"
+                AllowDrop="True" DragEnter="OnDragEnter" DragOver="OnDragOver" DragLeave="OnDragLeave" Drop="OnDrop">
             <Border.Background>
                 <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.75" RadiusY="0.9">
                     <GradientStop Color="#12151D" Offset="0" />
@@ -42,6 +59,48 @@
             </Border.Background>
             <Grid>
                 <c:Visualizer x:Name="Viz" />
+
+                <!-- Custom Image: empty state / drop hint -->
+                <Border x:Name="ImageEmptyState" Visibility="Collapsed" MaxWidth="420"
+                        HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <StackPanel HorizontalAlignment="Center">
+                        <Border Width="78" Height="78" CornerRadius="20" HorizontalAlignment="Center"
+                                Background="{StaticResource SurfaceAltBrush}" BorderBrush="{StaticResource BorderSoftBrush}" BorderThickness="1">
+                            <Viewbox Width="38" Height="38">
+                                <Canvas Width="24" Height="24">
+                                    <Border Canvas.Left="1.5" Canvas.Top="3.5" Width="21" Height="17" CornerRadius="3"
+                                            BorderBrush="{StaticResource AccentBrush}" BorderThickness="1.7" />
+                                    <Ellipse Canvas.Left="5.4" Canvas.Top="7.4" Width="3.6" Height="3.6" Fill="{StaticResource AccentBrush}" />
+                                    <Path Data="M2.5,18.5 L9,12.5 L13.5,16 L16.5,13 L21.5,17.5" Stroke="{StaticResource AccentBrush}"
+                                          StrokeThickness="1.8" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                                </Canvas>
+                            </Viewbox>
+                        </Border>
+                        <TextBlock Text="Drop an image to visualize" FontFamily="{StaticResource LabelFont}" FontSize="16"
+                                   FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"
+                                   HorizontalAlignment="Center" Margin="0,18,0,0" />
+                        <TextBlock Text="Drag it anywhere onto the screen  ·  PNG, JPG, GIF, BMP" Style="{StaticResource Caption}"
+                                   Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Center" Margin="0,7,0,0" />
+                        <Button Content="Choose from folder" Click="OnChooseImage" Style="{StaticResource PillButton}"
+                                HorizontalAlignment="Center" Margin="0,18,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Drag-over highlight (covers the screen while a file is held over it) -->
+                <Border x:Name="DragOverlay" Visibility="Collapsed" CornerRadius="17" Margin="1" IsHitTestVisible="False"
+                        Background="#CC0A0C11">
+                    <Grid Margin="16">
+                        <Rectangle RadiusX="13" RadiusY="13" Stroke="{StaticResource AccentBrush}" StrokeThickness="2"
+                                   StrokeDashArray="5 4" Fill="{StaticResource AccentSoftBrush}" />
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="Release to visualize" FontFamily="{StaticResource LabelFont}" FontSize="18"
+                                       FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" />
+                            <TextBlock x:Name="DragFileName" Style="{StaticResource Mono}" Foreground="{StaticResource TextSecondaryBrush}"
+                                       HorizontalAlignment="Center" Margin="0,8,0,0" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
                 <TextBlock Text="RIBBON" x:Name="StyleTag" FontFamily="{StaticResource LabelFont}" FontSize="10"
                            Foreground="{StaticResource TextTertiaryBrush}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="16,14,0,0" />
                 <TextBlock Text="20 Hz — 20 kHz" Style="{StaticResource Mono}" FontSize="10"

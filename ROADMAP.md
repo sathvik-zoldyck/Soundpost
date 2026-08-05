@@ -35,8 +35,9 @@ The backbone. Everything else sits on top of this working flawlessly.
 |---|---|
 | 🧭 | Full rules engine — triggers on app launch / window focus / time-of-day / manual |
 | 🧭 | Remember per-app device across reconnects (fixes the #1 Windows annoyance) |
+| 🧭 | **Custom Sound Templates** — user-named preference bundles (per-app volume + routing + device + visualizer style/palette), built and named in a friendly UI and applied in one click. Keep as many as you like (*Relaxing*, *Gaming*, *Focus*…). Extends Scenes into full one-click "setup macros." |
 | 🧭 | **Plugin SDK v1** — load community plugins that react to events ([design](PLUGIN_SDK.md)) |
-| 🧭 | More visualizers — **Cymatics (sand)**, **Custom Image**, and a community dropdown |
+| 🚧 | More visualizers — **Cymatics (sand)** + **Custom Image**, plus a **dropdown** so contributors can add their own (Ribbon / Spectrum / Radial / Oscilloscope already shipped; Aurora removed) |
 | 🧭 | Themes — reskin the console; community theme folder |
 | 🧭 | Command palette + first-run onboarding |
 | 🧭 | Import from EarTrumpet / SoundSwitch |
