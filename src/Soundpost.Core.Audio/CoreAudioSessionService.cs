@@ -183,13 +183,19 @@ public sealed class CoreAudioSessionService : IAudioSessionService
         try
         {
             using System.Diagnostics.Process process = System.Diagnostics.Process.GetProcessById((int)pid);
-            return process.ProcessName;
+            return Capitalise(process.ProcessName);
         }
         catch
         {
             return $"PID {pid}";
         }
     }
+
+    // Process names come through lowercase ("chrome"); the mixer reads better with them capitalised.
+    private static string Capitalise(string name) =>
+        string.IsNullOrEmpty(name) || char.IsUpper(name[0])
+            ? name
+            : char.ToUpperInvariant(name[0]) + name[1..];
 
     private static string? SafeIconPath(AudioSessionControl session)
     {
