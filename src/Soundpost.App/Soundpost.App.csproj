@@ -14,6 +14,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- The brand mark, embedded so the window and rail can render it without a file on disk.
+         logo.png is the source art (opaque black background); logo-mark.png is the same mark with
+         alpha derived from its brightness, so it sits on any surface without a black tile. -->
+    <Resource Include="Assets\logo-mark.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Soundpost.Core.Audio\Soundpost.Core.Audio.csproj" />
   </ItemGroup>
 

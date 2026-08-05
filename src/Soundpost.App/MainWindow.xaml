@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         xmlns:views="clr-namespace:Soundpost.App.Views"
-        Title="Soundpost" Height="740" Width="1220" MinHeight="600" MinWidth="980"
+        Title="Soundpost" Icon="Assets/logo-mark.png" Height="740" Width="1220" MinHeight="600" MinWidth="980"
         WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="CanResize"
         Background="{StaticResource ChassisBrush}" Foreground="{StaticResource TextPrimaryBrush}"
         FontFamily="{StaticResource BodyFont}" UseLayoutRounding="True" TextOptions.TextFormattingMode="Ideal">
@@ -53,26 +53,8 @@
             <DockPanel>
                 <!-- brand -->
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Height="46" Margin="18,0,0,0">
-                    <Viewbox Width="26" Height="26" VerticalAlignment="Center">
-                        <Canvas Width="512" Height="512">
-                            <Rectangle Canvas.Left="60" Canvas.Top="206" Width="18" Height="100" RadiusX="9" RadiusY="9" Fill="#FF7A1A" />
-                            <Rectangle Canvas.Left="96" Canvas.Top="181" Width="18" Height="150" RadiusX="9" RadiusY="9" Fill="#FF7A1A" />
-                            <Rectangle Canvas.Left="132" Canvas.Top="161" Width="18" Height="190" RadiusX="9" RadiusY="9" Fill="#FF7A1A" />
-                            <Rectangle Canvas.Left="362" Canvas.Top="161" Width="18" Height="190" RadiusX="9" RadiusY="9" Fill="#A24BFF" />
-                            <Rectangle Canvas.Left="398" Canvas.Top="181" Width="18" Height="150" RadiusX="9" RadiusY="9" Fill="#A24BFF" />
-                            <Rectangle Canvas.Left="434" Canvas.Top="206" Width="18" Height="100" RadiusX="9" RadiusY="9" Fill="#A24BFF" />
-                            <Path StrokeThickness="42" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
-                                  Data="M 336 176 C 296 148, 212 158, 212 202 C 212 236, 256 248, 256 256 C 256 264, 300 276, 300 310 C 300 354, 216 364, 176 336">
-                                <Path.Stroke>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Color="#FF7A1A" Offset="0" />
-                                        <GradientStop Color="#FF3D7F" Offset="0.5" />
-                                        <GradientStop Color="#A24BFF" Offset="1" />
-                                    </LinearGradientBrush>
-                                </Path.Stroke>
-                            </Path>
-                        </Canvas>
-                    </Viewbox>
+                    <Image Source="Assets/logo-mark.png" Width="36" Height="36" VerticalAlignment="Center"
+                           RenderOptions.BitmapScalingMode="HighQuality" />
                     <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" FontFamily="{StaticResource LabelFont}"
                                FontSize="14.5" FontWeight="SemiBold">
                         <Run Text="SOUND" Foreground="{StaticResource TextPrimaryBrush}" /><Run Text="POST" Foreground="{StaticResource AccentBrush}" />
