@@ -6,40 +6,80 @@
     <FontFamily x:Key="BodyFont">Segoe UI</FontFamily>
     <FontFamily x:Key="MonoFont">Cascadia Code, Consolas</FontFamily>
 
-    <!-- ============================ Palette ============================ -->
-    <SolidColorBrush x:Key="ChassisTopBrush" Color="#191D25" />
-    <SolidColorBrush x:Key="BgBrush" Color="#0C0E12" />
-    <SolidColorBrush x:Key="SurfaceBrush" Color="#171B22" />
-    <SolidColorBrush x:Key="SurfaceAltBrush" Color="#1A1E26" />
-    <SolidColorBrush x:Key="InsetBrush" Color="#070A0D" />
-    <SolidColorBrush x:Key="BorderBrush" Color="#242A34" />
-    <SolidColorBrush x:Key="BorderSoftBrush" Color="#2B313D" />
-    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#EEF1F7" />
-    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#8B93A2" />
-    <SolidColorBrush x:Key="TextTertiaryBrush" Color="#586070" />
+    <!-- ============================ Palette ============================
+         Depth on a dark UI comes from luminance, not shadow — a dark shadow on a dark
+         background is invisible. So surfaces climb a deliberate ladder, each step lighter
+         than the last, and every panel is lit from the top:
+
+           chassis  #0B0F1C   window bed, the darkest thing on screen
+           rail     #0A0E1B   sidebar, sits *below* the content plane
+           surface  #151B2E   cards            (elevation 1)
+           alt      #1C2439   rows inside cards (elevation 2)
+           high     #242E48   hover / pressed   (elevation 3)
+           inset    #070A12   wells cut into a card: meters, icon tiles
+
+         The whole ramp is indigo rather than neutral grey, which is what lets the warm
+         accent read as a light source instead of just another flat colour.
+    -->
+    <Color x:Key="ChassisColor">#0B0F1C</Color>
+    <Color x:Key="SurfaceColor">#151B2E</Color>
+    <Color x:Key="SurfaceAltColor">#1C2439</Color>
+    <Color x:Key="SurfaceHighColor">#242E48</Color>
+    <Color x:Key="AccentColor">#FF8A3D</Color>
+    <Color x:Key="AccentSoftColor">#33FF7A1A</Color>
+    <Color x:Key="TransparentColor">#00000000</Color>
+    <Color x:Key="BorderColor">#242E48</Color>
+    <Color x:Key="BorderSoftColor">#33405F</Color>
+
+    <SolidColorBrush x:Key="ChassisTopBrush" Color="#141B30" />
+    <SolidColorBrush x:Key="BgBrush" Color="#0B0F1C" />
+    <SolidColorBrush x:Key="RailBrush" Color="#0A0E1B" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#151B2E" />
+    <SolidColorBrush x:Key="SurfaceAltBrush" Color="#1C2439" />
+    <SolidColorBrush x:Key="SurfaceHighBrush" Color="#242E48" />
+    <SolidColorBrush x:Key="InsetBrush" Color="#070A12" />
+    <SolidColorBrush x:Key="BorderBrush" Color="#242E48" />
+    <SolidColorBrush x:Key="BorderSoftBrush" Color="#33405F" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#EDF1FA" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#93A0BE" />
+    <SolidColorBrush x:Key="TextTertiaryBrush" Color="#626F91" />
     <SolidColorBrush x:Key="AccentBrush" Color="#FF8A3D" />
     <SolidColorBrush x:Key="AccentHoverBrush" Color="#FFB072" />
-    <SolidColorBrush x:Key="AccentSoftBrush" Color="#26FF7A1A" />
+    <SolidColorBrush x:Key="AccentSoftBrush" Color="#33FF7A1A" />
     <SolidColorBrush x:Key="OnAccentBrush" Color="#1A1206" />
     <SolidColorBrush x:Key="VioletBrush" Color="#8B7BFF" />
 
     <LinearGradientBrush x:Key="ChassisBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#191D25" Offset="0" />
-        <GradientStop Color="#0F1217" Offset="0.55" />
-        <GradientStop Color="#0A0C10" Offset="1" />
+        <GradientStop Color="#111830" Offset="0" />
+        <GradientStop Color="#0B0F1C" Offset="0.45" />
+        <GradientStop Color="#080B15" Offset="1" />
     </LinearGradientBrush>
+
+    <!-- Card fill: lit from the top so panels read as physical, not painted. -->
     <LinearGradientBrush x:Key="RaisedBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#1A1E26" Offset="0" />
-        <GradientStop Color="#14171E" Offset="1" />
+        <GradientStop Color="#1A2236" Offset="0" />
+        <GradientStop Color="#141A2C" Offset="1" />
     </LinearGradientBrush>
+
+    <!-- The bevel: brightest along the top edge, falling off down the sides. -->
+    <LinearGradientBrush x:Key="BevelBorderBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#3D4C74" Offset="0" />
+        <GradientStop Color="#2A3550" Offset="0.35" />
+        <GradientStop Color="#1E2740" Offset="1" />
+    </LinearGradientBrush>
+
     <LinearGradientBrush x:Key="StripBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#171B22" Offset="0" />
-        <GradientStop Color="#0E1116" Offset="1" />
+        <GradientStop Color="#1C2439" Offset="0" />
+        <GradientStop Color="#131928" Offset="1" />
     </LinearGradientBrush>
     <LinearGradientBrush x:Key="AccentFillBrush" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Color="#FFBE86" Offset="0" />
         <GradientStop Color="#FF8A3D" Offset="1" />
     </LinearGradientBrush>
+
+    <!-- Shared motion timings — quick enough to feel responsive, slow enough to read. -->
+    <Duration x:Key="FastFade">0:0:0.13</Duration>
+    <Duration x:Key="MedFade">0:0:0.20</Duration>
 
     <!-- ============================ Text ============================ -->
     <Style x:Key="SectionLabel" TargetType="TextBlock">
@@ -61,10 +101,16 @@
     <!-- ============================ Card ============================ -->
     <Style x:Key="Card" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource RaisedBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderSoftBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource BevelBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="14" />
         <Setter Property="Padding" Value="13" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <!-- Reads as separation from the bed, not as a visible shadow. -->
+                <DropShadowEffect Color="#04060C" BlurRadius="22" ShadowDepth="5" Direction="270" Opacity="0.75" />
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- ============================ Buttons ============================ -->
@@ -99,13 +145,37 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="bg" CornerRadius="10" Padding="14,8" BorderThickness="1"
-                            BorderBrush="{StaticResource BorderSoftBrush}" Background="{StaticResource SurfaceAltBrush}">
+                    <Border x:Name="bg" CornerRadius="10" Padding="14,8" BorderThickness="1">
+                        <Border.Background>
+                            <SolidColorBrush Color="{StaticResource SurfaceAltColor}" />
+                        </Border.Background>
+                        <Border.BorderBrush>
+                            <SolidColorBrush Color="{StaticResource BorderSoftColor}" />
+                        </Border.BorderBrush>
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="bg" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="bg" Storyboard.TargetProperty="BorderBrush.Color"
+                                                        To="{StaticResource AccentColor}" Duration="{StaticResource FastFade}" />
+                                        <ColorAnimation Storyboard.TargetName="bg" Storyboard.TargetProperty="Background.Color"
+                                                        To="{StaticResource SurfaceHighColor}" Duration="{StaticResource FastFade}" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="bg" Storyboard.TargetProperty="BorderBrush.Color"
+                                                        To="{StaticResource BorderSoftColor}" Duration="{StaticResource FastFade}" />
+                                        <ColorAnimation Storyboard.TargetName="bg" Storyboard.TargetProperty="Background.Color"
+                                                        To="{StaticResource SurfaceAltColor}" Duration="{StaticResource FastFade}" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -171,6 +241,281 @@
                             <Setter TargetName="b" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
                             <Setter TargetName="t" Property="Text" Value="Muted" />
                             <Setter TargetName="t" Property="Foreground" Value="{StaticResource OnAccentBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================ Icon geometry (20×20) ============================ -->
+    <Geometry x:Key="IconDashboard">M3,3 H8 V8 H3 Z M12,3 H17 V8 H12 Z M3,12 H8 V17 H3 Z M12,12 H17 V17 H12 Z</Geometry>
+    <Geometry x:Key="IconVisualizer">M3,12 V8 M7,15.5 V4.5 M11,17.5 V2.5 M15,14 V6 M18.5,11.5 V8.5</Geometry>
+    <Geometry x:Key="IconMixer">M5,3 V17 M10,3 V17 M15,3 V17 M3,7 H7 M8,12.5 H12 M13,6 H17</Geometry>
+    <Geometry x:Key="IconRouting">M2.5,10 H8 M8,10 L13,5 H17.5 M8,10 L13,15 H17.5 M15.5,3 L17.5,5 L15.5,7 M15.5,13 L17.5,15 L15.5,17</Geometry>
+    <Geometry x:Key="IconAutomation">M11.5,2 L5,11 H9.5 L8.5,18 L15,9 H10.5 Z</Geometry>
+    <Geometry x:Key="IconScenes">M10,2.5 L18,6.5 L10,10.5 L2,6.5 Z M2,10.5 L10,14.5 L18,10.5</Geometry>
+    <Geometry x:Key="IconDevices">M4.5,2.5 H15.5 V17.5 H4.5 Z M10,6.5 m-1.6,0 a1.6,1.6 0 1,0 3.2,0 a1.6,1.6 0 1,0 -3.2,0 M10,12.5 m-2.8,0 a2.8,2.8 0 1,0 5.6,0 a2.8,2.8 0 1,0 -5.6,0</Geometry>
+    <Geometry x:Key="IconPlugins">M7,2 V6 M13,2 V6 M4.5,6 H15.5 V10.5 A5.5,5.5 0 0 1 4.5,10.5 Z M10,16 V18.5</Geometry>
+    <Geometry x:Key="IconSettings">M10,10 m-3.2,0 a3.2,3.2 0 1,0 6.4,0 a3.2,3.2 0 1,0 -6.4,0 M10,2.5 V5 M10,15 V17.5 M2.5,10 H5 M15,10 H17.5 M4.7,4.7 L6.5,6.5 M13.5,13.5 L15.3,15.3 M15.3,4.7 L13.5,6.5 M6.5,13.5 L4.7,15.3</Geometry>
+
+    <Geometry x:Key="IconHeadphones">M3.5,13 V10 A6.5,6.5 0 0 1 16.5,10 V13 M2.5,12.5 H5.5 V17.5 H2.5 Z M14.5,12.5 H17.5 V17.5 H14.5 Z</Geometry>
+    <Geometry x:Key="IconSpeakers">M5,2.5 H15 V17.5 H5 Z M10,6.3 m-1.5,0 a1.5,1.5 0 1,0 3,0 a1.5,1.5 0 1,0 -3,0 M10,12.5 m-2.7,0 a2.7,2.7 0 1,0 5.4,0 a2.7,2.7 0 1,0 -5.4,0</Geometry>
+    <Geometry x:Key="IconMonitor">M2.5,3.5 H17.5 V13.5 H2.5 Z M7,17.5 H13 M10,13.5 V17.5</Geometry>
+    <Geometry x:Key="IconGeneric">M4,8 H7 L11,4 V16 L7,12 H4 Z M14,7.5 A4.2,4.2 0 0 1 14,12.5</Geometry>
+    <Geometry x:Key="IconSpeakerWave">M3,8 H6 L10,4 V16 L6,12 H3 Z M13,7.5 A4.2,4.2 0 0 1 13,12.5 M15.5,5 A7.5,7.5 0 0 1 15.5,15</Geometry>
+    <Geometry x:Key="IconSpeakerMute">M3,8 H6 L10,4 V16 L6,12 H3 Z M13.5,8 L18,12 M18,8 L13.5,12</Geometry>
+
+    <!-- ============================ Sidebar nav ============================ -->
+    <Style x:Key="NavItem" TargetType="RadioButton">
+        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+        <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Margin" Value="0,1" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Grid>
+                        <!-- Brushes are declared inline (not as StaticResource) so each item owns an
+                             unfrozen brush the storyboards below can actually animate. -->
+                        <Border x:Name="bg" CornerRadius="10" Padding="12,9">
+                            <Border.Background>
+                                <SolidColorBrush Color="{StaticResource TransparentColor}" />
+                            </Border.Background>
+                        </Border>
+                        <Border x:Name="rail" Width="3" Height="18" CornerRadius="2" HorizontalAlignment="Left"
+                                Margin="-6,0,0,0" Background="{StaticResource AccentBrush}"
+                                RenderTransformOrigin="0.5,0.5" Opacity="0">
+                            <Border.RenderTransform>
+                                <ScaleTransform ScaleY="0.2" />
+                            </Border.RenderTransform>
+                        </Border>
+                        <StackPanel Orientation="Horizontal" Margin="12,9">
+                            <Path x:Name="ic" Data="{TemplateBinding Tag}" Width="18" Height="18" Stretch="Uniform"
+                                  StrokeThickness="1.5" StrokeLineJoin="Round"
+                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round" VerticalAlignment="Center">
+                                <Path.Stroke>
+                                    <SolidColorBrush Color="#93A0BE" />
+                                </Path.Stroke>
+                            </Path>
+                            <ContentPresenter Margin="12,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="bg" Storyboard.TargetProperty="Background.Color"
+                                                        To="#161E33" Duration="{StaticResource FastFade}" />
+                                        <ColorAnimation Storyboard.TargetName="ic" Storyboard.TargetProperty="Stroke.Color"
+                                                        To="#EDF1FA" Duration="{StaticResource FastFade}" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="bg" Storyboard.TargetProperty="Background.Color"
+                                                        To="{StaticResource TransparentColor}" Duration="{StaticResource FastFade}" />
+                                        <ColorAnimation Storyboard.TargetName="ic" Storyboard.TargetProperty="Stroke.Color"
+                                                        To="#93A0BE" Duration="{StaticResource FastFade}" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+                        </Trigger>
+
+                        <Trigger Property="IsChecked" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="bg" Storyboard.TargetProperty="Background.Color"
+                                                        To="{StaticResource AccentSoftColor}" Duration="{StaticResource MedFade}" />
+                                        <ColorAnimation Storyboard.TargetName="ic" Storyboard.TargetProperty="Stroke.Color"
+                                                        To="{StaticResource AccentColor}" Duration="{StaticResource MedFade}" />
+                                        <DoubleAnimation Storyboard.TargetName="rail" Storyboard.TargetProperty="Opacity"
+                                                         To="1" Duration="{StaticResource FastFade}" />
+                                        <DoubleAnimation Storyboard.TargetName="rail"
+                                                         Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                         To="1" Duration="{StaticResource MedFade}">
+                                            <DoubleAnimation.EasingFunction>
+                                                <BackEase EasingMode="EaseOut" Amplitude="0.6" />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="bg" Storyboard.TargetProperty="Background.Color"
+                                                        To="{StaticResource TransparentColor}" Duration="{StaticResource FastFade}" />
+                                        <ColorAnimation Storyboard.TargetName="ic" Storyboard.TargetProperty="Stroke.Color"
+                                                        To="#93A0BE" Duration="{StaticResource FastFade}" />
+                                        <DoubleAnimation Storyboard.TargetName="rail" Storyboard.TargetProperty="Opacity"
+                                                         To="0" Duration="{StaticResource FastFade}" />
+                                        <DoubleAnimation Storyboard.TargetName="rail"
+                                                         Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                         To="0.2" Duration="{StaticResource FastFade}" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                            <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================ Device row ============================ -->
+    <Style x:Key="DeviceRow" TargetType="Button">
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Margin" Value="0,0,0,8" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="bg" CornerRadius="12" Padding="12,11" BorderThickness="1">
+                        <Border.Background>
+                            <SolidColorBrush Color="{StaticResource SurfaceAltColor}" />
+                        </Border.Background>
+                        <Border.BorderBrush>
+                            <SolidColorBrush Color="{StaticResource BorderColor}" />
+                        </Border.BorderBrush>
+                        <ContentPresenter />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="bg" Storyboard.TargetProperty="Background.Color"
+                                                        To="{StaticResource SurfaceHighColor}" Duration="{StaticResource FastFade}" />
+                                        <ColorAnimation Storyboard.TargetName="bg" Storyboard.TargetProperty="BorderBrush.Color"
+                                                        To="{StaticResource BorderSoftColor}" Duration="{StaticResource FastFade}" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="bg" Storyboard.TargetProperty="Background.Color"
+                                                        To="{StaticResource SurfaceAltColor}" Duration="{StaticResource FastFade}" />
+                                        <ColorAnimation Storyboard.TargetName="bg" Storyboard.TargetProperty="BorderBrush.Color"
+                                                        To="{StaticResource BorderColor}" Duration="{StaticResource FastFade}" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================ App mixer row ============================ -->
+    <Style x:Key="AppRow" TargetType="Border">
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Padding" Value="8,0" />
+        <Setter Property="Margin" Value="-8,0" />
+        <Setter Property="Background">
+            <Setter.Value>
+                <SolidColorBrush Color="{StaticResource TransparentColor}" />
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Trigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetProperty="Background.Color"
+                                            To="{StaticResource SurfaceAltColor}" Duration="{StaticResource FastFade}" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetProperty="Background.Color"
+                                            To="{StaticResource TransparentColor}" Duration="{StaticResource FastFade}" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.ExitActions>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ============================ App volume slider (horizontal) ============================ -->
+    <Style x:Key="AppSlider" TargetType="Slider">
+        <Setter Property="Minimum" Value="0" />
+        <Setter Property="Maximum" Value="1" />
+        <Setter Property="Height" Value="18" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="IsMoveToPointEnabled" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Slider">
+                    <Grid Height="18" Background="Transparent">
+                        <Border Height="4" CornerRadius="2" Background="{StaticResource InsetBrush}"
+                                BorderBrush="#20242D" BorderThickness="1" VerticalAlignment="Center" />
+                        <Track x:Name="PART_Track">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Focusable="False" IsTabStop="False" Command="Slider.DecreaseLarge">
+                                    <RepeatButton.Template>
+                                        <ControlTemplate TargetType="RepeatButton">
+                                            <Border Height="4" CornerRadius="2" Background="{StaticResource AccentFillBrush}"
+                                                    VerticalAlignment="Center" />
+                                        </ControlTemplate>
+                                    </RepeatButton.Template>
+                                </RepeatButton>
+                            </Track.DecreaseRepeatButton>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Focusable="False" IsTabStop="False" Command="Slider.IncreaseLarge">
+                                    <RepeatButton.Template>
+                                        <ControlTemplate TargetType="RepeatButton"><Border Background="Transparent" /></ControlTemplate>
+                                    </RepeatButton.Template>
+                                </RepeatButton>
+                            </Track.IncreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb>
+                                    <Thumb.Template>
+                                        <ControlTemplate TargetType="Thumb">
+                                            <Grid Width="14" Height="18" Background="Transparent">
+                                                <Ellipse Width="13" Height="13" Fill="#F4F6FA" />
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Thumb.Template>
+                                </Thumb>
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================ Ghost icon button ============================ -->
+    <Style x:Key="GhostIconButton" TargetType="Button">
+        <Setter Property="Foreground" Value="{StaticResource TextTertiaryBrush}" />
+        <Setter Property="Width" Value="28" />
+        <Setter Property="Height" Value="26" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="bg" CornerRadius="7" Background="Transparent">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bg" Property="Background" Value="{StaticResource SurfaceAltBrush}" />
+                            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

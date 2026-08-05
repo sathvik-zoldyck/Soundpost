@@ -28,7 +28,9 @@ public sealed class SegmentMeter : FrameworkElement
 
     public bool Horizontal { get => (bool)GetValue(HorizontalProperty); set => SetValue(HorizontalProperty, value); }
 
-    private static readonly Brush Off = Freeze(0x17, 0x1b, 0x22);
+    // Unlit segments sit in the indigo family so they read as dark LEDs in a recessed trough;
+    // a neutral grey here goes muddy against the blue surfaces.
+    private static readonly Brush Off = Freeze(0x0d, 0x13, 0x24);
     private static readonly Brush Low = Freeze(0x37, 0xe0, 0xa0);
     private static readonly Brush Mid = Freeze(0xff, 0xc2, 0x4b);
     private static readonly Brush Hot = Freeze(0xff, 0x54, 0x68);
