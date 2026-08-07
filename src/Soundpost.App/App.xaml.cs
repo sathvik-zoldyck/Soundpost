@@ -1,3 +1,4 @@
+using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -5,9 +6,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using H.NotifyIcon;
+using Soundpost.App.State;
 using Soundpost.App.ViewModels;
 using Soundpost.App.Windows;
 using Soundpost.Core.Audio;
+using Soundpost.Core.Storage;
 
 namespace Soundpost.App;
 
@@ -36,6 +39,9 @@ public partial class App : Application
     private TaskbarIcon? _tray;
     private DateTime _panelHiddenAt;
 
+    private IConfigStore<AppState>? _stateStore;
+    private AppState _state = new();
+
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
@@ -63,7 +69,19 @@ public partial class App : Application
         _mainViewModel = new MainViewModel(
             _deviceService, _sessionService, switcher, _meterService, _masterVolumeService);
 
+        // Restore what the console remembered from last run: which section, and where it sat.
+        string stateDir = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Soundpost");
+        _stateStore = new AtomicJsonStore<AppState>(Path.Combine(stateDir, "state.json"));
+        _state = _stateStore.Load();
+
+        if (Enum.TryParse(_state.LastSection, out Section section))
+        {
+            _mainViewModel.ActiveSection = section;
+        }
+
         _window = new MainWindow { DataContext = _mainViewModel };
+        RestoreWindowPlacement(_window);
         _window.CloseToTrayRequested += (_, _) => HideConsole();
         _window.StateChanged += (_, _) =>
         {
@@ -246,6 +264,10 @@ public partial class App : Application
 
     private void HideConsole()
     {
+        // Checkpoint here as well as on exit: hiding to the tray is a natural save point, and it
+        // means a later crash or force-kill still restores the last placement and section.
+        CaptureState();
+
         _window?.Hide();
         if (_mainViewModel is not null)
         {
@@ -271,6 +293,76 @@ public partial class App : Application
         thread.Start();
     }
 
+    private void RestoreWindowPlacement(Window window)
+    {
+        if (_state.WindowWidth >= window.MinWidth && _state.WindowHeight >= window.MinHeight)
+        {
+            window.Width = _state.WindowWidth;
+            window.Height = _state.WindowHeight;
+        }
+
+        // Only honour a saved position that still lands on a connected monitor — otherwise a window
+        // last closed on an unplugged display would open off in the void. Fall back to centring.
+        if (!double.IsNaN(_state.WindowLeft) && !double.IsNaN(_state.WindowTop) &&
+            IsOnScreen(_state.WindowLeft, _state.WindowTop, window.Width, window.Height))
+        {
+            window.WindowStartupLocation = WindowStartupLocation.Manual;
+            window.Left = _state.WindowLeft;
+            window.Top = _state.WindowTop;
+        }
+
+        if (_state.WindowMaximized)
+        {
+            window.WindowState = WindowState.Maximized;
+        }
+    }
+
+    private static bool IsOnScreen(double left, double top, double width, double height)
+    {
+        var desktop = new Rect(
+            SystemParameters.VirtualScreenLeft, SystemParameters.VirtualScreenTop,
+            SystemParameters.VirtualScreenWidth, SystemParameters.VirtualScreenHeight);
+        var window = new Rect(left, top, width, height);
+        window.Intersect(desktop);
+
+        // Require a graspable slice of the window (roughly the title bar) to remain visible.
+        return window.Width >= 120 && window.Height >= 40;
+    }
+
+    private void CaptureState()
+    {
+        if (_window is null || _stateStore is null || _mainViewModel is null)
+        {
+            return;
+        }
+
+        // When maximised or minimised, RestoreBounds holds the "normal" rect we actually want to
+        // remember, not the maximised screen bounds.
+        Rect bounds = _window.WindowState == WindowState.Normal
+            ? new Rect(_window.Left, _window.Top, _window.Width, _window.Height)
+            : _window.RestoreBounds;
+
+        if (!bounds.IsEmpty && bounds.Width > 0 && bounds.Height > 0)
+        {
+            _state.WindowLeft = bounds.Left;
+            _state.WindowTop = bounds.Top;
+            _state.WindowWidth = bounds.Width;
+            _state.WindowHeight = bounds.Height;
+        }
+
+        _state.WindowMaximized = _window.WindowState == WindowState.Maximized;
+        _state.LastSection = _mainViewModel.ActiveSection.ToString();
+
+        try
+        {
+            _stateStore.Save(_state);
+        }
+        catch
+        {
+            // Saving state must never take the app down on exit.
+        }
+    }
+
     private static void OnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
         MessageBox.Show(e.Exception.ToString(), "Soundpost — unexpected error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -279,6 +371,7 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        CaptureState();
         _tray?.Dispose();
         _mainViewModel?.Dispose();
         _masterVolumeService?.Dispose();

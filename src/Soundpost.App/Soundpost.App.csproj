@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Soundpost.Core.Audio\Soundpost.Core.Audio.csproj" />
+    <ProjectReference Include="..\Soundpost.Core.Storage\Soundpost.Core.Storage.csproj" />
   </ItemGroup>
 
 </Project>

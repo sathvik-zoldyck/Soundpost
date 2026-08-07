@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <RootNamespace>Soundpost.Core.Storage</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!-- No package references: System.Text.Json ships in the framework. This project is the
+       persistence backbone — atomic writes, backups and schema migration for everything the
+       app needs to remember across restarts. -->
+
+</Project>
