@@ -19,9 +19,9 @@ Local-first. No account. No telemetry.
 
 <br/>
 
-<img src="assets/media/dashboard.png" alt="Soundpost dashboard — master volume dial, playback device switcher, per-app mixer, output meters" width="860" />
+<img src="assets/media/visualizer.gif" alt="Soundpost's visualizer — the Ribbon style reacting live to audio at 60fps" width="860" />
 
-<sub>⭐ **Star it** to follow along — Soundpost is being built in the open, in public.</sub>
+<sub><em>"Sound, seen."</em> — the visualizer reacting to whatever's playing, live at 60fps. &nbsp;·&nbsp; ⭐ **Star it** to follow along — Soundpost is built in the open.</sub>
 
 </div>
 
@@ -38,9 +38,9 @@ react — without hunting through menus. Local-first, and yours.
 
 <div align="center">
 
-<img src="assets/media/visualizer.png" alt="Visualizer — the Ribbon style reacting to live audio at 60fps" width="860" />
+<img src="assets/media/dashboard.png" alt="Soundpost dashboard — master volume dial, playback device switcher, per-app mixer, output meters" width="860" />
 
-<sub><strong>Visualizer</strong> — whatever's playing, drawn live at 60fps. Switchable styles, palettes, and real knobs.</sub>
+<sub><strong>The console</strong> — every device and every app making sound, on one screen. Click a device to make it default; drag any app to set its level.</sub>
 
 <br/><br/>
 
