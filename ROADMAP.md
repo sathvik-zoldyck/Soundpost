@@ -26,8 +26,8 @@ The backbone. Everything else sits on top of this working flawlessly.
 | 🔜 | **Automation v1** — one trigger done impeccably: device connect/disconnect → apply a scene |
 | 🔜 | **Plain-language diagnostics** — "this app is routed to an unplugged device," with one-click fixes |
 | 🔜 | **Self-heal reconcile** — re-apply your intent after a Windows update shuffles things |
-| 🔜 | **Tray icon** + minimize-to-tray + single instance |
-| 🔜 | **Quick Panel** — a compact tray flyout for the moves you make mid-meeting, without opening the console ([plan](#quick-panel)) |
+| ✅ | **Tray icon** + minimize-to-tray + single instance |
+| ✅ | **Quick Panel** — a compact tray flyout for the moves you make mid-meeting, without opening the console ([plan](#quick-panel)) |
 | 🧭 | Global hotkeys + quick-switch overlay |
 
 ## v1 — power without clutter
