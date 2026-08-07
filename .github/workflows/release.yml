@@ -1,0 +1,44 @@
+name: Release
+
+# Cutting a release is a single action: push a version tag and this builds the one-file,
+# self-contained Soundpost.exe and attaches it to a DRAFT release for you to review and publish.
+#
+#   git tag v0.1.0
+#   git push origin v0.1.0
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write # needed to create the release
+
+jobs:
+  release:
+    name: Build & draft release (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Publish self-contained single file
+        run: dotnet publish src/Soundpost.App/Soundpost.App.csproj -p:PublishProfile=win-x64
+
+      - name: Stage artifact
+        shell: pwsh
+        run: |
+          $publish = "src/Soundpost.App/bin/Release/net9.0-windows/win-x64/publish/Soundpost.exe"
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Copy-Item $publish "dist/Soundpost-${{ github.ref_name }}-win-x64.exe"
+
+      - name: Draft GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          draft: true # you review and publish it by hand
+          generate_release_notes: true
+          name: Soundpost ${{ github.ref_name }}
