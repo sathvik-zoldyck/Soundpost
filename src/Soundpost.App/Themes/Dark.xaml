@@ -527,6 +527,36 @@
         </Setter>
     </Style>
 
+    <!-- ============================ Compact icon mute toggle ============================ -->
+    <!-- A square speaker button that flips to a muted glyph. Used where a full "Mute/Muted"
+         pill is too wide — the Quick Panel's app rows. -->
+    <Style x:Key="IconMuteToggle" TargetType="ToggleButton">
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Width" Value="30" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border x:Name="bg" CornerRadius="8" Background="Transparent">
+                        <Path x:Name="ic" Data="{StaticResource IconSpeakerWave}" Width="17" Height="17" Stretch="Uniform"
+                              Stroke="{StaticResource TextSecondaryBrush}" StrokeThickness="1.6" StrokeLineJoin="Round"
+                              StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                              HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bg" Property="Background" Value="{StaticResource SurfaceHighBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="ic" Property="Data" Value="{StaticResource IconSpeakerMute}" />
+                            <Setter TargetName="ic" Property="Stroke" Value="#FF5468" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- ============================ Ghost icon button ============================ -->
     <Style x:Key="GhostIconButton" TargetType="Button">
         <Setter Property="Foreground" Value="{StaticResource TextTertiaryBrush}" />

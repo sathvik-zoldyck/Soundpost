@@ -27,6 +27,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     public ObservableCollection<SessionViewModel> Sessions { get; } = new();
 
+    /// <summary>True when no app is producing sound — drives the Quick Panel's empty state.</summary>
+    public bool HasNoSessions => Sessions.Count == 0;
+
     [ObservableProperty]
     private string _defaultDeviceName = "—";
 
@@ -60,6 +63,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _master = master;
 
         _devices.DevicesChanged += OnDevicesChanged;
+        Sessions.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasNoSessions));
 
         _sessionTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1500) };
         _sessionTimer.Tick += (_, _) =>
@@ -230,13 +234,21 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
+    /// <summary>
+    /// False while nothing on screen shows a meter — the console is hidden to the tray and only the
+    /// Quick Panel (which has no meters) is up. Lets the meter poll pause without stopping the
+    /// slower session poll that keeps the panel's app list fresh.
+    /// </summary>
+    public bool MetersVisible { get; set; } = true;
+
     private void TickMeters()
     {
         // Peak polling crosses into Core Audio COM on the UI thread ~22x a second: it opens the
         // default endpoint and walks its session list every tick. That is fine behind a static
         // dashboard, but on the Visualizer it competes with a 60fps render loop for the same
-        // thread and drags the frame rate down. Nothing on that screen shows a meter, so skip it.
-        if (ActiveSection == Section.Visualizer)
+        // thread and drags the frame rate down. Nothing on that screen — or the Quick Panel —
+        // shows a meter, so skip it there.
+        if (!MetersVisible || ActiveSection == Section.Visualizer)
         {
             return;
         }

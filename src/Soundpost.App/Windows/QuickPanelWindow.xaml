@@ -1,0 +1,185 @@
+<Window x:Class="Soundpost.App.Windows.QuickPanelWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="clr-namespace:Soundpost.App.Controls"
+        Title="Soundpost" Width="372" SizeToContent="Height"
+        WindowStyle="None" ResizeMode="NoResize" ShowInTaskbar="False"
+        AllowsTransparency="True" Background="Transparent" Topmost="True"
+        FontFamily="{StaticResource BodyFont}" UseLayoutRounding="True" TextOptions.TextFormattingMode="Ideal"
+        Deactivated="OnDeactivated">
+    <Window.Resources>
+        <Style x:Key="PanelDeviceGlyph" TargetType="Path">
+            <Setter Property="Width" Value="17" />
+            <Setter Property="Height" Value="17" />
+            <Setter Property="Stretch" Value="Uniform" />
+            <Setter Property="StrokeThickness" Value="1.5" />
+            <Setter Property="StrokeLineJoin" Value="Round" />
+            <Setter Property="StrokeStartLineCap" Value="Round" />
+            <Setter Property="StrokeEndLineCap" Value="Round" />
+            <Setter Property="Stroke" Value="{StaticResource TextSecondaryBrush}" />
+            <Setter Property="Data" Value="{StaticResource IconGeneric}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IconKind}" Value="Headphones">
+                    <Setter Property="Data" Value="{StaticResource IconHeadphones}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IconKind}" Value="Speakers">
+                    <Setter Property="Data" Value="{StaticResource IconSpeakers}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IconKind}" Value="Monitor">
+                    <Setter Property="Data" Value="{StaticResource IconMonitor}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsDefault}" Value="True">
+                    <Setter Property="Stroke" Value="{StaticResource AccentBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <!-- Margin leaves room for the drop shadow to fall outside the card. -->
+    <Border x:Name="Root" Margin="14" CornerRadius="16" Background="{StaticResource RaisedBrush}"
+            BorderBrush="{StaticResource BevelBorderBrush}" BorderThickness="1"
+            RenderTransformOrigin="0.5,1">
+        <Border.RenderTransform>
+            <TranslateTransform x:Name="RootShift" />
+        </Border.RenderTransform>
+        <Border.Effect>
+            <DropShadowEffect Color="#04060C" BlurRadius="28" ShadowDepth="8" Direction="270" Opacity="0.85" />
+        </Border.Effect>
+
+        <StackPanel Margin="16,15,16,15">
+
+            <!-- header -->
+            <Grid Margin="0,0,0,14">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image Source="/Assets/logo-mark.png" Width="20" Height="20" VerticalAlignment="Center"
+                           RenderOptions.BitmapScalingMode="HighQuality" />
+                    <TextBlock Margin="9,0,0,0" VerticalAlignment="Center" FontFamily="{StaticResource LabelFont}"
+                               FontSize="12.5" FontWeight="SemiBold">
+                        <Run Text="SOUND" Foreground="{StaticResource TextPrimaryBrush}" /><Run Text="POST" Foreground="{StaticResource AccentBrush}" />
+                    </TextBlock>
+                </StackPanel>
+                <Button HorizontalAlignment="Right" Style="{StaticResource GhostIconButton}" Click="OnOpenConsole"
+                        ToolTip="Open the full console" FontFamily="Segoe MDL2 Assets" FontSize="12" Content="&#xE740;" />
+            </Grid>
+
+            <!-- master volume -->
+            <Border CornerRadius="12" Background="{StaticResource InsetBrush}" BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1" Padding="13,11">
+                <StackPanel>
+                    <Grid Margin="0,0,0,9">
+                        <TextBlock Text="MASTER" Style="{StaticResource SectionLabel}" FontSize="10" VerticalAlignment="Center" />
+                        <TextBlock HorizontalAlignment="Right" Style="{StaticResource Mono}" FontSize="11"
+                                   Foreground="{StaticResource TextPrimaryBrush}">
+                            <Run Text="{Binding MasterVolumePercent, Mode=OneWay}" /><Run Text="%" Foreground="{StaticResource TextSecondaryBrush}" />
+                        </TextBlock>
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Slider Grid.Column="0" Style="{StaticResource AppSlider}" VerticalAlignment="Center"
+                                Value="{Binding MasterVolume, Mode=TwoWay}" />
+                        <ToggleButton Grid.Column="1" Style="{StaticResource IconMuteToggle}" Margin="8,0,0,0"
+                                      IsChecked="{Binding IsMasterMuted, Mode=TwoWay}" ToolTip="Mute output" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- output devices -->
+            <TextBlock Text="OUTPUT" Style="{StaticResource SectionLabel}" FontSize="10" Margin="2,15,0,8" />
+            <ItemsControl ItemsSource="{Binding PlaybackDevices}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Style="{StaticResource DeviceRow}" Padding="10,8" Margin="0,0,0,6"
+                                Command="{Binding DataContext.SetDefaultCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding}" ToolTip="{Binding Name}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Path Grid.Column="0" Style="{StaticResource PanelDeviceGlyph}" VerticalAlignment="Center" />
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="11,0,8,0">
+                                    <TextBlock Text="{Binding Title}" Foreground="{StaticResource TextPrimaryBrush}"
+                                               FontSize="12.5" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Text="{Binding Subtitle}" Style="{StaticResource Caption}" FontSize="10"
+                                               Margin="0,1,0,0" TextTrimming="CharacterEllipsis" />
+                                </StackPanel>
+                                <Grid Grid.Column="2" Width="18" Height="18" VerticalAlignment="Center"
+                                      Visibility="{Binding IsDefault, Converter={StaticResource BoolToVis}}">
+                                    <Ellipse Fill="{StaticResource VioletBrush}" />
+                                    <Path Data="M6,12.4 L9.4,15.8 L16,8.6" Stretch="Uniform" Width="9" Height="9"
+                                          Stroke="#12121A" StrokeThickness="2.4" StrokeLineJoin="Round"
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                                </Grid>
+                            </Grid>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- active apps -->
+            <Grid Margin="2,9,0,8">
+                <TextBlock Text="APPS" Style="{StaticResource SectionLabel}" FontSize="10" VerticalAlignment="Center" />
+                <TextBlock HorizontalAlignment="Right" Style="{StaticResource Caption}" FontSize="10"
+                           Text="{Binding Sessions.Count, StringFormat='{}{0} playing'}" />
+            </Grid>
+
+            <ItemsControl ItemsSource="{Binding Sessions}">
+                <ItemsControl.Template>
+                    <ControlTemplate TargetType="ItemsControl">
+                        <ScrollViewer MaxHeight="188" VerticalScrollBarVisibility="Auto">
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </ControlTemplate>
+                </ItemsControl.Template>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Height="42">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Width="26" Height="26" VerticalAlignment="Center">
+                                <Image Source="{Binding Icon}" Width="26" Height="26"
+                                       RenderOptions.BitmapScalingMode="HighQuality" />
+                                <Border CornerRadius="8" Background="{StaticResource SurfaceAltBrush}"
+                                        BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                                        Visibility="{Binding HasNoIcon, Converter={StaticResource BoolToVis}}">
+                                    <TextBlock Text="{Binding DisplayName, Converter={StaticResource FirstLetter}}"
+                                               FontFamily="{StaticResource LabelFont}" FontSize="12" FontWeight="SemiBold"
+                                               Foreground="{StaticResource AccentBrush}"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                            </Grid>
+
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="11,0,10,0">
+                                <TextBlock Text="{Binding DisplayName}" Foreground="{StaticResource TextPrimaryBrush}"
+                                           FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                                           Margin="0,0,0,4" ToolTip="{Binding DisplayName}" />
+                                <Slider Style="{StaticResource AppSlider}" Value="{Binding Volume, Mode=TwoWay}" />
+                            </StackPanel>
+
+                            <ToggleButton Grid.Column="2" Style="{StaticResource IconMuteToggle}" VerticalAlignment="Center"
+                                          IsChecked="{Binding IsMuted, Mode=TwoWay}" ToolTip="Mute this app" />
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- empty state -->
+            <TextBlock Text="Nothing is playing right now." Style="{StaticResource Caption}"
+                       HorizontalAlignment="Center" Margin="0,8,0,4"
+                       Visibility="{Binding HasNoSessions, Converter={StaticResource BoolToVis}}" />
+
+            <!-- footer -->
+            <Border Height="1" Background="{StaticResource BorderBrush}" Margin="0,13,0,12" />
+            <Button Content="Open Soundpost" Click="OnOpenConsole" Style="{StaticResource PillButton}"
+                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+        </StackPanel>
+    </Border>
+</Window>
