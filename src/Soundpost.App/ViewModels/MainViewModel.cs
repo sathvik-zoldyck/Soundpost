@@ -22,6 +22,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private readonly IMasterVolumeService _master;
     private readonly DispatcherTimer _sessionTimer;
     private readonly DispatcherTimer _meterTimer;
+    private readonly DispatcherTimer _deviceDebounce;
 
     public ObservableCollection<DeviceViewModel> PlaybackDevices { get; } = new();
 
@@ -76,6 +77,15 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _meterTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(45) };
         _meterTimer.Tick += (_, _) => TickMeters();
         _meterTimer.Start();
+
+        // Switching a default device makes Windows fire several notifications in a burst (one per
+        // role). This collapses the burst into a single refresh once it settles.
+        _deviceDebounce = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(150) };
+        _deviceDebounce.Tick += (_, _) =>
+        {
+            _deviceDebounce.Stop();
+            RefreshDevices();
+        };
 
         RefreshDevices();
         RefreshSessions();
@@ -177,10 +187,46 @@ public partial class MainViewModel : ObservableObject, IDisposable
         RefreshDevices();
     }
 
-    private void OnDevicesChanged(object? sender, AudioDeviceChange e) =>
-        Application.Current?.Dispatcher.Invoke(RefreshDevices);
+    private void OnDevicesChanged(object? sender, AudioDeviceChange e)
+    {
+        // These arrive on Core Audio's own RPC threads. Marshal to the UI thread WITHOUT blocking:
+        // a blocking Invoke here would re-enter the device enumerator from inside its notification
+        // callback, which deadlocks or crashes under rapid switching. Post the work and let the
+        // debounce coalesce the burst.
+        Application.Current?.Dispatcher.BeginInvoke(() =>
+        {
+            _deviceDebounce.Stop();
+            _deviceDebounce.Start();
+        });
+    }
+
+    private bool _refreshingDevices;
 
     private void RefreshDevices()
+    {
+        // Guard against re-entry, and swallow the transient COM failures that happen while an
+        // endpoint is mid-transition — the next notification refreshes to the settled state.
+        if (_refreshingDevices)
+        {
+            return;
+        }
+
+        _refreshingDevices = true;
+        try
+        {
+            RefreshDevicesCore();
+        }
+        catch
+        {
+            // Device was enumerated mid-switch; ignore and let the debounced retry settle it.
+        }
+        finally
+        {
+            _refreshingDevices = false;
+        }
+    }
+
+    private void RefreshDevicesCore()
     {
         IReadOnlyList<AudioDevice> current = _devices.GetDevices(AudioDeviceKind.Playback);
 
@@ -269,6 +315,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     public void Dispose()
     {
+        _deviceDebounce.Stop();
         _meterTimer.Stop();
         _sessionTimer.Stop();
         _devices.DevicesChanged -= OnDevicesChanged;
