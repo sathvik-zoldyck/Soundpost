@@ -1,10 +1,12 @@
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using Soundpost.App.Controls;
+using Soundpost.App.Controls.Visualizers;
 
 namespace Soundpost.App.Views;
 
@@ -28,54 +30,45 @@ public partial class VisualizerView : UserControl
         KnobPalette.ValueChanged += (_, _) => ApplyPalette();
 
         Viz.FpsUpdated += (_, _) => UpdateStyleTag();
-        SetActive(VizStyle.Ribbon);
-    }
-
-    private VizStyle _style = VizStyle.Ribbon;
-
-    private void UpdateStyleTag() =>
-        StyleTag.Text = $"{Display(_style).ToUpperInvariant()} · {Viz.Fps} FPS";
-
-    private void OnStyle(object sender, RoutedEventArgs e)
-    {
-        if (sender is Button button && Enum.TryParse((string)button.Tag, out VizStyle style))
-        {
-            SetActive(style);
-        }
-    }
-
-    private void OnToggleMore(object sender, RoutedEventArgs e) => MorePopup.IsOpen = !MorePopup.IsOpen;
-
-    private void OnChooseImage(object sender, RoutedEventArgs e) => ChooseImage();
-
-    private void SetActive(VizStyle style)
-    {
-        Viz.VisualStyle = style;
-        _style = style;
         UpdateStyleTag();
-
-        StyleRibbon.Style = Pill(style == VizStyle.Ribbon);
-        StyleSpectrum.Style = Pill(style == VizStyle.Spectrum);
-        StyleRadial.Style = Pill(style == VizStyle.Radial);
-        StyleScope.Style = Pill(style == VizStyle.Oscilloscope);
-
-        bool isMore = style is VizStyle.Cymatics or VizStyle.CustomImage;
-        MoreButton.Style = Pill(isMore);
-        MoreButton.Content = isMore ? Display(style) + "  ▾" : "More  ▾";
-
-        MorePopup.IsOpen = false;
         UpdateImageOverlay();
     }
 
-    // Keeps the Custom Image chrome in sync: drop-zone when empty, "Change image…" pill once loaded.
+    private void UpdateStyleTag() =>
+        StyleTag.Text = $"{Viz.SelectedRenderer.Name.ToUpperInvariant()} · {Viz.Fps} FPS";
+
+    private void OnChooseImage(object sender, RoutedEventArgs e) => ChooseImage();
+
+    // The style list is bound to the renderer registry; changing the selection is all it takes.
+    private void OnStyleChanged(object sender, SelectionChangedEventArgs e)
+    {
+        UpdateStyleTag();
+        UpdateImageOverlay();
+    }
+
+    // Keeps the Custom Image chrome in sync: drop-zone when the active style wants an image and none
+    // is loaded, "Change image…" once one is. Any renderer implementing IRequiresImage gets this.
     private void UpdateImageOverlay()
     {
-        bool custom = Viz.VisualStyle == VizStyle.CustomImage;
+        bool wantsImage = Viz.SelectedRenderer is IRequiresImage;
         bool hasImage = Viz.CustomImage is not null;
 
-        ImageEmptyState.Visibility = custom && !hasImage ? Visibility.Visible : Visibility.Collapsed;
-        ImageButton.Visibility = custom && hasImage ? Visibility.Visible : Visibility.Collapsed;
+        ImageEmptyState.Visibility = wantsImage && !hasImage ? Visibility.Visible : Visibility.Collapsed;
+        ImageButton.Visibility = wantsImage && hasImage ? Visibility.Visible : Visibility.Collapsed;
         ImageButton.Content = "Change image…";
+    }
+
+    private void SelectImageRenderer()
+    {
+        // Jump to the first image-consuming style (Custom Image) — used when an image is dropped.
+        for (int i = 0; i < Viz.Renderers.Count; i++)
+        {
+            if (Viz.Renderers[i] is IRequiresImage)
+            {
+                Viz.SelectedIndex = i;
+                return;
+            }
+        }
     }
 
     private void ChooseImage()
@@ -155,7 +148,7 @@ public partial class VisualizerView : UserControl
         string? path = ImagePathFrom(e);
         if (path is not null && LoadImage(path))
         {
-            SetActive(VizStyle.CustomImage); // drop from any style jumps straight into Custom Image
+            SelectImageRenderer(); // drop from any style jumps straight into Custom Image
         }
     }
 
@@ -173,14 +166,6 @@ public partial class VisualizerView : UserControl
 
         return null;
     }
-
-    private Style Pill(bool active) => (Style)FindResource(active ? "PillButtonActive" : "PillButton");
-
-    private static string Display(VizStyle style) => style switch
-    {
-        VizStyle.CustomImage => "Custom Image",
-        _ => style.ToString(),
-    };
 
     private void ApplySensitivity()
     {

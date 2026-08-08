@@ -16,6 +16,38 @@
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="Margin" Value="0,2,0,0" />
         </Style>
+
+        <!-- One style pill, generated per registered renderer; the selected one lights up. -->
+        <Style x:Key="StyleChip" TargetType="ListBoxItem">
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+            <Setter Property="FontFamily" Value="{StaticResource LabelFont}" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="0,0,3,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="bg" CornerRadius="10" Padding="14,8" Background="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bg" Property="Background" Value="{StaticResource SurfaceHighBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="bg" Property="Background" Value="{StaticResource AccentFillBrush}" />
+                                <Setter Property="Foreground" Value="{StaticResource OnAccentBrush}" />
+                                <Setter TargetName="bg" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect Color="#FF8A3D" BlurRadius="16" ShadowDepth="0" Opacity="0.45" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
     <Grid Margin="4,0,20,18">
@@ -34,35 +66,28 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!-- Segmented group: one recessed housing rather than five floating pills -->
+            <!-- Recessed housing holding one pill per registered renderer. The list is bound to the
+                 control's registry, so a new IVisualizerRenderer appears here with no view changes. -->
             <Border Grid.Column="0" CornerRadius="13" Padding="4" Background="{StaticResource InsetBrush}"
                     BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
-                <StackPanel Orientation="Horizontal">
-                    <Button x:Name="StyleRibbon" Content="Ribbon" Tag="Ribbon" Click="OnStyle" Style="{StaticResource PillButton}" Margin="0,0,3,0" />
-                    <Button x:Name="StyleSpectrum" Content="Spectrum" Tag="Spectrum" Click="OnStyle" Style="{StaticResource PillButton}" Margin="0,0,3,0" />
-                    <Button x:Name="StyleRadial" Content="Radial" Tag="Radial" Click="OnStyle" Style="{StaticResource PillButton}" Margin="0,0,3,0" />
-                    <Button x:Name="StyleScope" Content="Oscilloscope" Tag="Oscilloscope" Click="OnStyle" Style="{StaticResource PillButton}" Margin="0,0,3,0" />
-                    <Button x:Name="MoreButton" Content="More  ▾" Click="OnToggleMore" Style="{StaticResource PillButton}" />
-                    <Popup x:Name="MorePopup" PlacementTarget="{Binding ElementName=MoreButton}" Placement="Bottom"
-                           StaysOpen="False" AllowsTransparency="True" HorizontalOffset="-70" VerticalOffset="10">
-                        <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderSoftBrush}"
-                                BorderThickness="1" CornerRadius="13" Padding="8">
-                            <Border.Effect>
-                                <DropShadowEffect Color="#04060C" BlurRadius="26" ShadowDepth="6" Direction="270" Opacity="0.8" />
-                            </Border.Effect>
-                            <StackPanel Width="206">
-                                <TextBlock Text="MORE VISUALIZERS" Style="{StaticResource SectionLabel}" Margin="6,2,6,8" />
-                                <Button Content="Cymatics" Tag="Cymatics" Click="OnStyle" Style="{StaticResource PillButton}"
-                                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Margin="0,0,0,5" />
-                                <Button Content="Custom Image" Tag="CustomImage" Click="OnStyle" Style="{StaticResource PillButton}"
-                                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" />
-                                <Border Height="1" Background="{StaticResource BorderBrush}" Margin="4,11,4,8" />
-                                <TextBlock Text="Community styles land here — see visualizers/" Style="{StaticResource Caption}"
-                                           TextWrapping="Wrap" Margin="6,0,6,2" />
-                            </StackPanel>
-                        </Border>
-                    </Popup>
-                </StackPanel>
+                <ListBox x:Name="StyleList" Background="Transparent" BorderThickness="0" Padding="0"
+                         ItemsSource="{Binding Renderers, ElementName=Viz}"
+                         SelectedIndex="{Binding SelectedIndex, ElementName=Viz, Mode=TwoWay}"
+                         SelectionChanged="OnStyleChanged"
+                         ItemContainerStyle="{StaticResource StyleChip}"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </Border>
 
             <Button x:Name="ImageButton" Grid.Column="2" Content="Change image…" Click="OnChooseImage"

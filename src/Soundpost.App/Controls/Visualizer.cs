@@ -1,40 +1,49 @@
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Soundpost.App.Controls.Visualizers;
 using Soundpost.Core.Audio;
 
 namespace Soundpost.App.Controls;
 
-public enum VizStyle
-{
-    Ribbon,
-    Spectrum,
-    Oscilloscope,
-    Radial,
-    Cymatics,
-    CustomImage,
-}
-
 /// <summary>
-/// The live visualizer. Owns a <see cref="LoopbackAnalyzer"/> (starts capture only while visible),
-/// smooths the FFT into bands each frame, and draws the selected <see cref="VisualStyle"/> using the
-/// current <see cref="Palette"/>. Renderers are intentionally small and self-contained so new styles
-/// (including community ones) are easy to add.
+/// The live visualizer host. Owns a <see cref="LoopbackAnalyzer"/> (captures only while visible),
+/// smooths the FFT into bands each frame, and hands the frame to the selected
+/// <see cref="IVisualizerRenderer"/>. Styles are a registry, not a switch — adding one is writing a
+/// class and appending it to <see cref="_renderers"/>, which is exactly what a community style does.
 /// </summary>
 public sealed class Visualizer : FrameworkElement
 {
-    public static readonly DependencyProperty VisualStyleProperty = DependencyProperty.Register(
-        nameof(VisualStyle), typeof(VizStyle), typeof(Visualizer),
-        new FrameworkPropertyMetadata(VizStyle.Ribbon, FrameworkPropertyMetadataOptions.AffectsRender));
+    // The built-in styles, in the order they appear in the style bar. Community renderers append here.
+    private readonly IVisualizerRenderer[] _renderers =
+    {
+        new RibbonRenderer(),
+        new SpectrumRenderer(),
+        new RadialRenderer(),
+        new OscilloscopeRenderer(),
+        new CymaticsRenderer(),
+        new CustomImageRenderer(),
+    };
 
-    public VizStyle VisualStyle { get => (VizStyle)GetValue(VisualStyleProperty); set => SetValue(VisualStyleProperty, value); }
+    /// <summary>The available styles, in display order.</summary>
+    public IReadOnlyList<IVisualizerRenderer> Renderers => _renderers;
+
+    public static readonly DependencyProperty SelectedIndexProperty = DependencyProperty.Register(
+        nameof(SelectedIndex), typeof(int), typeof(Visualizer),
+        new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.AffectsRender));
+
+    /// <summary>Index into <see cref="Renderers"/> of the style currently drawing.</summary>
+    public int SelectedIndex { get => (int)GetValue(SelectedIndexProperty); set => SetValue(SelectedIndexProperty, value); }
+
+    /// <summary>The style currently drawing.</summary>
+    public IVisualizerRenderer SelectedRenderer => _renderers[Math.Clamp(SelectedIndex, 0, _renderers.Length - 1)];
 
     public double Sensitivity { get; set; } = 0.68;
     public double Smoothing { get; set; } = 0.55;
     public double GlowAmount { get; set; } = 0.72;
     public double Speed { get; set; } = 0.4;
 
-    /// <summary>Image drawn by the Custom Image style; reacts to the audio (pulse + color wash).</summary>
+    /// <summary>Image drawn by an <see cref="IRequiresImage"/> style; reacts to the audio.</summary>
     public ImageSource? CustomImage { get; set; }
 
     public static readonly string[] PaletteNames = { "Sunset", "Aqua", "Neon", "Ember" };
@@ -55,38 +64,8 @@ public sealed class Visualizer : FrameworkElement
     private bool _running;
 
     private int _palette;
-    private Pen _mainPen = null!;
-    private Pen _glowPen = null!;
-    private Pen _strandPen = null!;
-    private Pen[] _ribbonPens = null!;
-    private LinearGradientBrush _barBrush = null!;
-
-    // Reused across strands so a 60fps redraw doesn't allocate a list per curve.
-    private readonly List<Point> _strandBuffer = new(192);
-
-    // Hoisted out of the render loop; one geometry per opacity tier, rebuilt each frame.
-    private readonly StreamGeometry[] _ribbonGeometry = new StreamGeometry[3];
-    private readonly StreamGeometryContext[] _ribbonContext = new StreamGeometryContext[3];
-
-    private const int RibbonStrands = 9;
-    private const int RibbonSteps = 96;
-    private double[]? _ribbonEnvelope;                                  // shape only — built once
-    private readonly double[] _ribbonX = new double[RibbonSteps];       // rebuilt per frame
-    private readonly double[] _ribbonLevel = new double[RibbonSteps];
-    private readonly double[] _ribbonSinA = new double[RibbonSteps];
-    private readonly double[] _ribbonCosA = new double[RibbonSteps];
-
-    /// <summary>The lens taper: zero at both edges, widest in the middle. Never changes.</summary>
-    private static double[] BuildEnvelope()
-    {
-        var envelope = new double[RibbonSteps];
-        for (int i = 0; i < RibbonSteps; i++)
-        {
-            envelope[i] = Math.Pow(Math.Sin(i / (double)(RibbonSteps - 1) * Math.PI), 0.7);
-        }
-
-        return envelope;
-    }
+    private int _paletteVersion;
+    private VizPalette _vizPalette = null!;
 
     private int _frameParity;
 
@@ -99,17 +78,6 @@ public sealed class Visualizer : FrameworkElement
     /// <summary>Raised about once a second when <see cref="Fps"/> changes.</summary>
     public event EventHandler? FpsUpdated;
 
-    // Cymatics state (allocated lazily).
-    private const int CymSize = 200;
-    private WriteableBitmap? _cymBmp;
-    private byte[]? _cymPixels;
-    private double[]? _grain;
-    private double[]? _cosNx, _cosMx, _cosMy, _cosNy;
-    private double _cymN = 3, _cymM = 2;
-
-    // Custom Image vignette (built once).
-    private Brush? _vignette;
-
     public int PaletteCount => Palettes.Length;
 
     public int Palette
@@ -118,14 +86,14 @@ public sealed class Visualizer : FrameworkElement
         set
         {
             _palette = Math.Clamp(value, 0, Palettes.Length - 1);
-            BuildPalette();
+            _vizPalette = new VizPalette(++_paletteVersion, Palettes[_palette]);
             InvalidateVisual();
         }
     }
 
     public Visualizer()
     {
-        BuildPalette();
+        _vizPalette = new VizPalette(++_paletteVersion, Palettes[_palette]);
         IsVisibleChanged += (_, _) =>
         {
             if (IsVisible)
@@ -138,36 +106,6 @@ public sealed class Visualizer : FrameworkElement
             }
         };
         Unloaded += (_, _) => Stop();
-    }
-
-    private void BuildPalette()
-    {
-        Color[] p = Palettes[_palette];
-        var grad = new LinearGradientBrush { StartPoint = new Point(0, 0.5), EndPoint = new Point(1, 0.5) };
-        grad.GradientStops.Add(new GradientStop(p[0], 0));
-        grad.GradientStops.Add(new GradientStop(p[1], 0.45));
-        grad.GradientStops.Add(new GradientStop(p[2], 1));
-        grad.Freeze();
-
-        _mainPen = FreezePen(grad, 2.0);
-        _glowPen = FreezePen(Fade(grad, 0.35), 6.0);
-        _strandPen = FreezePen(grad, 1.2);
-
-        // Ribbon strands are grouped into a few opacity tiers, each with its own pre-faded frozen
-        // pen. Baking the alpha into the pen means the render loop never calls PushOpacity, which
-        // would otherwise force a separate composition layer per strand, every frame.
-        _ribbonPens = new[]
-        {
-            FreezePen(Fade(grad, 0.30), 1.1),
-            FreezePen(Fade(grad, 0.55), 1.2),
-            FreezePen(Fade(grad, 0.90), 1.3),
-        };
-
-        _barBrush = new LinearGradientBrush { StartPoint = new Point(0.5, 1), EndPoint = new Point(0.5, 0) };
-        _barBrush.GradientStops.Add(new GradientStop(p[0], 0));
-        _barBrush.GradientStops.Add(new GradientStop(p[1], 0.6));
-        _barBrush.GradientStops.Add(new GradientStop(p[2], 1));
-        _barBrush.Freeze();
     }
 
     private void Start()
@@ -255,365 +193,24 @@ public sealed class Visualizer : FrameworkElement
             return;
         }
 
-        switch (VisualStyle)
+        var frame = new VizFrame
         {
-            case VizStyle.Spectrum: DrawSpectrum(dc, w, h); break;
-            case VizStyle.Oscilloscope: DrawScope(dc, w, h); break;
-            case VizStyle.Radial: DrawRadial(dc, w, h); break;
-            case VizStyle.Cymatics: DrawCymatics(dc, w, h); break;
-            case VizStyle.CustomImage: DrawCustomImage(dc, w, h); break;
-            default: DrawRibbon(dc, w, h); break;
-        }
-    }
+            Dc = dc,
+            Width = w,
+            Height = h,
+            Bands = _bands,
+            Waveform = _wave,
+            Time = _time,
+            Sensitivity = Sensitivity,
+            Smoothing = Smoothing,
+            Glow = GlowAmount,
+            Speed = Speed,
+            Palette = _vizPalette,
+            Image = CustomImage,
+        };
 
-    // A lens of nested strands: amplitude is shaped by an envelope that falls to zero at both
-    // edges, so the ribbon converges to a point left and right and swells in the middle. Strands
-    // are hairline strokes rather than thick glowing bands — that keeps the curves legible and
-    // keeps the rasterised area (the real cost of this style) small enough to hold 60fps.
-    private void DrawRibbon(DrawingContext dc, double w, double h)
-    {
-        const int strands = RibbonStrands;
-        const int steps = RibbonSteps;
-        double cy = h / 2;
-        double maxAmp = h * 0.44;
-        double reach = 0.5 + Sensitivity;
-
-        // Everything that depends only on the step (and not the strand) is computed once per
-        // frame rather than once per strand — otherwise the same Pow/Sin/band-average work is
-        // repeated for all nine strands, which is where the frame budget was going.
-        _ribbonEnvelope ??= BuildEnvelope();
-        for (int i = 0; i < steps; i++)
-        {
-            double t = i / (double)(steps - 1);
-            _ribbonX[i] = t * w;
-            _ribbonLevel[i] = BandAt(t);
-            double a = (t * 5.5) + (_time * 2.2);
-            _ribbonSinA[i] = Math.Sin(a);
-            _ribbonCosA[i] = Math.Cos(a);
-        }
-
-        int tiers = _ribbonPens.Length;
-        for (int i = 0; i < tiers; i++)
-        {
-            _ribbonGeometry[i] = new StreamGeometry();
-            _ribbonContext[i] = _ribbonGeometry[i].Open();
-        }
-
-        // Every strand goes into its tier's geometry, so the whole ribbon costs one stroked
-        // draw per tier instead of one per curve.
-        for (int s = 1; s <= strands; s++)
-        {
-            double scale = s / (double)strands;
-            int tier = Math.Min(tiers - 1, (int)(scale * tiers * 0.999));
-
-            // sin(A + B) expanded, so the per-strand phase costs two multiplies instead of a
-            // fresh Sin call at every point.
-            double phase = s * 0.55;
-            double sinB = Math.Sin(phase);
-            double cosB = Math.Cos(phase);
-
-            for (int side = 0; side < 2; side++)
-            {
-                double sign = side == 0 ? -1 : 1;
-                StreamGeometryContext ctx = _ribbonContext[tier];
-
-                for (int i = 0; i < steps; i++)
-                {
-                    double wobble = ((_ribbonSinA[i] * cosB) + (_ribbonCosA[i] * sinB)) * 0.05;
-                    double amp = maxAmp * scale * _ribbonEnvelope![i] * (0.14 + ((_ribbonLevel[i] + wobble) * reach));
-                    var p = new Point(_ribbonX[i], cy + (sign * amp));
-
-                    if (i == 0)
-                    {
-                        ctx.BeginFigure(p, false, false);
-                    }
-                    else
-                    {
-                        ctx.LineTo(p, true, false);
-                    }
-                }
-            }
-        }
-
-        for (int i = 0; i < tiers; i++)
-        {
-            _ribbonContext[i].Close();
-            _ribbonGeometry[i].Freeze();
-        }
-
-        // Bloom rides on the outer tier only — the inner strands stay crisp.
-        if (GlowAmount > 0.05)
-        {
-            dc.PushOpacity(GlowAmount * 0.45);
-            dc.DrawGeometry(null, _glowPen, _ribbonGeometry[tiers - 1]);
-            dc.Pop();
-        }
-
-        for (int i = 0; i < tiers; i++)
-        {
-            dc.DrawGeometry(null, _ribbonPens[i], _ribbonGeometry[i]);
-        }
-    }
-
-    /// <summary>
-    /// Band energy at normalised position <paramref name="t"/>, averaged over a small
-    /// neighbourhood so the ribbon draws as a smooth curve rather than a spiky one.
-    /// </summary>
-    private double BandAt(double t)
-    {
-        double pos = Math.Clamp(t, 0, 1) * (Bands - 1);
-        int centre = (int)pos;
-
-        double sum = 0;
-        int n = 0;
-        for (int k = centre - 3; k <= centre + 3; k++)
-        {
-            if (k >= 0 && k < Bands)
-            {
-                sum += _bands[k];
-                n++;
-            }
-        }
-
-        return n == 0 ? 0 : sum / n;
-    }
-
-    private void DrawSpectrum(DrawingContext dc, double w, double h)
-    {
-        int bars = 64;
-        double gap = 3;
-        double bw = (w - ((bars - 1) * gap)) / bars;
-        for (int i = 0; i < bars; i++)
-        {
-            int b = (int)((double)i / bars * Bands);
-            double bh = Math.Max(2, _bands[b] * h * 0.92);
-            double x = i * (bw + gap);
-            dc.DrawRoundedRectangle(_barBrush, null, new Rect(x, h - bh, bw, bh), 2, 2);
-        }
-    }
-
-    private void DrawScope(DrawingContext dc, double w, double h)
-    {
-        double cy = h / 2;
-        int n = _wave.Length;
-        var pts = new List<Point>(n);
-        double amp = h * 0.42 * (0.6 + Sensitivity);
-        for (int i = 0; i < n; i++)
-        {
-            double x = i / (double)(n - 1) * w;
-            pts.Add(new Point(x, cy - (_wave[i] * amp)));
-        }
-
-        DrawPolyline(dc, pts, 0.95);
-    }
-
-    private void DrawRadial(DrawingContext dc, double w, double h)
-    {
-        var c = new Point(w / 2, h / 2);
-        double r0 = Math.Min(w, h) * 0.16;
-        double rMax = Math.Min(w, h) * 0.34;
-        int n = 72;
-        for (int i = 0; i < n; i++)
-        {
-            int b = (int)((double)i / n * Bands);
-            double a = (i / (double)n * Math.PI * 2) + (_time * 0.4);
-            double len = r0 + (_bands[b] * rMax);
-            var p0 = new Point(c.X + (Math.Cos(a) * r0), c.Y + (Math.Sin(a) * r0));
-            var p1 = new Point(c.X + (Math.Cos(a) * len), c.Y + (Math.Sin(a) * len));
-            dc.DrawLine(_glowPen, p0, p1);
-            dc.DrawLine(_mainPen, p0, p1);
-        }
-    }
-
-    // Cymatic (Chladni) sand plate: nodal lines of a vibrating square plate. The mode numbers
-    // (n, m) are driven by where the music's energy sits; louder audio thickens the sand.
-    private void DrawCymatics(DrawingContext dc, double w, double h)
-    {
-        const int s = CymSize;
-        if (_cymBmp is null)
-        {
-            _cymBmp = new WriteableBitmap(s, s, 96, 96, PixelFormats.Bgra32, null);
-            _cymPixels = new byte[s * s * 4];
-            _cosNx = new double[s];
-            _cosMx = new double[s];
-            _cosMy = new double[s];
-            _cosNy = new double[s];
-            _grain = new double[s * s];
-            var rnd = new Random(1234);
-            for (int k = 0; k < _grain.Length; k++)
-            {
-                _grain[k] = 0.45 + (rnd.NextDouble() * 0.55);
-            }
-        }
-
-        int half = Bands / 2;
-        double nTarget = 2 + (ArgMax(0, half) / (double)Math.Max(1, half) * 5.0);
-        double mTarget = 2 + ((ArgMax(half, Bands) - half) / (double)Math.Max(1, Bands - half) * 5.0);
-        _cymN += (nTarget - _cymN) * 0.05;
-        _cymM += (mTarget - _cymM) * 0.05;
-
-        double energy = Energy();
-        double eps = 0.03 + (energy * 0.16 * (0.4 + Sensitivity));
-
-        for (int i = 0; i < s; i++)
-        {
-            double x = i / (double)(s - 1);
-            _cosNx![i] = Math.Cos(_cymN * Math.PI * x);
-            _cosMx![i] = Math.Cos(_cymM * Math.PI * x);
-        }
-
-        for (int j = 0; j < s; j++)
-        {
-            double y = j / (double)(s - 1);
-            _cosMy![j] = Math.Cos(_cymM * Math.PI * y);
-            _cosNy![j] = Math.Cos(_cymN * Math.PI * y);
-        }
-
-        byte[] px = _cymPixels!;
-        int stride = s * 4;
-        for (int j = 0; j < s; j++)
-        {
-            double cmy = _cosMy![j], cny = _cosNy![j];
-            int row = j * stride;
-            int grow = j * s;
-            for (int i = 0; i < s; i++)
-            {
-                double f = (_cosNx![i] * cmy) - (_cosMx![i] * cny);
-                double af = Math.Abs(f);
-                double a = af < eps ? 1 - (af / eps) : 0;
-                a *= _grain![grow + i];
-                int o = row + (i * 4);
-                px[o] = (byte)(214 * a);       // B
-                px[o + 1] = (byte)(238 * a);   // G
-                px[o + 2] = (byte)(255 * a);   // R
-                px[o + 3] = 255;               // A
-            }
-        }
-
-        _cymBmp.WritePixels(new Int32Rect(0, 0, s, s), px, stride, 0);
-        dc.DrawImage(_cymBmp, new Rect(0, 0, w, h));
-    }
-
-    private void DrawCustomImage(DrawingContext dc, double w, double h)
-    {
-        if (CustomImage is null)
-        {
-            return; // Empty state ("drop an image") is drawn by the view's overlay.
-        }
-
-        double iw = CustomImage.Width, ih = CustomImage.Height;
-        if (iw <= 0 || ih <= 0)
-        {
-            return;
-        }
-
-        // Cover-fit, then pulse the zoom with the bass so the picture breathes with the beat.
-        double bass = BandAvg(0, 12);
-        double energy = Energy();
-        double scale = 1 + (bass * 0.16 * (0.5 + Sensitivity));
-        double fit = Math.Max(w / iw, h / ih) * scale;
-        double dw = iw * fit, dh = ih * fit;
-        dc.DrawImage(CustomImage, new Rect((w - dw) / 2, (h - dh) / 2, dw, dh));
-
-        // Palette wash that swells with the overall energy.
-        Color c = Palettes[_palette][1];
-        byte alpha = (byte)Math.Clamp(energy * 110 * (0.35 + GlowAmount), 0, 135);
-        if (alpha > 0)
-        {
-            dc.DrawRectangle(new SolidColorBrush(Color.FromArgb(alpha, c.R, c.G, c.B)), null, new Rect(0, 0, w, h));
-        }
-
-        // Vignette so the picture settles inside the console frame.
-        dc.DrawRectangle(_vignette ??= BuildVignette(), null, new Rect(0, 0, w, h));
-    }
-
-    private void DrawPolyline(DrawingContext dc, List<Point> pts, double opacity)
-    {
-        var geo = new StreamGeometry();
-        using (StreamGeometryContext ctx = geo.Open())
-        {
-            ctx.BeginFigure(pts[0], false, false);
-            ctx.PolyLineTo(pts.GetRange(1, pts.Count - 1), true, true);
-        }
-
-        geo.Freeze();
-        dc.PushOpacity(opacity * (0.5 + (GlowAmount * 0.5)));
-        dc.DrawGeometry(null, _glowPen, geo);
-        dc.Pop();
-        dc.PushOpacity(opacity);
-        dc.DrawGeometry(null, _mainPen, geo);
-        dc.Pop();
-    }
-
-    private int ArgMax(int lo, int hi)
-    {
-        int index = lo;
-        float max = -1f;
-        for (int i = lo; i < hi && i < Bands; i++)
-        {
-            if (_bands[i] > max)
-            {
-                max = _bands[i];
-                index = i;
-            }
-        }
-
-        return index;
-    }
-
-    private double Energy()
-    {
-        double sum = 0;
-        for (int i = 0; i < Bands; i++)
-        {
-            sum += _bands[i];
-        }
-
-        return sum / Bands;
-    }
-
-    private double BandAvg(int lo, int hi)
-    {
-        double sum = 0;
-        int n = 0;
-        for (int i = lo; i < hi && i < Bands; i++)
-        {
-            sum += _bands[i];
-            n++;
-        }
-
-        return n == 0 ? 0 : sum / n;
+        _renderers[Math.Clamp(SelectedIndex, 0, _renderers.Length - 1)].Draw(frame);
     }
 
     private static Color Rgb(byte r, byte g, byte b) => Color.FromRgb(r, g, b);
-
-    private static Brush Fade(Brush source, double opacity)
-    {
-        Brush b = source.Clone();
-        b.Opacity = opacity;
-        b.Freeze();
-        return b;
-    }
-
-    private static Pen FreezePen(Brush brush, double thickness)
-    {
-        var pen = new Pen(brush, thickness) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round, LineJoin = PenLineJoin.Round };
-        pen.Freeze();
-        return pen;
-    }
-
-    private static Brush BuildVignette()
-    {
-        var brush = new RadialGradientBrush
-        {
-            GradientOrigin = new Point(0.5, 0.5),
-            Center = new Point(0.5, 0.5),
-            RadiusX = 0.78,
-            RadiusY = 0.78,
-        };
-        brush.GradientStops.Add(new GradientStop(Color.FromArgb(0, 5, 6, 9), 0.55));
-        brush.GradientStops.Add(new GradientStop(Color.FromArgb(160, 5, 6, 9), 1));
-        brush.Freeze();
-        return brush;
-    }
 }
