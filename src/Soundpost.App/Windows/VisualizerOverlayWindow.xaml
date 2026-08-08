@@ -1,0 +1,126 @@
+<Window x:Class="Soundpost.App.Windows.VisualizerOverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="clr-namespace:Soundpost.App.Controls"
+        Title="Soundpost Visualizer"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        Topmost="True" ResizeMode="NoResize" ShowInTaskbar="False"
+        WindowStartupLocation="Manual" UseLayoutRounding="True"
+        FontFamily="{StaticResource BodyFont}"
+        Loaded="OnLoaded" KeyDown="OnKeyDown" MouseMove="OnMouseMove">
+    <Window.Resources>
+        <!-- One style pill (shared shape with the docked view) -->
+        <Style x:Key="OverlayChip" TargetType="ListBoxItem">
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+            <Setter Property="FontFamily" Value="{StaticResource LabelFont}" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="0,0,3,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="bg" CornerRadius="9" Padding="12,7" Background="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bg" Property="Background" Value="{StaticResource SurfaceHighBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="bg" Property="Background" Value="{StaticResource AccentFillBrush}" />
+                                <Setter Property="Foreground" Value="{StaticResource OnAccentBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Backdrop-mode segmented button -->
+        <Style x:Key="ModeButton" TargetType="RadioButton">
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+            <Setter Property="FontFamily" Value="{StaticResource LabelFont}" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="0,0,3,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="bg" CornerRadius="9" Padding="12,7" Background="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bg" Property="Background" Value="{StaticResource SurfaceHighBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="bg" Property="Background" Value="{StaticResource AccentSoftBrush}" />
+                                <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <!-- Backdrop: the layer that goes solid / dimmed / clear. The window itself is transparent,
+             so "Clear" reveals whatever is behind (e.g. a music video). -->
+        <Border x:Name="Backdrop">
+            <Border.Background>
+                <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.8" RadiusY="1.0">
+                    <GradientStop Color="#101728" Offset="0" />
+                    <GradientStop Color="#090D18" Offset="0.7" />
+                    <GradientStop Color="#06090F" Offset="1" />
+                </RadialGradientBrush>
+            </Border.Background>
+        </Border>
+
+        <c:Visualizer x:Name="Viz" />
+
+        <!-- Custom Image empty-state hint (only shown for the image style, before one is chosen) -->
+        <TextBlock x:Name="ImageHint" Visibility="Collapsed"
+                   Text="Pick an image from the console, then reopen fullscreen"
+                   FontFamily="{StaticResource LabelFont}" FontSize="15" Foreground="{StaticResource TextSecondaryBrush}"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+        <!-- Floating control bar (auto-hides) -->
+        <Border x:Name="Bar" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,34"
+                CornerRadius="14" Padding="8,6" Background="#E60C111E"
+                BorderBrush="{StaticResource BorderSoftBrush}" BorderThickness="1">
+            <Border.Effect>
+                <DropShadowEffect Color="#04060C" BlurRadius="30" ShadowDepth="8" Direction="270" Opacity="0.7" />
+            </Border.Effect>
+            <StackPanel Orientation="Horizontal">
+                <ListBox x:Name="StyleList" Background="Transparent" BorderThickness="0" Padding="0"
+                         ItemsSource="{Binding Renderers, ElementName=Viz}"
+                         SelectedIndex="{Binding SelectedIndex, ElementName=Viz, Mode=TwoWay}"
+                         SelectionChanged="OnStyleChanged" ItemContainerStyle="{StaticResource OverlayChip}"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate><TextBlock Text="{Binding Name}" /></DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <Border Width="1" Background="{StaticResource BorderBrush}" Margin="8,4" />
+
+                <TextBlock Text="BACKDROP" Style="{StaticResource SectionLabel}" FontSize="9.5"
+                           VerticalAlignment="Center" Margin="4,0,8,0" />
+                <RadioButton x:Name="ModeSolid" GroupName="Mode" Content="Solid" Style="{StaticResource ModeButton}"
+                             IsChecked="True" Checked="OnModeChanged" />
+                <RadioButton x:Name="ModeDim" GroupName="Mode" Content="Dim" Style="{StaticResource ModeButton}"
+                             Checked="OnModeChanged" />
+                <RadioButton x:Name="ModeClear" GroupName="Mode" Content="Clear" Style="{StaticResource ModeButton}"
+                             Checked="OnModeChanged" />
+
+                <Border Width="1" Background="{StaticResource BorderBrush}" Margin="8,4" />
+
+                <Button Content="Exit  ⎋" Click="OnClose" Style="{StaticResource PillButton}" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

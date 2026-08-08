@@ -39,6 +39,23 @@ public partial class VisualizerView : UserControl
 
     private void OnChooseImage(object sender, RoutedEventArgs e) => ChooseImage();
 
+    private Windows.VisualizerOverlayWindow? _overlay;
+
+    private void OnFullscreen(object sender, RoutedEventArgs e)
+    {
+        // Reuse a single overlay; if it's already up, just bring it forward.
+        if (_overlay is { IsLoaded: true })
+        {
+            _overlay.Activate();
+            return;
+        }
+
+        _overlay = new Windows.VisualizerOverlayWindow { Owner = Window.GetWindow(this) };
+        _overlay.Closed += (_, _) => _overlay = null;
+        _overlay.ContinueFrom(Viz);
+        _overlay.Show();
+    }
+
     // The style list is bound to the renderer registry; changing the selection is all it takes.
     private void OnStyleChanged(object sender, SelectionChangedEventArgs e)
     {

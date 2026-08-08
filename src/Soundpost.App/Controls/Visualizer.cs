@@ -18,6 +18,7 @@ public sealed class Visualizer : FrameworkElement
     private readonly IVisualizerRenderer[] _renderers =
     {
         new RibbonRenderer(),
+        new AuroraRenderer(),
         new SpectrumRenderer(),
         new RadialRenderer(),
         new OscilloscopeRenderer(),

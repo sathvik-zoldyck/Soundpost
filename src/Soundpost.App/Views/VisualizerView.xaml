@@ -90,8 +90,12 @@
                 </ListBox>
             </Border>
 
-            <Button x:Name="ImageButton" Grid.Column="2" Content="Change image…" Click="OnChooseImage"
-                    Style="{StaticResource PillButton}" Visibility="Collapsed" VerticalAlignment="Center" />
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button x:Name="ImageButton" Content="Change image…" Click="OnChooseImage"
+                        Style="{StaticResource PillButton}" Visibility="Collapsed" Margin="0,0,8,0" />
+                <Button Content="⛶  Fullscreen" Click="OnFullscreen" Style="{StaticResource PillButton}"
+                        ToolTip="Pop out a fullscreen overlay you can lay over a music video" />
+            </StackPanel>
         </Grid>
 
         <!-- ======================= SCREEN ======================= -->
