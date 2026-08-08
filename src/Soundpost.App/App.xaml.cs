@@ -80,12 +80,23 @@ public partial class App : Application
             _mainViewModel.ActiveSection = section;
         }
 
+        ApplyThemeDictionary(_state.Theme); // set the palette before any window loads
+
+        CreateTrayIcon();
+        BuildConsoleWindows();
+        _window!.Show();
+    }
+
+    // Creates the console + quick panel and wires their events. Called at startup and again after a
+    // theme change, so the new windows resolve their brushes against the swapped palette.
+    private void BuildConsoleWindows()
+    {
         _window = new MainWindow { DataContext = _mainViewModel };
         RestoreWindowPlacement(_window);
         _window.CloseToTrayRequested += (_, _) => HideConsole();
         _window.StateChanged += (_, _) =>
         {
-            if (_window.WindowState == WindowState.Minimized)
+            if (_window!.WindowState == WindowState.Minimized)
             {
                 HideConsole();
             }
@@ -100,10 +111,62 @@ public partial class App : Application
                 _panelHiddenAt = DateTime.UtcNow;
             }
         };
+    }
 
-        CreateTrayIcon();
+    /// <summary>The active theme name, for the Settings view to mark the current one.</summary>
+    public string CurrentTheme => _state.Theme;
 
-        _window.Show();
+    // Theme name -> its palette dictionary. Add a row here and a swatch in SettingsView to ship one.
+    private static readonly Dictionary<string, string> ThemeSources = new()
+    {
+        ["Indigo"] = "Themes/ThemeIndigo.xaml",
+        ["BlackRed"] = "Themes/ThemeBlackRed.xaml",
+        ["RichGold"] = "Themes/ThemeRichGold.xaml",
+        ["PinkBlossom"] = "Themes/ThemePinkBlossom.xaml",
+    };
+
+    private static string NormalizeTheme(string? name) =>
+        name is not null && ThemeSources.ContainsKey(name) ? name : "Indigo";
+
+    /// <summary>Switch the colour theme and reskin the app. Called from Settings.</summary>
+    public void ApplyTheme(string name)
+    {
+        string normalized = NormalizeTheme(name);
+        if (_state.Theme == normalized)
+        {
+            return;
+        }
+
+        ApplyThemeDictionary(normalized);
+        CaptureState(); // persist the choice (and current placement)
+
+        // Rebuild the console so its styles re-resolve against the new palette. Land back on
+        // Settings so the change is visible immediately.
+        MainWindow? oldWindow = _window;
+        QuickPanelWindow? oldPanel = _panel;
+        BuildConsoleWindows();
+        _mainViewModel!.ActiveSection = Section.Settings;
+        _window!.Show();
+        oldPanel?.Close();
+        oldWindow?.Close();
+    }
+
+    // Rebuild the whole resource stack for the named palette. Both the theme dictionary AND the
+    // styles are recreated: a Style caches the brushes its StaticResource setters resolved to when it
+    // first loaded, so swapping only the palette would leave the styles pointing at the old colours.
+    // Reloading Dark.xaml fresh (after the new palette) makes its styles re-resolve to the new one.
+    private void ApplyThemeDictionary(string? name)
+    {
+        string normalized = NormalizeTheme(name);
+
+        var palette = new ResourceDictionary { Source = new Uri(ThemeSources[normalized], UriKind.Relative) };
+        var styles = new ResourceDictionary { Source = new Uri("Themes/Dark.xaml", UriKind.Relative) };
+
+        Resources.MergedDictionaries.Clear();
+        Resources.MergedDictionaries.Add(palette); // colours first, so the styles below resolve them
+        Resources.MergedDictionaries.Add(styles);
+
+        _state.Theme = normalized;
     }
 
     private void CreateTrayIcon()

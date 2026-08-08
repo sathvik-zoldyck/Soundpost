@@ -1,0 +1,72 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ============================ Black & Red ============================
+         Near-black surfaces (from #121216) climbing to a warm charcoal (#352E34), with a bold red
+         accent (#CA2422) in place of the orange. Same keys as ThemeIndigo, different values — the
+         styles don't change. -->
+
+    <Color x:Key="ChassisColor">#0C0C0F</Color>
+    <Color x:Key="SurfaceColor">#161418</Color>
+    <Color x:Key="SurfaceAltColor">#211E23</Color>
+    <Color x:Key="SurfaceHighColor">#302B31</Color>
+    <Color x:Key="AccentColor">#CA2422</Color>
+    <Color x:Key="AccentSoftColor">#33CA2422</Color>
+    <Color x:Key="TransparentColor">#00000000</Color>
+    <Color x:Key="BorderColor">#2A262D</Color>
+    <Color x:Key="BorderSoftColor">#3A353D</Color>
+
+    <SolidColorBrush x:Key="ChassisTopBrush" Color="#161318" />
+    <SolidColorBrush x:Key="BgBrush" Color="#0C0C0F" />
+    <SolidColorBrush x:Key="RailBrush" Color="#080809" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#161418" />
+    <SolidColorBrush x:Key="SurfaceAltBrush" Color="#211E23" />
+    <SolidColorBrush x:Key="SurfaceHighBrush" Color="#302B31" />
+    <SolidColorBrush x:Key="InsetBrush" Color="#060507" />
+    <SolidColorBrush x:Key="BorderBrush" Color="#2A262D" />
+    <SolidColorBrush x:Key="BorderSoftBrush" Color="#3A353D" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F1EEF0" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#9C949B" />
+    <SolidColorBrush x:Key="TextTertiaryBrush" Color="#6B646B" />
+    <SolidColorBrush x:Key="AccentBrush" Color="#CA2422" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="#E5433F" />
+    <SolidColorBrush x:Key="AccentSoftBrush" Color="#33CA2422" />
+    <SolidColorBrush x:Key="OnAccentBrush" Color="#FFF2F1" />
+    <SolidColorBrush x:Key="VioletBrush" Color="#E0555A" />
+
+    <LinearGradientBrush x:Key="ChassisBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#141216" Offset="0" />
+        <GradientStop Color="#0C0C0F" Offset="0.45" />
+        <GradientStop Color="#070708" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="RaisedBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#1B181D" Offset="0" />
+        <GradientStop Color="#141216" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="BevelBorderBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#443E46" Offset="0" />
+        <GradientStop Color="#2E2A31" Offset="0.35" />
+        <GradientStop Color="#201D22" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="StripBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#211E23" Offset="0" />
+        <GradientStop Color="#151317" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="AccentFillBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#E5433F" Offset="0" />
+        <GradientStop Color="#CA2422" Offset="1" />
+    </LinearGradientBrush>
+
+    <!-- Visualizer screen backdrop + grid (the visualiser's OWN colours are separate and unchanged). -->
+    <RadialGradientBrush x:Key="ScreenBrush" GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.75" RadiusY="0.9">
+        <GradientStop Color="#141015" Offset="0" />
+        <GradientStop Color="#0C0A0D" Offset="0.7" />
+        <GradientStop Color="#070607" Offset="1" />
+    </RadialGradientBrush>
+    <Color x:Key="GridColor">#241E23</Color>
+
+</ResourceDictionary>

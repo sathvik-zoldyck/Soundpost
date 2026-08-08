@@ -1,0 +1,72 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ============================ Pink — Cherry Blossom ============================
+         Soft and feminine: pale-pink surfaces, deep navy ink, a blush accent with thistle as the
+         secondary. Light-mode luminance (white cards over a blush bed). The visualiser screen stays
+         a dark plum so the neon still reads. -->
+
+    <Color x:Key="ChassisColor">#FBF2F4</Color>
+    <Color x:Key="SurfaceColor">#FFFFFF</Color>
+    <Color x:Key="SurfaceAltColor">#FCEFF2</Color>
+    <Color x:Key="SurfaceHighColor">#F7E1E7</Color>
+    <Color x:Key="AccentColor">#E75A84</Color>
+    <Color x:Key="AccentSoftColor">#33E75A84</Color>
+    <Color x:Key="TransparentColor">#00000000</Color>
+    <Color x:Key="BorderColor">#F0D9DF</Color>
+    <Color x:Key="BorderSoftColor">#E4C4CD</Color>
+
+    <SolidColorBrush x:Key="ChassisTopBrush" Color="#FDF6F8" />
+    <SolidColorBrush x:Key="BgBrush" Color="#FBF2F4" />
+    <SolidColorBrush x:Key="RailBrush" Color="#F7EAEE" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="SurfaceAltBrush" Color="#FCEFF2" />
+    <SolidColorBrush x:Key="SurfaceHighBrush" Color="#F7E1E7" />
+    <SolidColorBrush x:Key="InsetBrush" Color="#F3DFE5" />
+    <SolidColorBrush x:Key="BorderBrush" Color="#F0D9DF" />
+    <SolidColorBrush x:Key="BorderSoftBrush" Color="#E4C4CD" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#14112D" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#6E667F" />
+    <SolidColorBrush x:Key="TextTertiaryBrush" Color="#A99FB0" />
+    <SolidColorBrush x:Key="AccentBrush" Color="#E75A84" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="#F07A9C" />
+    <SolidColorBrush x:Key="AccentSoftBrush" Color="#33E75A84" />
+    <SolidColorBrush x:Key="OnAccentBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="VioletBrush" Color="#B49BCF" />
+
+    <LinearGradientBrush x:Key="ChassisBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#FDF6F8" Offset="0" />
+        <GradientStop Color="#FBF2F4" Offset="0.45" />
+        <GradientStop Color="#F6EAEE" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="RaisedBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#FFFFFF" Offset="0" />
+        <GradientStop Color="#FDF4F7" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="BevelBorderBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#FFFFFF" Offset="0" />
+        <GradientStop Color="#FBE8ED" Offset="0.35" />
+        <GradientStop Color="#F0D5DC" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="StripBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#FCEFF2" Offset="0" />
+        <GradientStop Color="#F6E1E8" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="AccentFillBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#F07A9C" Offset="0" />
+        <GradientStop Color="#E75A84" Offset="1" />
+    </LinearGradientBrush>
+
+    <!-- Visualizer screen stays a dark plum so the neon reads (viz colours come from the Palette knob). -->
+    <RadialGradientBrush x:Key="ScreenBrush" GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.75" RadiusY="0.9">
+        <GradientStop Color="#1A1424" Offset="0" />
+        <GradientStop Color="#100C18" Offset="0.7" />
+        <GradientStop Color="#080610" Offset="1" />
+    </RadialGradientBrush>
+    <Color x:Key="GridColor">#241C30</Color>
+
+</ResourceDictionary>

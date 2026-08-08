@@ -1,0 +1,72 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ============================ Rich — Gold & White ============================
+         A light, editorial scheme: warm off-white surfaces, near-black ink, a rich gold accent.
+         The luminance ladder inverts (white cards over an off-white bed, subtle darker borders).
+         The visualiser screen stays dark so the neon still reads. -->
+
+    <Color x:Key="ChassisColor">#EDEAE2</Color>
+    <Color x:Key="SurfaceColor">#FFFFFF</Color>
+    <Color x:Key="SurfaceAltColor">#F4F1E9</Color>
+    <Color x:Key="SurfaceHighColor">#E8E3D6</Color>
+    <Color x:Key="AccentColor">#B8912E</Color>
+    <Color x:Key="AccentSoftColor">#33C29A3B</Color>
+    <Color x:Key="TransparentColor">#00000000</Color>
+    <Color x:Key="BorderColor">#DCD5C6</Color>
+    <Color x:Key="BorderSoftColor">#C9C0AD</Color>
+
+    <SolidColorBrush x:Key="ChassisTopBrush" Color="#F3F0E8" />
+    <SolidColorBrush x:Key="BgBrush" Color="#EDEAE2" />
+    <SolidColorBrush x:Key="RailBrush" Color="#E7E3D8" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="SurfaceAltBrush" Color="#F4F1E9" />
+    <SolidColorBrush x:Key="SurfaceHighBrush" Color="#E8E3D6" />
+    <SolidColorBrush x:Key="InsetBrush" Color="#E1DCCE" />
+    <SolidColorBrush x:Key="BorderBrush" Color="#DCD5C6" />
+    <SolidColorBrush x:Key="BorderSoftBrush" Color="#C9C0AD" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#1C1810" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#6B6353" />
+    <SolidColorBrush x:Key="TextTertiaryBrush" Color="#9A927E" />
+    <SolidColorBrush x:Key="AccentBrush" Color="#B8912E" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="#CBA54A" />
+    <SolidColorBrush x:Key="AccentSoftBrush" Color="#33C29A3B" />
+    <SolidColorBrush x:Key="OnAccentBrush" Color="#221B08" />
+    <SolidColorBrush x:Key="VioletBrush" Color="#8A7A3D" />
+
+    <LinearGradientBrush x:Key="ChassisBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#F3F0E8" Offset="0" />
+        <GradientStop Color="#EDEAE2" Offset="0.45" />
+        <GradientStop Color="#E4E0D5" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="RaisedBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#FFFFFF" Offset="0" />
+        <GradientStop Color="#F8F5EE" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="BevelBorderBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#FFFFFF" Offset="0" />
+        <GradientStop Color="#ECE6D7" Offset="0.35" />
+        <GradientStop Color="#D8D0BE" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="StripBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#F4F1E9" Offset="0" />
+        <GradientStop Color="#EAE6DB" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="AccentFillBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#D4AE52" Offset="0" />
+        <GradientStop Color="#B8912E" Offset="1" />
+    </LinearGradientBrush>
+
+    <!-- Visualizer screen stays dark so the neon reads (its own colours are set by the Palette knob). -->
+    <RadialGradientBrush x:Key="ScreenBrush" GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.75" RadiusY="0.9">
+        <GradientStop Color="#16130B" Offset="0" />
+        <GradientStop Color="#0C0A06" Offset="0.7" />
+        <GradientStop Color="#070603" Offset="1" />
+    </RadialGradientBrush>
+    <Color x:Key="GridColor">#241F12</Color>
+
+</ResourceDictionary>

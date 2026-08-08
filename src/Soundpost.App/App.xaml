@@ -6,6 +6,9 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <!-- Index 0 is the active theme (colours); it's swapped at runtime from Settings.
+                     Dark.xaml (styles) references its keys, so it must come after. -->
+                <ResourceDictionary Source="Themes/ThemeIndigo.xaml" />
                 <ResourceDictionary Source="Themes/Dark.xaml" />
             </ResourceDictionary.MergedDictionaries>
 

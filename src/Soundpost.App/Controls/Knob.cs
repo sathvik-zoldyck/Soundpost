@@ -31,7 +31,7 @@ public sealed class Knob : FrameworkElement
     private double _dragStartY;
     private double _dragStartValue;
 
-    private static readonly Pen TrackPen = FreezePen(Color.FromRgb(0x26, 0x2c, 0x37), 5);
+    private static readonly Pen TrackPen = FreezePen(Color.FromRgb(0x2b, 0x2b, 0x30), 5);
 
     public Knob()
     {
@@ -81,14 +81,14 @@ public sealed class Knob : FrameworkElement
         dc.DrawGeometry(null, accentPen, Arc(center, r, StartDeg, SweepDeg * value));
 
         double fr = r - 6;
-        var face = new RadialGradientBrush(Color.FromRgb(0x34, 0x3b, 0x46), Color.FromRgb(0x14, 0x18, 0x1e))
+        var face = new RadialGradientBrush(Color.FromRgb(0x3a, 0x3a, 0x40), Color.FromRgb(0x16, 0x16, 0x1a))
         {
             GradientOrigin = new Point(0.4, 0.32),
             Center = new Point(0.5, 0.5),
             RadiusX = 0.6,
             RadiusY = 0.6,
         };
-        dc.DrawEllipse(face, FreezePen(Color.FromRgb(0x3b, 0x42, 0x4e), 1), center, fr, fr);
+        dc.DrawEllipse(face, FreezePen(Color.FromRgb(0x42, 0x42, 0x48), 1), center, fr, fr);
 
         double a = (StartDeg + (SweepDeg * value)) * Math.PI / 180;
         var outer = new Point(center.X + (Math.Cos(a) * (fr - 3)), center.Y + (Math.Sin(a) * (fr - 3)));

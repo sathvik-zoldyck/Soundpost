@@ -52,7 +52,7 @@ public sealed class ArcGauge : FrameworkElement
 
     private static Brush BuildWell()
     {
-        // Domed face lit from the upper left, like a machined knob cap.
+        // Neutral machined face — deliberately hue-free so it sits on any theme (no blue tint).
         var brush = new RadialGradientBrush
         {
             GradientOrigin = new Point(0.36, 0.26),
@@ -60,23 +60,24 @@ public sealed class ArcGauge : FrameworkElement
             RadiusX = 0.78,
             RadiusY = 0.78,
         };
-        brush.GradientStops.Add(new GradientStop(Color.FromRgb(0x18, 0x20, 0x3A), 0));
-        brush.GradientStops.Add(new GradientStop(Color.FromRgb(0x0C, 0x11, 0x20), 0.7));
-        brush.GradientStops.Add(new GradientStop(Color.FromRgb(0x06, 0x09, 0x11), 1));
+        brush.GradientStops.Add(new GradientStop(Color.FromRgb(0x22, 0x22, 0x26), 0));
+        brush.GradientStops.Add(new GradientStop(Color.FromRgb(0x11, 0x11, 0x13), 0.7));
+        brush.GradientStops.Add(new GradientStop(Color.FromRgb(0x08, 0x08, 0x09), 1));
         brush.Freeze();
         return brush;
     }
 
     private static Pen BuildWellRim()
     {
-        var pen = new Pen(Frozen(Color.FromRgb(0x1E, 0x27, 0x40)), 1);
+        var pen = new Pen(Frozen(Color.FromRgb(0x2C, 0x2C, 0x32)), 1);
         pen.Freeze();
         return pen;
     }
 
     private readonly Pen _trackPen;
-    private readonly Pen _fillPen;
-    private readonly Pen _glowPen;
+    private Pen? _fillPen;
+    private Pen? _glowPen;
+    private bool _accentBuilt;
 
     public ArcGauge()
     {
@@ -85,23 +86,45 @@ public sealed class ArcGauge : FrameworkElement
 
         _trackPen = new Pen(TrackBrush, Thickness) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
         _trackPen.Freeze();
+    }
 
-        // Same orange → pink → violet run as the Soundpost mark.
+    // Build the fill gradient from the active theme's accent (resolved once the dial is in the tree),
+    // so the dial is red on Black&Red, gold on Rich Gold, etc. — never a stray orange/violet.
+    private void EnsureAccentPens()
+    {
+        if (_accentBuilt)
+        {
+            return;
+        }
+
+        _accentBuilt = true;
+        Color accent = TryFindResource("AccentColor") is Color c ? c : Color.FromRgb(0xFF, 0x8A, 0x3D);
+
         var gradient = new LinearGradientBrush { StartPoint = new Point(0, 1), EndPoint = new Point(1, 0) };
-        gradient.GradientStops.Add(new GradientStop(Color.FromRgb(0xFF, 0x7A, 0x1A), 0));
-        gradient.GradientStops.Add(new GradientStop(Color.FromRgb(0xFF, 0x3D, 0x7F), 0.5));
-        gradient.GradientStops.Add(new GradientStop(0xA24BFFu.ToColor(), 1));
+        gradient.GradientStops.Add(new GradientStop(Lighten(accent, 0.45), 0));
+        gradient.GradientStops.Add(new GradientStop(accent, 0.5));
+        gradient.GradientStops.Add(new GradientStop(Darken(accent, 0.32), 1));
         gradient.Freeze();
 
         _fillPen = new Pen(gradient, Thickness) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
         _fillPen.Freeze();
 
-        var glow = gradient.Clone();
+        LinearGradientBrush glow = (LinearGradientBrush)gradient.Clone();
         glow.Opacity = 0.22;
         glow.Freeze();
         _glowPen = new Pen(glow, Thickness + 12) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
         _glowPen.Freeze();
     }
+
+    private static Color Lighten(Color c, double amt) => Color.FromRgb(
+        (byte)(c.R + ((255 - c.R) * amt)),
+        (byte)(c.G + ((255 - c.G) * amt)),
+        (byte)(c.B + ((255 - c.B) * amt)));
+
+    private static Color Darken(Color c, double amt) => Color.FromRgb(
+        (byte)(c.R * (1 - amt)),
+        (byte)(c.G * (1 - amt)),
+        (byte)(c.B * (1 - amt)));
 
     // A bare FrameworkElement has no natural size, so centred alignment would collapse it to zero.
     // Claim the largest square the parent offers, falling back to a sane default when unconstrained.
@@ -125,6 +148,7 @@ public sealed class ArcGauge : FrameworkElement
             return;
         }
 
+        EnsureAccentPens();
         var centre = new Point(w / 2, h / 2);
 
         // Hit surface — without a filled background the element ignores clicks on empty pixels.
@@ -144,8 +168,8 @@ public sealed class ArcGauge : FrameworkElement
             Geometry fill = Arc(centre, radius, StartAngle, end);
 
             dc.PushOpacity(IsMuted ? 0.35 : 1.0);
-            dc.DrawGeometry(null, _glowPen, fill);
-            dc.DrawGeometry(null, _fillPen, fill);
+            dc.DrawGeometry(null, _glowPen!, fill);
+            dc.DrawGeometry(null, _fillPen!, fill);
 
             Point thumb = PointOnArc(centre, radius, end);
             dc.DrawEllipse(ThumbBrush, null, thumb, Thickness / 2, Thickness / 2);

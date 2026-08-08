@@ -38,7 +38,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private double _masterLevel;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsDashboard), nameof(IsVisualizer), nameof(IsMixer), nameof(IsPlaceholder))]
+    [NotifyPropertyChangedFor(nameof(IsDashboard), nameof(IsVisualizer), nameof(IsMixer), nameof(IsSettings), nameof(IsPlaceholder))]
     private Section _activeSection = Section.Dashboard;
 
     public bool IsDashboard => ActiveSection == Section.Dashboard;
@@ -47,8 +47,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     public bool IsMixer => ActiveSection == Section.Mixer;
 
+    public bool IsSettings => ActiveSection == Section.Settings;
+
     /// <summary>True for the sections that are on the roadmap but not wired up yet.</summary>
-    public bool IsPlaceholder => !IsDashboard && !IsVisualizer && !IsMixer;
+    public bool IsPlaceholder => !IsDashboard && !IsVisualizer && !IsMixer && !IsSettings;
 
     public MainViewModel(
         IAudioDeviceService devices,

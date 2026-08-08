@@ -70,9 +70,10 @@
                         <c:ArcGauge Value="{Binding MasterVolume, Mode=TwoWay}" IsMuted="{Binding IsMasterMuted}"
                                     MaxWidth="212" MaxHeight="212" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False">
+                            <!-- Fixed light ink: this sits on the dial's dark well in every theme. -->
                             <TextBlock FontFamily="{StaticResource LabelFont}" FontSize="34" FontWeight="SemiBold"
-                                       Foreground="{StaticResource TextPrimaryBrush}" HorizontalAlignment="Center">
-                                <Run Text="{Binding MasterVolumePercent, Mode=OneWay}" /><Run Text="%" Foreground="{StaticResource TextSecondaryBrush}" FontSize="20" />
+                                       Foreground="#F2F2F6" HorizontalAlignment="Center">
+                                <Run Text="{Binding MasterVolumePercent, Mode=OneWay}" /><Run Text="%" Foreground="#9C9CA6" FontSize="20" />
                             </TextBlock>
                         </StackPanel>
                         <Button Command="{Binding ToggleMasterMuteCommand}" Style="{StaticResource GhostIconButton}"
@@ -81,9 +82,10 @@
                             <Path Width="19" Height="19" Stretch="Uniform" StrokeThickness="1.6"
                                   StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round">
                                 <Path.Style>
+                                    <!-- Fixed light stroke: the mute icon sits on the dial's dark well. -->
                                     <Style TargetType="Path">
                                         <Setter Property="Data" Value="{StaticResource IconSpeakerWave}" />
-                                        <Setter Property="Stroke" Value="{StaticResource TextSecondaryBrush}" />
+                                        <Setter Property="Stroke" Value="#9C9CA6" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding IsMasterMuted}" Value="True">
                                                 <Setter Property="Data" Value="{StaticResource IconSpeakerMute}" />
@@ -133,13 +135,13 @@
                                                 <Ellipse Stroke="{StaticResource BorderSoftBrush}" StrokeThickness="1.5"
                                                          Visibility="{Binding IsDefault, Converter={StaticResource BoolToVisInv}}" />
                                                 <Grid Visibility="{Binding IsDefault, Converter={StaticResource BoolToVis}}">
-                                                    <Ellipse Fill="{StaticResource VioletBrush}">
+                                                    <Ellipse Fill="{StaticResource AccentBrush}">
                                                         <Ellipse.Effect>
-                                                            <DropShadowEffect Color="#8B7BFF" BlurRadius="16" ShadowDepth="0" Opacity="0.75" />
+                                                            <DropShadowEffect Color="{StaticResource AccentColor}" BlurRadius="16" ShadowDepth="0" Opacity="0.75" />
                                                         </Ellipse.Effect>
                                                     </Ellipse>
                                                     <Path Data="M6,12.4 L9.4,15.8 L16,8.6" Stretch="Uniform" Width="12" Height="12"
-                                                          Stroke="#12121A" StrokeThickness="2.2"
+                                                          Stroke="{StaticResource OnAccentBrush}" StrokeThickness="2.2"
                                                           StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
                                                 </Grid>
                                             </Grid>

@@ -19,4 +19,7 @@ public sealed class AppState : ISchemaVersioned
 
     /// <summary>The section the console was showing, restored on next launch.</summary>
     public string LastSection { get; set; } = "Dashboard";
+
+    /// <summary>The active colour theme: "Indigo" (default) or "BlackRed".</summary>
+    public string Theme { get; set; } = "Indigo";
 }

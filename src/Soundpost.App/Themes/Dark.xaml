@@ -7,75 +7,10 @@
     <FontFamily x:Key="MonoFont">Cascadia Code, Consolas</FontFamily>
 
     <!-- ============================ Palette ============================
-         Depth on a dark UI comes from luminance, not shadow — a dark shadow on a dark
-         background is invisible. So surfaces climb a deliberate ladder, each step lighter
-         than the last, and every panel is lit from the top:
-
-           chassis  #0B0F1C   window bed, the darkest thing on screen
-           rail     #0A0E1B   sidebar, sits *below* the content plane
-           surface  #151B2E   cards            (elevation 1)
-           alt      #1C2439   rows inside cards (elevation 2)
-           high     #242E48   hover / pressed   (elevation 3)
-           inset    #070A12   wells cut into a card: meters, icon tiles
-
-         The whole ramp is indigo rather than neutral grey, which is what lets the warm
-         accent read as a light source instead of just another flat colour.
-    -->
-    <Color x:Key="ChassisColor">#0B0F1C</Color>
-    <Color x:Key="SurfaceColor">#151B2E</Color>
-    <Color x:Key="SurfaceAltColor">#1C2439</Color>
-    <Color x:Key="SurfaceHighColor">#242E48</Color>
-    <Color x:Key="AccentColor">#FF8A3D</Color>
-    <Color x:Key="AccentSoftColor">#33FF7A1A</Color>
-    <Color x:Key="TransparentColor">#00000000</Color>
-    <Color x:Key="BorderColor">#242E48</Color>
-    <Color x:Key="BorderSoftColor">#33405F</Color>
-
-    <SolidColorBrush x:Key="ChassisTopBrush" Color="#141B30" />
-    <SolidColorBrush x:Key="BgBrush" Color="#0B0F1C" />
-    <SolidColorBrush x:Key="RailBrush" Color="#0A0E1B" />
-    <SolidColorBrush x:Key="SurfaceBrush" Color="#151B2E" />
-    <SolidColorBrush x:Key="SurfaceAltBrush" Color="#1C2439" />
-    <SolidColorBrush x:Key="SurfaceHighBrush" Color="#242E48" />
-    <SolidColorBrush x:Key="InsetBrush" Color="#070A12" />
-    <SolidColorBrush x:Key="BorderBrush" Color="#242E48" />
-    <SolidColorBrush x:Key="BorderSoftBrush" Color="#33405F" />
-    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#EDF1FA" />
-    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#93A0BE" />
-    <SolidColorBrush x:Key="TextTertiaryBrush" Color="#626F91" />
-    <SolidColorBrush x:Key="AccentBrush" Color="#FF8A3D" />
-    <SolidColorBrush x:Key="AccentHoverBrush" Color="#FFB072" />
-    <SolidColorBrush x:Key="AccentSoftBrush" Color="#33FF7A1A" />
-    <SolidColorBrush x:Key="OnAccentBrush" Color="#1A1206" />
-    <SolidColorBrush x:Key="VioletBrush" Color="#8B7BFF" />
-
-    <LinearGradientBrush x:Key="ChassisBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#111830" Offset="0" />
-        <GradientStop Color="#0B0F1C" Offset="0.45" />
-        <GradientStop Color="#080B15" Offset="1" />
-    </LinearGradientBrush>
-
-    <!-- Card fill: lit from the top so panels read as physical, not painted. -->
-    <LinearGradientBrush x:Key="RaisedBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#1A2236" Offset="0" />
-        <GradientStop Color="#141A2C" Offset="1" />
-    </LinearGradientBrush>
-
-    <!-- The bevel: brightest along the top edge, falling off down the sides. -->
-    <LinearGradientBrush x:Key="BevelBorderBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#3D4C74" Offset="0" />
-        <GradientStop Color="#2A3550" Offset="0.35" />
-        <GradientStop Color="#1E2740" Offset="1" />
-    </LinearGradientBrush>
-
-    <LinearGradientBrush x:Key="StripBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#1C2439" Offset="0" />
-        <GradientStop Color="#131928" Offset="1" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="AccentFillBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#FFBE86" Offset="0" />
-        <GradientStop Color="#FF8A3D" Offset="1" />
-    </LinearGradientBrush>
+         All theme-varying colour (surfaces, accent, text, gradients, the visualiser screen backdrop)
+         lives in the theme dictionaries — Themes/ThemeIndigo.xaml and Themes/ThemeBlackRed.xaml —
+         which are merged ahead of this one and swapped at runtime from Settings. The styles below
+         reference those keys, so a theme swap reskins the whole app without touching them. -->
 
     <!-- Shared motion timings — quick enough to feel responsive, slow enough to read. -->
     <Duration x:Key="FastFade">0:0:0.13</Duration>
@@ -190,7 +125,7 @@
                 <ControlTemplate TargetType="Button">
                     <Border CornerRadius="10" Padding="14,8" Background="{StaticResource AccentFillBrush}">
                         <Border.Effect>
-                            <DropShadowEffect Color="#FF8A3D" BlurRadius="18" ShadowDepth="0" Opacity="0.55" />
+                            <DropShadowEffect Color="{StaticResource AccentColor}" BlurRadius="18" ShadowDepth="0" Opacity="0.55" />
                         </Border.Effect>
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
@@ -603,7 +538,7 @@
                                             <Border Width="6" CornerRadius="3" Background="{StaticResource AccentFillBrush}"
                                                     HorizontalAlignment="Center" Margin="0,8">
                                                 <Border.Effect>
-                                                    <DropShadowEffect Color="#FF8A3D" BlurRadius="10" ShadowDepth="0" Opacity="0.5" />
+                                                    <DropShadowEffect Color="{StaticResource AccentColor}" BlurRadius="10" ShadowDepth="0" Opacity="0.5" />
                                                 </Border.Effect>
                                             </Border>
                                         </ControlTemplate>

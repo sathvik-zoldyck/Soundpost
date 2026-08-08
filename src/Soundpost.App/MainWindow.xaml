@@ -167,6 +167,10 @@
                                   Visibility="{Binding IsVisualizer, Converter={StaticResource BoolToVis}}">
                 <views:VisualizerView.RenderTransform><TranslateTransform /></views:VisualizerView.RenderTransform>
             </views:VisualizerView>
+            <views:SettingsView Style="{StaticResource ViewHost}"
+                                Visibility="{Binding IsSettings, Converter={StaticResource BoolToVis}}">
+                <views:SettingsView.RenderTransform><TranslateTransform /></views:SettingsView.RenderTransform>
+            </views:SettingsView>
             <views:PlaceholderView Style="{StaticResource ViewHost}"
                                    Visibility="{Binding IsPlaceholder, Converter={StaticResource BoolToVis}}">
                 <views:PlaceholderView.RenderTransform><TranslateTransform /></views:PlaceholderView.RenderTransform>

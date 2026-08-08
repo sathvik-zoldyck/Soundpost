@@ -67,15 +67,7 @@
     <Grid>
         <!-- Backdrop: the layer that goes solid / dimmed / clear. The window itself is transparent,
              so "Clear" reveals whatever is behind (e.g. a music video). -->
-        <Border x:Name="Backdrop">
-            <Border.Background>
-                <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.8" RadiusY="1.0">
-                    <GradientStop Color="#101728" Offset="0" />
-                    <GradientStop Color="#090D18" Offset="0.7" />
-                    <GradientStop Color="#06090F" Offset="1" />
-                </RadialGradientBrush>
-            </Border.Background>
-        </Border>
+        <Border x:Name="Backdrop" Background="{StaticResource ScreenBrush}" />
 
         <c:Visualizer x:Name="Viz" />
 
