@@ -162,6 +162,18 @@ public static class VizAudio
         return n == 0 ? 0 : sum / n;
     }
 
+    /// <summary>
+    /// Band energy for a mirrored layout: t runs 0..1 across the width, bass sits in the centre and
+    /// the range fans out symmetrically to both edges — so a frequency-driven shape reads as a
+    /// centred mountain instead of piling up on one side. Starts just above 0 Hz so the dead DC bin
+    /// doesn't notch the centre.
+    /// </summary>
+    public static double MirroredBandAt(float[] bands, double t)
+    {
+        double p = Math.Abs(t - 0.5) * 2.0; // 0 at centre, 1 at the edges
+        return BandAt(bands, 0.05 + (p * 0.9));
+    }
+
     /// <summary>Band energy at normalised position t, averaged over a small neighbourhood (smooth).</summary>
     public static double BandAt(float[] bands, double t)
     {

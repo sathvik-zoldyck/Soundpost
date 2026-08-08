@@ -45,7 +45,7 @@ public sealed class RibbonRenderer : IVisualizerRenderer
         {
             double t = i / (double)(Steps - 1);
             _x[i] = t * w;
-            _level[i] = VizAudio.BandAt(frame.Bands, t);
+            _level[i] = VizAudio.MirroredBandAt(frame.Bands, t); // bass in the centre, symmetric
             double a = (t * 5.5) + (frame.Time * 2.2);
             _sinA[i] = Math.Sin(a);
             _cosA[i] = Math.Cos(a);

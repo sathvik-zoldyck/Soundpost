@@ -18,8 +18,9 @@ public sealed class SpectrumRenderer : IVisualizerRenderer
 
         for (int i = 0; i < bars; i++)
         {
-            int b = (int)((double)i / bars * bands.Length);
-            double bh = Math.Max(2, bands[b] * h * 0.92);
+            // Mirrored so bass sits in the centre and the bars are symmetric, not left-loaded.
+            double level = VizAudio.MirroredBandAt(bands, i / (double)(bars - 1));
+            double bh = Math.Max(2, level * h * 0.92);
             double x = i * (bw + gap);
             frame.Dc.DrawRoundedRectangle(frame.Palette.BarBrush, null, new Rect(x, h - bh, bw, bh), 2, 2);
         }
