@@ -50,10 +50,23 @@ public partial class VisualizerView : UserControl
             return;
         }
 
-        _overlay = new Windows.VisualizerOverlayWindow { Owner = Window.GetWindow(this) };
-        _overlay.Closed += (_, _) => _overlay = null;
+        Window? console = Window.GetWindow(this);
+
+        _overlay = new Windows.VisualizerOverlayWindow { Owner = console };
+        _overlay.Closed += (_, _) =>
+        {
+            _overlay = null;
+            // Bring the console back exactly as it was.
+            console?.Show();
+            console?.Activate();
+        };
         _overlay.ContinueFrom(Viz);
         _overlay.Show();
+
+        // Hide the console while the overlay is up — otherwise its own visualizer shows THROUGH the
+        // transparent overlay in Dim/Clear mode, so you'd see two sets of waves. Hiding it also
+        // stops the console's render loop and its duplicate audio capture.
+        console?.Hide();
     }
 
     // The style list is bound to the renderer registry; changing the selection is all it takes.
