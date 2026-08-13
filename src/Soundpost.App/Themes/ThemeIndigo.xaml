@@ -61,6 +61,15 @@
         <GradientStop Color="#FF8A3D" Offset="1" />
     </LinearGradientBrush>
 
+    <!-- The master dial's signature run: orange -> pink -> violet, like the Soundpost mark. Only the
+         Indigo theme defines this; other themes leave it out and the dial derives a single-hue
+         gradient from their accent instead. -->
+    <LinearGradientBrush x:Key="DialGradient" StartPoint="0,1" EndPoint="1,0">
+        <GradientStop Color="#FF7A1A" Offset="0" />
+        <GradientStop Color="#FF3D7F" Offset="0.5" />
+        <GradientStop Color="#A24BFF" Offset="1" />
+    </LinearGradientBrush>
+
     <!-- Visualizer screen backdrop + grid (the visualiser's OWN colours are separate and unchanged). -->
     <RadialGradientBrush x:Key="ScreenBrush" GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.75" RadiusY="0.9">
         <GradientStop Color="#101728" Offset="0" />

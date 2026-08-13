@@ -98,18 +98,29 @@ public sealed class ArcGauge : FrameworkElement
         }
 
         _accentBuilt = true;
-        Color accent = TryFindResource("AccentColor") is Color c ? c : Color.FromRgb(0xFF, 0x8A, 0x3D);
 
-        var gradient = new LinearGradientBrush { StartPoint = new Point(0, 1), EndPoint = new Point(1, 0) };
-        gradient.GradientStops.Add(new GradientStop(Lighten(accent, 0.45), 0));
-        gradient.GradientStops.Add(new GradientStop(accent, 0.5));
-        gradient.GradientStops.Add(new GradientStop(Darken(accent, 0.32), 1));
-        gradient.Freeze();
+        // A theme may supply its own dial gradient (Indigo's signature orange -> pink -> violet).
+        // Otherwise derive a single-hue gradient from the theme accent.
+        Brush fill;
+        if (TryFindResource("DialGradient") is Brush themed)
+        {
+            fill = themed;
+        }
+        else
+        {
+            Color accent = TryFindResource("AccentColor") is Color c ? c : Color.FromRgb(0xFF, 0x8A, 0x3D);
+            var gradient = new LinearGradientBrush { StartPoint = new Point(0, 1), EndPoint = new Point(1, 0) };
+            gradient.GradientStops.Add(new GradientStop(Lighten(accent, 0.45), 0));
+            gradient.GradientStops.Add(new GradientStop(accent, 0.5));
+            gradient.GradientStops.Add(new GradientStop(Darken(accent, 0.32), 1));
+            gradient.Freeze();
+            fill = gradient;
+        }
 
-        _fillPen = new Pen(gradient, Thickness) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
+        _fillPen = new Pen(fill, Thickness) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
         _fillPen.Freeze();
 
-        LinearGradientBrush glow = (LinearGradientBrush)gradient.Clone();
+        Brush glow = fill.Clone();
         glow.Opacity = 0.22;
         glow.Freeze();
         _glowPen = new Pen(glow, Thickness + 12) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
