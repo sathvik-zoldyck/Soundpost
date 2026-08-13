@@ -43,6 +43,12 @@ Windows scatters your audio across a volume flyout, a device menu, a sound contr
 
 <div align="center">
 
+<img src="assets/media/spectrum.gif" alt="The Soundpost visualizer reacting to live audio in the Spectrum style" width="880" />
+
+<sub><b>The visualizer.</b> Seven styles react to your audio at 60 fps — here, Spectrum. Pop it fullscreen over a music video, or keep it in the console.</sub>
+
+<br/><br/>
+
 <img src="assets/media/themes.png" alt="Soundpost in all four themes: Indigo, Black and Red, Rich Gold, and Cherry Blossom" width="880" />
 
 <sub><b>Four themes, switched live.</b> Indigo, Black &amp; Red, Rich Gold, Cherry Blossom.</sub>
