@@ -137,18 +137,34 @@ public partial class App : Application
             return;
         }
 
-        ApplyThemeDictionary(normalized);
-        CaptureState(); // persist the choice (and current placement)
+        ApplyThemeDictionary(normalized); // swaps the palette + styles and records _state.Theme
 
-        // Rebuild the console so its styles re-resolve against the new palette. Land back on
-        // Settings so the change is visible immediately.
+        // Rebuild AFTER the triggering swatch's Checked event unwinds. Tearing down the window whose
+        // control raised this call, mid-event, is what left the new window still showing the old
+        // theme — deferring to a later dispatcher turn lets the event finish first.
+        Dispatcher.BeginInvoke(RebuildConsole, DispatcherPriority.Background);
+    }
+
+    private void RebuildConsole()
+    {
+        CaptureState(); // persist the choice + current placement (reads the outgoing window)
+
         MainWindow? oldWindow = _window;
         QuickPanelWindow? oldPanel = _panel;
         BuildConsoleWindows();
-        _mainViewModel!.ActiveSection = Section.Settings;
+        _mainViewModel!.ActiveSection = Section.Settings; // land back on Settings so the change shows
         _window!.Show();
+        _window.Activate();
         oldPanel?.Close();
-        oldWindow?.Close();
+
+        // Real close, not the usual hide-to-tray: a cancelled close fires CloseToTrayRequested →
+        // HideConsole, which would call Hide() on the NEW window (already assigned to _window) and
+        // leave the freshly-themed console invisible.
+        if (oldWindow is not null)
+        {
+            oldWindow.AllowClose = true;
+            oldWindow.Close();
+        }
     }
 
     // Rebuild the whole resource stack for the named palette. Both the theme dictionary AND the
