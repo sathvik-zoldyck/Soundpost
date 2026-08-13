@@ -87,8 +87,10 @@ public partial class App : Application
         _window!.Show();
     }
 
-    // Creates the console + quick panel and wires their events. Called at startup and again after a
-    // theme change, so the new windows resolve their brushes against the swapped palette.
+    // Creates the console window and wires its events. Called at startup and again after a theme
+    // change, so the new window resolves its brushes against the swapped palette. The Quick Panel is
+    // NOT created here — it's built fresh each time it opens (see ShowPanel), which guarantees it
+    // always uses the current theme without depending on recreation timing.
     private void BuildConsoleWindows()
     {
         _window = new MainWindow { DataContext = _mainViewModel };
@@ -101,16 +103,20 @@ public partial class App : Application
                 HideConsole();
             }
         };
+    }
 
-        _panel = new QuickPanelWindow { DataContext = _mainViewModel };
-        _panel.OpenConsoleRequested += (_, _) => ShowConsole();
-        _panel.IsVisibleChanged += (_, args) =>
+    private QuickPanelWindow CreatePanel()
+    {
+        var panel = new QuickPanelWindow { DataContext = _mainViewModel };
+        panel.OpenConsoleRequested += (_, _) => ShowConsole();
+        panel.IsVisibleChanged += (_, args) =>
         {
             if (args.NewValue is false)
             {
                 _panelHiddenAt = DateTime.UtcNow;
             }
         };
+        return panel;
     }
 
     /// <summary>The active theme name, for the Settings view to mark the current one.</summary>
@@ -150,16 +156,14 @@ public partial class App : Application
         CaptureState(); // persist the choice + current placement (reads the outgoing window)
 
         MainWindow? oldWindow = _window;
-        QuickPanelWindow? oldPanel = _panel;
+        DisposePanel(); // a panel open during the switch would still be the old palette; drop it
         BuildConsoleWindows();
         _mainViewModel!.ActiveSection = Section.Settings; // land back on Settings so the change shows
         _window!.Show();
         _window.Activate();
-        oldPanel?.Close();
 
-        // Real close, not the usual hide-to-tray: a cancelled close fires CloseToTrayRequested →
-        // HideConsole, which would call Hide() on the NEW window (already assigned to _window) and
-        // leave the freshly-themed console invisible.
+        // The window intercepts close to hide-to-tray, so a plain Close() would leave the old,
+        // still-themed instance alive. Force a real close so only the freshly-themed one remains.
         if (oldWindow is not null)
         {
             oldWindow.AllowClose = true;
@@ -309,18 +313,27 @@ public partial class App : Application
 
     private void ShowPanel()
     {
-        if (_panel is null)
+        // Toggle: if a panel is up, tear it down and stop.
+        bool wasVisible = _panel is { IsVisible: true };
+        DisposePanel();
+        if (wasVisible)
         {
             return;
         }
 
-        if (_panel.IsVisible)
-        {
-            _panel.Hide();
-            return;
-        }
-
+        // Fresh instance so the panel always reflects the current theme.
+        _panel = CreatePanel();
         _panel.ShowNearTray();
+    }
+
+    private void DisposePanel()
+    {
+        if (_panel is not null)
+        {
+            _panel.AllowClose = true; // OnClosing hides-to-reuse otherwise; force a real close
+            _panel.Close();
+            _panel = null;
+        }
     }
 
     private void ShowConsole()
