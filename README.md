@@ -1,115 +1,92 @@
 <div align="center">
 
-<img src="assets/logo.svg" alt="Soundpost" width="130" />
+<img src="assets/logo.svg" alt="Soundpost" width="120" />
 
 # Soundpost
 
-### One Center. Every Sound.
+### One center. Every sound.
 
-**The open audio hub for Windows — switch devices, mix every app, and *see* your sound. In one place.**
-Local-first. No account. No telemetry.
+**One console for Windows audio: switch your output device, mix every app, and see your sound — in one place. Local-first, no account, no telemetry.**
 
 [![CI](https://github.com/sathvik-zoldyck/Soundpost/actions/workflows/ci.yml/badge.svg)](https://github.com/sathvik-zoldyck/Soundpost/actions/workflows/ci.yml)
 [![License: GPLv3](https://img.shields.io/badge/license-GPLv3-blue.svg)](LICENSE)
-[![Windows 10/11](https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4?logo=windows)](#)
-[![.NET 9](https://img.shields.io/badge/.NET-9-512BD4?logo=dotnet)](#)
+[![Windows 10 / 11](https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4?logo=windows&logoColor=white)](#get-it)
+[![.NET 9](https://img.shields.io/badge/.NET-9-512BD4?logo=dotnet&logoColor=white)](#)
 [![Stars](https://img.shields.io/github/stars/sathvik-zoldyck/Soundpost?style=social)](https://github.com/sathvik-zoldyck/Soundpost/stargazers)
 
-**[Roadmap](ROADMAP.md) · [Vision](VISION.md) · [Architecture](ARCHITECTURE.md) · [Plugin SDK](PLUGIN_SDK.md) · [Contribute](CONTRIBUTING.md) · [Discussions](../../discussions)**
+**[Roadmap](ROADMAP.md) · [Architecture](ARCHITECTURE.md) · [Plugin SDK](PLUGIN_SDK.md) · [Contribute](CONTRIBUTING.md) · [Discussions](../../discussions)**
+
+English · [简体中文](README.zh.md) · [Español](README.es.md) · [हिन्दी](README.hi.md) · [العربية](README.ar.md) · [Português](README.pt.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [日本語](README.ja.md) · [Русский](README.ru.md) · [한국어](README.ko.md)
 
 <br/>
 
-<img src="assets/media/visualizer.gif" alt="Soundpost's visualizer — the Ribbon style reacting live to audio at 60fps" width="860" />
-
-<sub><em>"Sound, seen."</em> — the visualizer reacting to whatever's playing, live at 60fps. &nbsp;·&nbsp; ⭐ **Star it** to follow along — Soundpost is built in the open.</sub>
+<img src="assets/media/dashboard.png" alt="The Soundpost dashboard: master volume dial, playback device switcher, per-app mixer, and live output meters" width="880" />
 
 </div>
 
 ---
 
-## What it is
+Windows scatters your audio across a volume flyout, a device menu, a sound control panel, and a handful of third-party utilities that do not talk to each other — and none of them remember what you wanted. **Soundpost is the missing center.** Every device and every app flows into one console: you switch, mix, and route it, and it lands on the right output. And when you just want to listen, the visualizer turns whatever is playing into something worth watching.
 
-Windows scatters your audio across four disconnected places — the volume mixer, the device flyout, a
-routing utility, and Settings that resets after every update. **Soundpost is the one console that
-brings them together:** switch your output in a click, set the level of every app, and watch it all
-react — without hunting through menus. Local-first, and yours.
+## Features
+
+- **Instant device switching.** Change your default output or input in one click.
+- **Per-app mixer.** Volume, mute, and live meters for every application making sound.
+- **Live output metering.** Master and per-app peak meters with real ballistics.
+- **Visualizer.** Seven live styles — Ribbon, Aurora, Spectrum, Radial, Oscilloscope, Cymatics, and a Custom Image mode — that react to your audio at 60 fps, with adjustable sensitivity, smoothing, glow, and palette.
+- **Fullscreen overlay.** Pop the visualizer out over a music video with solid, dimmed, or fully transparent backdrops.
+- **Quick Panel.** A compact tray flyout for the moves you make mid-meeting, without opening the full console.
+- **Four themes.** Indigo, Black & Red, Rich Gold, and Cherry Blossom — switchable live from Settings.
+- **Local and private.** No account, no cloud, no telemetry. Everything stays on your machine.
 
 ## See it
 
 <div align="center">
 
-<img src="assets/media/dashboard.png" alt="Soundpost dashboard — master volume dial, playback device switcher, per-app mixer, output meters" width="860" />
+<img src="assets/media/themes.png" alt="Soundpost in all four themes: Indigo, Black and Red, Rich Gold, and Cherry Blossom" width="880" />
 
-<sub><strong>The console</strong> — every device and every app making sound, on one screen. Click a device to make it default; drag any app to set its level.</sub>
+<sub><b>Four themes, switched live.</b> Indigo, Black &amp; Red, Rich Gold, Cherry Blossom.</sub>
 
 <br/><br/>
 
-<img src="assets/media/quick-panel.png" alt="Quick Panel — a compact tray flyout with master volume, output switching, and per-app controls" width="330" />
+<img src="assets/media/quick-panel.png" alt="The Quick Panel tray flyout with master volume, output switching, and per-app controls" width="320" />
 
-<sub><strong>Quick Panel</strong> — the mid-meeting moves from the tray, without opening the full app: master volume, switch output, mute an app.</sub>
+<sub><b>Quick Panel.</b> Master volume, output switching, and per-app mute — straight from the tray.</sub>
 
 </div>
 
-## What works today
+## Get it
 
-| ✅ Shipped | 🔜 On the roadmap |
-|---|---|
-| One-click default-device switching | Scenes — save a whole setup, apply in a click |
-| Per-app mixer: volume, mute, **live meters** | Auto-switch rules (*"headphones connect → this scene"*) |
-| Live visualizer — 6 styles, 60fps, drop-in images | Per-app routing UI *(engine already works)* |
-| Tray icon + **Quick Panel** flyout | Plain-language diagnostics + one-click fixes |
-| Remembers your window, section, and setup | Global hotkeys + quick-switch overlay |
-
-Full, living plan → **[ROADMAP.md](ROADMAP.md)**.
-
-## Quick start
-
-> ⚠️ **Early development** — not packaged for install yet. Build from source (needs the
-> [.NET 9 SDK](https://dotnet.microsoft.com/download) on Windows 10/11):
+Soundpost targets **Windows 10 and 11**. Grab a build from [Releases](../../releases) once one is published, or build from source:
 
 ```bash
-git clone https://github.com/sathvik-zoldyck/soundpost.git
-cd soundpost
+git clone https://github.com/sathvik-zoldyck/Soundpost.git
+cd Soundpost
 dotnet run --project src/Soundpost.App
 ```
 
-## Honest about Windows
+You need the [.NET 9 SDK](https://dotnet.microsoft.com/download). A one-file, self-contained `Soundpost.exe` (no .NET install required) is produced by the release workflow.
 
-Reliability is the whole point, so we won't oversell what the OS allows: playing one sound on
-**multiple outputs** at once needs software loopback (added latency) — a clearly-labeled experimental
-module, not a launch promise; system-wide **EQ/DSP** is fragile driver territory we may *integrate*
-([Equalizer APO](https://sourceforge.net/projects/equalizerapo/)) rather than reinvent; and some apps
-only read their device at startup, so Soundpost **tells you** when a change needs a restart. The full
-study is in [`docs/RESEARCH.md`](docs/RESEARCH.md).
+## How it works
 
-## Built to extend
+Every app and device flows into one center; you route, mix, and automate it, and it lands on the right output. A single Core Audio layer wraps the Windows COM APIs so the rest of the app never touches them directly, which keeps the console responsive and the audio handling isolated and testable.
 
-The core stays small; the ecosystem is where the fun is — no forking required.
+## Extend it
 
-🌈 **[Visualizers](visualizers/)** · 🎭 **[Themes](themes/)** · 🔌 **[Plugins](PLUGIN_SDK.md)** — react to events and automate anything.
+Soundpost is built to be added to.
+
+- **Visualizers.** A style is one class implementing `IVisualizerRenderer` — see [visualizers/](visualizers/). Write it, register it, and it appears in the style bar.
+- **Themes.** Palettes are self-contained dictionaries; a new theme is a new file plus a swatch.
+- **Plugins.** An event-driven plugin surface is on the roadmap — see [PLUGIN_SDK.md](PLUGIN_SDK.md).
+
+## Roadmap
+
+Shipping now: device switching, per-app mixer and meters, the visualizer, the tray and Quick Panel, persistence, and themes. Next: scenes and profiles, an automation layer, per-app routing, and plain-language diagnostics. The full plan lives in [ROADMAP.md](ROADMAP.md).
 
 ## Contributing
 
-Bugs, design, themes, visualizers, plugins, docs, code — **you're welcome here.** A visualizer is the
-easiest, most fun way in. Start with [CONTRIBUTING.md](CONTRIBUTING.md) and the
-[`good first issue`](../../labels/good%20first%20issue) label.
-
-Only `Soundpost.Core.Audio` touches the raw Windows APIs (the "COM firewall"); everything above is
-clean, testable models — see [ARCHITECTURE.md](ARCHITECTURE.md).
+Contributions are welcome, from a new visualizer to a bug fix. Start with [CONTRIBUTING.md](CONTRIBUTING.md), open an [issue](../../issues), or say hello in [Discussions](../../discussions). If Soundpost is useful to you, a star helps other people find it.
 
 ## License
 
-[**GNU GPLv3**](LICENSE) — free to use, study, modify, and share; derivatives stay open. The
-**Soundpost** name and logo are covered by [TRADEMARK.md](TRADEMARK.md). Built with respect for
-[EarTrumpet](https://github.com/File-New-Project/EarTrumpet) and
-[SoundSwitch](https://github.com/Belphemur/SoundSwitch).
-
-<div align="center">
-
----
-
-**Control · Connect · Experience.**
-
-⭐ **Star Soundpost** if you'd use this — it's how the project grows.
-
-</div>
+[GPLv3](LICENSE). Free and open source.
