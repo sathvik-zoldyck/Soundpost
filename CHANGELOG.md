@@ -29,6 +29,8 @@ and this project aims to adhere to [Semantic Versioning](https://semver.org/spec
 - Visualizer: WASAPI loopback capture + FFT (`LoopbackAnalyzer`) feeding WPF-drawn styles
   (Ribbon, Spectrum, Radial, Oscilloscope) with draggable knobs (sensitivity, smoothing, glow,
   speed) and switchable palettes.
+- Console theme **Forest** (Pine & Amber) — a dark pine-green surface ladder with a warm honey-amber
+  accent; selectable live in Settings alongside the existing themes.
 - Contributor docs: Vision, Roadmap, Architecture (with diagram), Plugin SDK, Style Guide, Trademark,
   Showcase, ADRs + an RFC template, and scaffolding for community plugins / themes / visualizers / examples.
 - Brand: a new Soundpost logo (interlocking-S soundwave) in `assets/`, used in the app and README.

@@ -109,6 +109,24 @@
                             </StackPanel>
                         </Border>
                     </RadioButton>
+
+                    <!-- Forest — Pine &amp; Amber (dark) -->
+                    <RadioButton x:Name="ThemeForest" GroupName="Theme" Style="{StaticResource ThemeCard}" Checked="OnThemeChosen" Tag="Forest">
+                        <Border Width="176" CornerRadius="12" Background="#142418" BorderBrush="#23392A" BorderThickness="1" ClipToBounds="True">
+                            <StackPanel>
+                                <Grid Height="72">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Rectangle Grid.Column="0" Fill="#0B120D" />
+                                    <Rectangle Grid.Column="1" Fill="#1B2E20" />
+                                    <Rectangle Grid.Column="2" Fill="#E0A33A" />
+                                </Grid>
+                                <TextBlock Text="Forest" FontFamily="{StaticResource LabelFont}" FontSize="12.5" FontWeight="SemiBold" Foreground="#EAF2EC" Margin="12,9,0,3" />
+                                <TextBlock Text="Pine · amber" FontFamily="{StaticResource LabelFont}" FontSize="10.5" Foreground="#97AC9E" Margin="12,0,0,10" />
+                            </StackPanel>
+                        </Border>
+                    </RadioButton>
                 </WrapPanel>
 
                 <TextBlock Text="More themes are coming — this is the switcher they'll plug into."

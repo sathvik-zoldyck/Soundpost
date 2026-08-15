@@ -129,6 +129,7 @@ public partial class App : Application
         ["BlackRed"] = "Themes/ThemeBlackRed.xaml",
         ["RichGold"] = "Themes/ThemeRichGold.xaml",
         ["PinkBlossom"] = "Themes/ThemePinkBlossom.xaml",
+        ["Forest"] = "Themes/ThemeForest.xaml",
     };
 
     private static string NormalizeTheme(string? name) =>
