@@ -29,6 +29,8 @@ and this project aims to adhere to [Semantic Versioning](https://semver.org/spec
 - Visualizer: WASAPI loopback capture + FFT (`LoopbackAnalyzer`) feeding WPF-drawn styles
   (Ribbon, Spectrum, Radial, Oscilloscope) with draggable knobs (sensitivity, smoothing, glow,
   speed) and switchable palettes.
+- Visualizer style **Bloom** — sonar-like rings born from bass onsets that travel outward and fade,
+  over a core disc that pulses with overall energy. Onset-driven rather than timed; allocation-light.
 - Contributor docs: Vision, Roadmap, Architecture (with diagram), Plugin SDK, Style Guide, Trademark,
   Showcase, ADRs + an RFC template, and scaffolding for community plugins / themes / visualizers / examples.
 - Brand: a new Soundpost logo (interlocking-S soundwave) in `assets/`, used in the app and README.

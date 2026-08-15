@@ -21,6 +21,7 @@ public sealed class Visualizer : FrameworkElement
         new AuroraRenderer(),
         new SpectrumRenderer(),
         new RadialRenderer(),
+        new BloomRenderer(),
         new OscilloscopeRenderer(),
         new CymaticsRenderer(),
         new CustomImageRenderer(),
