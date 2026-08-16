@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <!-- Windows Core Audio (WASAPI/MMDevice) wrappers. The COM firewall lives here. -->
-    <PackageReference Include="NAudio" Version="2.3.0" />
+    <PackageReference Include="NAudio" Version="3.0.0" />
   </ItemGroup>
 
 </Project>
