@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- A reference plugin: the canonical "auto-duck" built against Soundpost.Plugin.Abstractions and
+       nothing else. It is a standalone class library — never packed or shipped with the app. See
+       README.md here and docs/rfcs/0001-plugin-sdk.md. -->
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <RootNamespace>Soundpost.Examples.AutoDuck</RootNamespace>
+    <AssemblyName>AutoDuck</AssemblyName>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The one reference a plugin needs. Soundpost.Core.Audio's models come in transitively; a plugin
+         never references core directly. -->
+    <ProjectReference Include="..\..\src\Soundpost.Plugin.Abstractions\Soundpost.Plugin.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="plugin.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

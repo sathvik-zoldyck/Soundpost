@@ -1,0 +1,9 @@
+{
+  "id": "com.soundpost.examples.autoduck",
+  "name": "Auto-Duck",
+  "version": "1.0.0",
+  "author": "Soundpost contributors",
+  "description": "Lowers other apps while a voice-chat app is playing, then restores them.",
+  "minAppVersion": "0.1.0",
+  "entry": "AutoDuck.dll"
+}
