@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The public contract a plugin compiles against. Nothing here touches Windows audio COM: plugins
+       receive immutable snapshots (from Soundpost.Core.Audio) and act only through ISoundpostHost, so
+       the COM firewall stays intact. See docs/rfcs/0001-plugin-sdk.md and PLUGIN_SDK.md. -->
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <RootNamespace>Soundpost.Plugin.Abstractions</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Reuse the app's immutable audio models (AudioDevice, AudioSession, DeviceRole, …). This is a
+         data-only dependency; it brings no COM handles across the boundary. -->
+    <ProjectReference Include="..\Soundpost.Core.Audio\Soundpost.Core.Audio.csproj" />
+  </ItemGroup>
+
+</Project>

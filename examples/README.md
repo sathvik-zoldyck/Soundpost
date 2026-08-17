@@ -5,4 +5,10 @@ how to build on Soundpost. Great for learning and for copy-pasting a starting po
 
 Each example lives in its own subfolder with a short `README.md` explaining what it demonstrates.
 
+## Available examples
+
+- [**AutoDuck**](AutoDuck/) — a reference plugin that lowers other apps while a voice-chat app is
+  playing, then restores them. Shows the whole plugin shape: events, host actions, per-plugin storage,
+  and logging, built against [`Soundpost.Plugin.Abstractions`](../src/Soundpost.Plugin.Abstractions/).
+
 Contributions welcome — if you built something small and instructive, add it here.
