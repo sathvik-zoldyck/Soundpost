@@ -1,5 +1,6 @@
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Soundpost.App.Interop;
 using Soundpost.Core.Audio;
 
@@ -11,6 +12,17 @@ public partial class SessionViewModel : ObservableObject
     private readonly IAudioSessionService _sessions;
 
     public int ProcessId { get; }
+
+    /// <summary>Whether the detail strip (dB, solo, session info) is open for this row.</summary>
+    [ObservableProperty]
+    private bool _isExpanded;
+
+    /// <summary>True while this app is the soloed one (everything else muted). Driven by the mixer.</summary>
+    [ObservableProperty]
+    private bool _isSoloed;
+
+    [RelayCommand]
+    private void ToggleExpand() => IsExpanded = !IsExpanded;
 
     /// <summary>The app's real Windows icon, or null when we fall back to a letter tile.</summary>
     public ImageSource? Icon { get; }
@@ -39,6 +51,7 @@ public partial class SessionViewModel : ObservableObject
             if (SetProperty(ref _volume, value))
             {
                 OnPropertyChanged(nameof(VolumePercent));
+                OnPropertyChanged(nameof(VolumeDb));
                 try
                 {
                     _sessions.SetVolume(ProcessId, value);
@@ -53,6 +66,11 @@ public partial class SessionViewModel : ObservableObject
 
     public int VolumePercent => (int)System.Math.Round(_volume * 100);
 
+    /// <summary>The volume as decibels below full scale — the reading a mixing desk shows.</summary>
+    public string VolumeDb => _isMuted || _volume <= 0.0001f
+        ? "−∞ dB"
+        : (20 * System.Math.Log10(_volume)).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) + " dB";
+
     private bool _isMuted;
 
     public bool IsMuted
@@ -62,6 +80,7 @@ public partial class SessionViewModel : ObservableObject
         {
             if (SetProperty(ref _isMuted, value))
             {
+                OnPropertyChanged(nameof(VolumeDb));
                 try
                 {
                     _sessions.SetMute(ProcessId, value);
@@ -95,5 +114,6 @@ public partial class SessionViewModel : ObservableObject
         }
 
         SetProperty(ref _isMuted, session.IsMuted, nameof(IsMuted));
+        OnPropertyChanged(nameof(VolumeDb));
     }
 }

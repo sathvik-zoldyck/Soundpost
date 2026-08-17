@@ -226,6 +226,7 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Style="{StaticResource AppRow}">
+                                    <StackPanel>
                                     <Grid Height="46">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
@@ -267,9 +268,69 @@
                                         <c:SegmentMeter Grid.Column="4" Width="42" Height="6" Segments="9" Horizontal="True"
                                                         Level="{Binding MeterLevel}" VerticalAlignment="Center" Margin="14,0,4,0" />
 
-                                        <Button Grid.Column="5" Style="{StaticResource GhostIconButton}" Content="⋯"
-                                                VerticalAlignment="Center" ToolTip="Per-app options — coming with Routing" />
+                                        <!-- expand/collapse the per-app detail strip -->
+                                        <Button Grid.Column="5" Style="{StaticResource GhostIconButton}"
+                                                Command="{Binding ToggleExpandCommand}"
+                                                VerticalAlignment="Center" ToolTip="Show per-app detail">
+                                            <TextBlock Text="⋯" FontSize="15">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsExpanded}" Value="True">
+                                                                <Setter Property="Text" Value="⌃" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Button>
                                     </Grid>
+
+                                    <!-- Per-app detail strip: level in dB, session state, and solo/mute. -->
+                                    <Border Margin="43,2,4,6" Padding="14,11" CornerRadius="10"
+                                            Background="{StaticResource InsetBrush}"
+                                            BorderBrush="{StaticResource BorderSoftBrush}" BorderThickness="1"
+                                            Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVis}}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="24" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="64" />
+                                                <ColumnDefinition Width="8" />
+                                                <ColumnDefinition Width="64" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- level in decibels below full scale -->
+                                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                <TextBlock Text="LEVEL" Style="{StaticResource SectionLabel}" />
+                                                <TextBlock Text="{Binding VolumeDb}" Style="{StaticResource Mono}"
+                                                           FontSize="18" Foreground="{StaticResource TextPrimaryBrush}"
+                                                           Margin="0,2,0,0" />
+                                            </StackPanel>
+
+                                            <!-- live session state + process id -->
+                                            <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                                <TextBlock Text="SESSION" Style="{StaticResource SectionLabel}" />
+                                                <TextBlock Foreground="{StaticResource TextSecondaryBrush}"
+                                                           FontFamily="{StaticResource LabelFont}" FontSize="12" Margin="0,2,0,0">
+                                                    <Run Text="{Binding State, Mode=OneWay}" /><Run Text="  ·  PID " /><Run Text="{Binding ProcessId, Mode=OneWay}" />
+                                                </TextBlock>
+                                            </StackPanel>
+
+                                            <ToggleButton Grid.Column="3" Style="{StaticResource SoloToggle}"
+                                                          VerticalAlignment="Center"
+                                                          IsChecked="{Binding IsSoloed, Mode=OneWay}"
+                                                          Command="{Binding DataContext.ToggleSoloCommand,
+                                                                     RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                          CommandParameter="{Binding}" />
+
+                                            <ToggleButton Grid.Column="5" Style="{StaticResource MuteToggle}"
+                                                          VerticalAlignment="Center"
+                                                          IsChecked="{Binding IsMuted, Mode=TwoWay}" />
+                                        </Grid>
+                                    </Border>
+                                    </StackPanel>
                                     </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>

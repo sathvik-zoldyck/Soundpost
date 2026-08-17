@@ -280,6 +280,63 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 existing.UpdateFrom(session);
             }
         }
+
+        // If the soloed app has gone away, lift the solo so the others aren't left muted.
+        if (_soloPid != 0 && Sessions.All(s => s.ProcessId != _soloPid))
+        {
+            ClearSolo();
+        }
+    }
+
+    // ---- solo: play one app, mute the rest ----
+
+    private int _soloPid;
+    private readonly HashSet<int> _mutedForSolo = new();
+
+    /// <summary>Solo an app (mute everything else), or lift solo if it's already the soloed one.</summary>
+    [RelayCommand]
+    private void ToggleSolo(SessionViewModel? target)
+    {
+        if (target is null)
+        {
+            return;
+        }
+
+        if (_soloPid == target.ProcessId)
+        {
+            ClearSolo();
+            return;
+        }
+
+        ClearSolo(); // only one app is ever soloed
+        _soloPid = target.ProcessId;
+        foreach (SessionViewModel s in Sessions)
+        {
+            s.IsSoloed = s.ProcessId == target.ProcessId;
+
+            // Mute only the apps that weren't already muted, so lifting solo restores exactly what
+            // the user had — their own mutes are left untouched.
+            if (s.ProcessId != target.ProcessId && !s.IsMuted)
+            {
+                s.IsMuted = true;
+                _mutedForSolo.Add(s.ProcessId);
+            }
+        }
+    }
+
+    private void ClearSolo()
+    {
+        foreach (SessionViewModel s in Sessions)
+        {
+            s.IsSoloed = false;
+            if (_mutedForSolo.Contains(s.ProcessId))
+            {
+                s.IsMuted = false;
+            }
+        }
+
+        _mutedForSolo.Clear();
+        _soloPid = 0;
     }
 
     /// <summary>

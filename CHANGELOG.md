@@ -42,6 +42,10 @@ and this project aims to adhere to [Semantic Versioning](https://semver.org/spec
 - Contributor docs: Vision, Roadmap, Architecture (with diagram), Plugin SDK, Style Guide, Trademark,
   Showcase, ADRs + an RFC template, and scaffolding for community plugins / themes / visualizers / examples.
 - Brand: a new Soundpost logo (interlocking-S soundwave) in `assets/`, used in the app and README.
+- Per-app detail strip on the dashboard mixer — each app row expands (⋯) to show its level in
+  decibels below full scale (live, reads `−∞ dB` when muted), the session's state and process id,
+  and **Solo** / **Mute** toggles. Solo plays one app and mutes the rest, restoring the others'
+  prior mute state when lifted (a manually-muted app stays muted after unsolo).
 
 ### Changed
 - **Relicensed from MIT to GNU GPLv3** — strong copyleft so Soundpost (and everything built on it)

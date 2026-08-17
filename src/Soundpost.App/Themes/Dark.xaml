@@ -183,6 +183,31 @@
         </Setter>
     </Style>
 
+    <!-- Solo: same shape as MuteToggle, its own label. Highlights when this app is the soloed one. -->
+    <Style x:Key="SoloToggle" TargetType="ToggleButton">
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border x:Name="b" CornerRadius="8" Padding="0,7"
+                            Background="{StaticResource SurfaceAltBrush}"
+                            BorderBrush="{StaticResource BorderSoftBrush}" BorderThickness="1">
+                        <TextBlock x:Name="t" Text="Solo" FontFamily="{StaticResource LabelFont}" FontSize="10.5"
+                                   HorizontalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="b" Property="Background" Value="{StaticResource AccentFillBrush}" />
+                            <Setter TargetName="b" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                            <Setter TargetName="t" Property="Text" Value="Soloed" />
+                            <Setter TargetName="t" Property="Foreground" Value="{StaticResource OnAccentBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- ============================ Icon geometry (20×20) ============================ -->
     <Geometry x:Key="IconDashboard">M3,3 H8 V8 H3 Z M12,3 H17 V8 H12 Z M3,12 H8 V17 H3 Z M12,12 H17 V17 H12 Z</Geometry>
     <Geometry x:Key="IconVisualizer">M3,12 V8 M7,15.5 V4.5 M11,17.5 V2.5 M15,14 V6 M18.5,11.5 V8.5</Geometry>
