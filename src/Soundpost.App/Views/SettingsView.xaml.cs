@@ -19,6 +19,7 @@ public partial class SettingsView : UserControl
             "BlackRed" => ThemeBlackRed,
             "RichGold" => ThemeRichGold,
             "PinkBlossom" => ThemePinkBlossom,
+            "Forest" => ThemeForest,
             _ => ThemeIndigo,
         };
         active.IsChecked = true;

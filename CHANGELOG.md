@@ -33,6 +33,8 @@ and this project aims to adhere to [Semantic Versioning](https://semver.org/spec
   records, and a no-op base class from `PLUGIN_SDK.md`); no loader yet (see [RFC 0001](docs/rfcs/0001-plugin-sdk.md)).
 - Example plugin **Auto-Duck** under `examples/` — the canonical reference plugin, built against the
   abstractions: lowers other apps while a voice-chat app is playing, then restores them.
+- Console theme **Forest** (Pine & Amber) — a dark pine-green surface ladder with a warm honey-amber
+  accent; selectable live in Settings alongside the existing themes.
 - Contributor docs: Vision, Roadmap, Architecture (with diagram), Plugin SDK, Style Guide, Trademark,
   Showcase, ADRs + an RFC template, and scaffolding for community plugins / themes / visualizers / examples.
 - Brand: a new Soundpost logo (interlocking-S soundwave) in `assets/`, used in the app and README.
