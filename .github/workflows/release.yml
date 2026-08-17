@@ -36,7 +36,7 @@ jobs:
           Copy-Item $publish "dist/Soundpost-${{ github.ref_name }}-win-x64.exe"
 
       - name: Draft GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: dist/*
           draft: true # you review and publish it by hand
