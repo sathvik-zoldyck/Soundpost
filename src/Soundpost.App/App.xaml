@@ -16,6 +16,7 @@
             <local:InverseBooleanToVisibilityConverter x:Key="BoolToVisInv" />
             <local:FirstLetterConverter x:Key="FirstLetter" />
             <local:EnumToBooleanConverter x:Key="EnumToBool" />
+            <local:GlyphKeyConverter x:Key="GlyphKey" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

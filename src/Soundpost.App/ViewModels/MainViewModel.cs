@@ -20,6 +20,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private readonly IDefaultDeviceSwitcher _switcher;
     private readonly IAudioMeterService _meters;
     private readonly IMasterVolumeService _master;
+    private readonly IAppRoutingService _routing;
     private readonly DispatcherTimer _sessionTimer;
     private readonly DispatcherTimer _meterTimer;
     private readonly DispatcherTimer _deviceDebounce;
@@ -38,7 +39,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private double _masterLevel;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsDashboard), nameof(IsVisualizer), nameof(IsMixer), nameof(IsSettings), nameof(IsPlaceholder))]
+    [NotifyPropertyChangedFor(nameof(IsDashboard), nameof(IsVisualizer), nameof(IsMixer), nameof(IsAmbient), nameof(IsSettings), nameof(IsPlaceholder))]
     private Section _activeSection = Section.Dashboard;
 
     public bool IsDashboard => ActiveSection == Section.Dashboard;
@@ -47,23 +48,32 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     public bool IsMixer => ActiveSection == Section.Mixer;
 
+    public bool IsAmbient => ActiveSection == Section.Ambient;
+
     public bool IsSettings => ActiveSection == Section.Settings;
 
     /// <summary>True for the sections that are on the roadmap but not wired up yet.</summary>
-    public bool IsPlaceholder => !IsDashboard && !IsVisualizer && !IsMixer && !IsSettings;
+    public bool IsPlaceholder => !IsDashboard && !IsVisualizer && !IsMixer && !IsAmbient && !IsSettings;
+
+    /// <summary>The ambient soundscape mixer (its own self-contained sub-view-model).</summary>
+    public AmbientViewModel Ambient { get; }
 
     public MainViewModel(
         IAudioDeviceService devices,
         IAudioSessionService sessions,
         IDefaultDeviceSwitcher switcher,
         IAudioMeterService meters,
-        IMasterVolumeService master)
+        IMasterVolumeService master,
+        IAppRoutingService routing,
+        IAmbientPlayer ambientPlayer)
     {
         _devices = devices;
         _sessions = sessions;
         _switcher = switcher;
         _meters = meters;
         _master = master;
+        _routing = routing;
+        Ambient = new AmbientViewModel(ambientPlayer);
 
         _devices.DevicesChanged += OnDevicesChanged;
         Sessions.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasNoSessions));
@@ -254,6 +264,13 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
 
         DefaultDeviceName = _devices.GetDefaultDevice(AudioDeviceKind.Playback)?.Name ?? "—";
+
+        // The endpoint list backs every app's routing picker; refresh each one so a plugged-in or
+        // removed device shows up (or drops out) as a route option, with the pinned one still marked.
+        foreach (SessionViewModel session in Sessions)
+        {
+            session.RebuildRoutes(PlaybackDevices);
+        }
     }
 
     private void RefreshSessions()
@@ -273,7 +290,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
             SessionViewModel? existing = Sessions.FirstOrDefault(x => x.ProcessId == session.ProcessId);
             if (existing is null)
             {
-                Sessions.Add(new SessionViewModel(_sessions, session));
+                var vm = new SessionViewModel(_sessions, _routing, session);
+                vm.RebuildRoutes(PlaybackDevices);
+                Sessions.Add(vm);
             }
             else
             {

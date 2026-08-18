@@ -77,6 +77,8 @@
                                  IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Visualizer}" />
                     <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Content="Mixer" Tag="{StaticResource IconMixer}"
                                  IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Mixer}" />
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Content="Ambient" Tag="{StaticResource IconAmbient}"
+                                 IsChecked="{Binding ActiveSection, Converter={StaticResource EnumToBool}, ConverterParameter=Ambient}" />
 
                     <TextBlock Text="CONTROL" Style="{StaticResource NavGroupLabel}" />
                     <RadioButton Style="{StaticResource NavItem}" GroupName="Nav" Tag="{StaticResource IconRouting}"
@@ -167,6 +169,10 @@
                                   Visibility="{Binding IsVisualizer, Converter={StaticResource BoolToVis}}">
                 <views:VisualizerView.RenderTransform><TranslateTransform /></views:VisualizerView.RenderTransform>
             </views:VisualizerView>
+            <views:AmbientView Style="{StaticResource ViewHost}" DataContext="{Binding Ambient}"
+                               Visibility="{Binding DataContext.IsAmbient, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}">
+                <views:AmbientView.RenderTransform><TranslateTransform /></views:AmbientView.RenderTransform>
+            </views:AmbientView>
             <views:SettingsView Style="{StaticResource ViewHost}"
                                 Visibility="{Binding IsSettings, Converter={StaticResource BoolToVis}}">
                 <views:SettingsView.RenderTransform><TranslateTransform /></views:SettingsView.RenderTransform>

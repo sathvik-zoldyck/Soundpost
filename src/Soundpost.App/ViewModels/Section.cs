@@ -6,6 +6,7 @@ public enum Section
     Dashboard,
     Visualizer,
     Mixer,
+    Ambient,
     Routing,
     Automation,
     Scenes,

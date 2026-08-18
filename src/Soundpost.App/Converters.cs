@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Media;
 
 namespace Soundpost.App;
 
@@ -42,6 +43,22 @@ public sealed class FirstLetterConverter : IValueConverter
     {
         string s = value?.ToString()?.Trim() ?? string.Empty;
         return s.Length == 0 ? "?" : char.ToUpperInvariant(s[0]).ToString();
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>
+/// Resolves an ambient sound's icon key (e.g. "Rain") to its <c>Geometry</c> resource
+/// (<c>GlyphRain</c>), so a sound list can pick glyphs by name without a trigger per sound.
+/// </summary>
+public sealed class GlyphKeyConverter : IValueConverter
+{
+    public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        string key = value?.ToString() ?? string.Empty;
+        return Application.Current?.TryFindResource("Glyph" + key) as Geometry;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>

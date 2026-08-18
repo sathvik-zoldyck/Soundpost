@@ -62,3 +62,6 @@ $RECYCLE.BIN/
 *.local.json
 appsettings.*.local.json
 .env
+
+# Promotion assets (local only — never commit)
+promotion/

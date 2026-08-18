@@ -65,9 +65,11 @@ public partial class App : Application
         _meterService = new CoreAudioMeterService();
         _masterVolumeService = new CoreAudioMasterVolumeService();
         IDefaultDeviceSwitcher switcher = new PolicyConfigDefaultDeviceSwitcher();
+        IAppRoutingService routing = new AudioPolicyConfigAppRoutingService();
+        IAmbientPlayer ambientPlayer = new Audio.NoopAmbientPlayer();
 
         _mainViewModel = new MainViewModel(
-            _deviceService, _sessionService, switcher, _meterService, _masterVolumeService);
+            _deviceService, _sessionService, switcher, _meterService, _masterVolumeService, routing, ambientPlayer);
 
         // Restore what the console remembered from last run: which section, and where it sat.
         string stateDir = Path.Combine(

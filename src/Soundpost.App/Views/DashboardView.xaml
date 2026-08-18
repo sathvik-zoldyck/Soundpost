@@ -286,49 +286,42 @@
                                         </Button>
                                     </Grid>
 
-                                    <!-- Per-app detail strip: level in dB, session state, and solo/mute. -->
-                                    <Border Margin="43,2,4,6" Padding="14,11" CornerRadius="10"
+                                    <!-- Per-app detail: level, quick actions, and output routing. -->
+                                    <Border Margin="43,3,4,9" Padding="17,14" CornerRadius="12"
                                             Background="{StaticResource InsetBrush}"
                                             BorderBrush="{StaticResource BorderSoftBrush}" BorderThickness="1"
                                             Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVis}}">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="24" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="64" />
-                                                <ColumnDefinition Width="8" />
-                                                <ColumnDefinition Width="64" />
-                                            </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <!-- level (with live session meta) on the left, solo/mute on the right -->
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
 
-                                            <!-- level in decibels below full scale -->
-                                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                                <TextBlock Text="LEVEL" Style="{StaticResource SectionLabel}" />
-                                                <TextBlock Text="{Binding VolumeDb}" Style="{StaticResource Mono}"
-                                                           FontSize="18" Foreground="{StaticResource TextPrimaryBrush}"
-                                                           Margin="0,2,0,0" />
-                                            </StackPanel>
+                                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                    <TextBlock Text="LEVEL" Style="{StaticResource SectionLabel}" />
+                                                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                                                        <TextBlock Text="{Binding VolumeDb}" FontFamily="{StaticResource MonoFont}"
+                                                                   FontSize="19" Foreground="{StaticResource TextPrimaryBrush}"
+                                                                   VerticalAlignment="Bottom" />
+                                                        <TextBlock Margin="13,0,0,2" VerticalAlignment="Bottom" Style="{StaticResource Caption}">
+                                                            <Run Text="{Binding State, Mode=OneWay}" /><Run Text="  ·  PID " /><Run Text="{Binding ProcessId, Mode=OneWay}" />
+                                                        </TextBlock>
+                                                    </StackPanel>
+                                                </StackPanel>
 
-                                            <!-- live session state + process id -->
-                                            <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                                                <TextBlock Text="SESSION" Style="{StaticResource SectionLabel}" />
-                                                <TextBlock Foreground="{StaticResource TextSecondaryBrush}"
-                                                           FontFamily="{StaticResource LabelFont}" FontSize="12" Margin="0,2,0,0">
-                                                    <Run Text="{Binding State, Mode=OneWay}" /><Run Text="  ·  PID " /><Run Text="{Binding ProcessId, Mode=OneWay}" />
-                                                </TextBlock>
-                                            </StackPanel>
-
-                                            <ToggleButton Grid.Column="3" Style="{StaticResource SoloToggle}"
-                                                          VerticalAlignment="Center"
-                                                          IsChecked="{Binding IsSoloed, Mode=OneWay}"
-                                                          Command="{Binding DataContext.ToggleSoloCommand,
-                                                                     RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                          CommandParameter="{Binding}" />
-
-                                            <ToggleButton Grid.Column="5" Style="{StaticResource MuteToggle}"
-                                                          VerticalAlignment="Center"
-                                                          IsChecked="{Binding IsMuted, Mode=TwoWay}" />
-                                        </Grid>
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <ToggleButton Width="66" Style="{StaticResource SoloToggle}"
+                                                                  IsChecked="{Binding IsSoloed, Mode=OneWay}"
+                                                                  Command="{Binding DataContext.ToggleSoloCommand,
+                                                                             RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                                  CommandParameter="{Binding}" />
+                                                    <ToggleButton Width="66" Margin="8,0,0,0" Style="{StaticResource MuteToggle}"
+                                                                  IsChecked="{Binding IsMuted, Mode=TwoWay}" />
+                                                </StackPanel>
+                                            </Grid>
+                                        </StackPanel>
                                     </Border>
                                     </StackPanel>
                                     </Border>
